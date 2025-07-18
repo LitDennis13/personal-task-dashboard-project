@@ -1,0 +1,11 @@
+.mainStyle {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template: 6.7vh auto / 1fr;
+    background-color: #FDFDFD;
+}
+
+.navigationBarLocation {
+    grid-area: 1 / 1 / 2 / 2;
+}
