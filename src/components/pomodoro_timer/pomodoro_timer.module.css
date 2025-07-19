@@ -1,0 +1,63 @@
+.mainStyle {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pomodoroTimer {
+    width: 50%;
+    height: 60%;
+    margin-bottom: 20vh;
+    display: grid;
+    grid-template: 1fr 5fr 1fr / 1fr;
+}
+
+.navigationBar {
+    grid-area: 1 / 1 / 2 / 2;
+    display: flex;
+    justify-content: space-center;
+}
+
+.navigationBar > button {
+    width: 100%;
+    border: none;
+    background-color: #b4c2de;
+    font-size: 2.5vw;
+    
+    transition: background-color .2s;
+
+}
+.navigationBar > button:hover {
+    background-color: #8fa2c7;
+    transition: background-color .2s;
+}
+
+.navigationBar > button:active {
+    background-color: #6e81a7;
+    transition: background-color .2s;
+}
+
+.roundLeft {
+    border-top-left-radius: 30px;
+}
+
+.roundRight {
+    border-top-right-radius: 30px;
+}
+
+#selected {
+    background-color: #6e81a7;
+}
+
+.timer {
+    grid-area: 2 / 1 / 3 / 2;
+    background-color: #FDF6E3;
+
+}
+
+.controls {
+    grid-area: 3 / 1 / 4 / 2;
+    background-color: #268BD2;
+}

@@ -2,8 +2,10 @@ import styles from "./dashboard.module.css";
 
 function Dashboard() {
 
-    return <div>
-        <h1>Dashboard</h1>
+    return <div className={styles.mainStyle}>
+        <div className={styles.pomodoroSpace}></div>
+        <div className={styles.todoSpace}></div>
+        <div className={styles.noteSpace}></div>
     </div>
 }
 

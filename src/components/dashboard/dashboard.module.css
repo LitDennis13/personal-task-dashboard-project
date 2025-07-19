@@ -1,0 +1,21 @@
+.mainStyle {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 1fr;
+}
+
+.pomodoroSpace {
+    grid-area: 1 / 1 / 2 / 2;
+    background-color: orchid;
+}
+
+.todoSpace {
+    grid-area: 1 / 2 / 2 / 3;
+    background-color: bisque;
+}
+
+.noteSpace {
+    grid-area: 2 / 1 / 3 / 3;
+    background-color: chocolate;
+}

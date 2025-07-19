@@ -25,10 +25,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <Dashboard />
       },
-	  {
-		path: "/dashboard",
-		element: <DashBoardRedirect />
-	  },
+      {
+      path: "/dashboard",
+      element: <DashBoardRedirect />
+      },
       {
         path: "/pomodoro-timer/",
         element: <PomodoroTimer />,
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         path: "/notes",
         element: <Notes />
       },
-	  {
+	    {
         path: "*",
         element: <NotFound />
       }
