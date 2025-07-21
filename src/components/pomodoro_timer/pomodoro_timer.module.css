@@ -54,7 +54,13 @@
 .timer {
     grid-area: 2 / 1 / 3 / 2;
     background-color: #FDF6E3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.timer > p {
+    font-size: 1400%;
 }
 
 .controls {

@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import styles from "./pomodoro_timer.module.css";
 
-
 function PomodoroTimer() {
-    let [option, setOption] = useState(0);
+    const [option, setOption] = useOutletContext<any>();
 
     function loadNavigationBarOptions() {
         let numOfOptions = 3;
@@ -41,7 +40,6 @@ function PomodoroTimer() {
 
         return returnArray;
     }
-    
 
     return <div className={styles.mainStyle}>
         <div className={styles.pomodoroTimer}>
@@ -50,7 +48,9 @@ function PomodoroTimer() {
                     return element;
                 })}
             </nav>
-            <div className={styles.timer}></div>
+            <div className={styles.timer}>
+                <p>25:00</p>
+            </div>
             <div className={styles.controls}></div>
         </div>
     </div>
