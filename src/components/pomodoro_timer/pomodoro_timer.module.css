@@ -11,7 +11,7 @@
     height: 60%;
     margin-bottom: 20vh;
     display: grid;
-    grid-template: 1fr 5fr 1fr / 1fr;
+    grid-template: 1.5fr 7fr 2fr / 1fr;
 }
 
 .navigationBar {
@@ -65,5 +65,50 @@
 
 .controls {
     grid-area: 3 / 1 / 4 / 2;
-    background-color: #268BD2;
+    background-color: #FDF6E3;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+}
+
+.controls > button {
+    border: none;
+    width: 40%;
+    height: 90%;
+    font-size: 300%;
+
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+}
+
+#timerNotStarted {
+    background-color: #0bd894;
+    transition: background-color .2s;
+
+}
+
+#timerNotStarted:hover {
+    background-color: #10B981;
+    transition: background-color .2s;
+}
+
+#timerNotStarted:active {
+    background-color: #0c9467;
+    transition: background-color .2s;
+}
+
+#timerStarted {
+    background-color: #ff4343;
+    transition: background-color .2s;
+
+}
+
+#timerStarted:hover {
+    background-color: #da5050;
+    transition: background-color .2s;
+}
+
+#timerStarted:active {
+    background-color: #c94b4b;
+    transition: background-color .2s;
 }

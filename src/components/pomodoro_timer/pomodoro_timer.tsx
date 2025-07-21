@@ -2,7 +2,8 @@ import { useOutletContext } from "react-router-dom";
 import styles from "./pomodoro_timer.module.css";
 
 function PomodoroTimer() {
-    const [option, setOption] = useOutletContext<any>();
+    const [option, setOption] = useOutletContext<any>()[0];
+    const [timerStarted, setTimerStarted] = useOutletContext<any>()[1];
 
     function loadNavigationBarOptions() {
         let numOfOptions = 3;
@@ -41,6 +42,18 @@ function PomodoroTimer() {
         return returnArray;
     }
 
+    function loadStartTimerButton() {
+        let id: string;
+        if (timerStarted) {
+            id = styles.timerStarted;
+        }
+        else {
+            id = styles.timerNotStarted;
+        }
+        
+        return <button id={id} onClick={() => setTimerStarted(!timerStarted)}>Start</button>
+    }
+
     return <div className={styles.mainStyle}>
         <div className={styles.pomodoroTimer}>
             <nav className={styles.navigationBar}>
@@ -51,7 +64,9 @@ function PomodoroTimer() {
             <div className={styles.timer}>
                 <p>25:00</p>
             </div>
-            <div className={styles.controls}></div>
+            <div className={styles.controls}>
+                {loadStartTimerButton()}
+            </div>
         </div>
     </div>
 }
