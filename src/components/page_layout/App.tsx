@@ -8,13 +8,14 @@ function App() {
     // Pomodoro Timer stuff
     let [option, setOption] = useState(0);
     let [timerStarted, setTimerStarted] = useState(false);
+    let [timeRemaining, setTimeRemaining] = useState(1500);
 
     return <div className={styles.mainStyle}>
         <div className={styles.navigationBarLocation}>
             <NavigationBar />
         </div>
         <div className={styles.mainContent}>
-            <Outlet context={[[option, setOption], [timerStarted, setTimerStarted]]}/>
+            <Outlet context={[[option, setOption], [timerStarted, setTimerStarted], [timeRemaining, setTimeRemaining]]}/>
         </div>
     </div>
 }
