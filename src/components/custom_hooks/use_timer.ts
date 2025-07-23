@@ -25,7 +25,4 @@ function useTimer(defaultOption: number): any {
     return [option, timerStarted, timeRemaining, optionSet, setTimerStarted];
 }
 
-
-
-
 export default useTimer;

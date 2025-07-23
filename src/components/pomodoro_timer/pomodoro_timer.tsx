@@ -1,8 +1,15 @@
+import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import styles from "./pomodoro_timer.module.css";
 
 function PomodoroTimer() {
+    let [timerHasStarted, setTimerHasStarted] = useState(false);
     const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[0];
+
+    function onNavigationBarChange(index: number) {
+        optionSet(index);
+        setTimerHasStarted(false);
+    }
 
     function loadNavigationBarOptions() {
         let numOfOptions = 3;
@@ -35,7 +42,7 @@ function PomodoroTimer() {
                 classStyle = "";
             }
 
-            returnArray[index] = <button key={index} id={id} className={classStyle} onClick={() => optionSet(index)}>{element}</button>;
+            returnArray[index] = <button key={index} id={id} className={classStyle} onClick={() => onNavigationBarChange(index)}>{element}</button>;
         });
 
         return returnArray;
@@ -58,6 +65,14 @@ function PomodoroTimer() {
         return <p>{onScreenMinutes}:{onScreenSeconds}</p>;
     }
 
+    function startStopOnClick() {
+        if (!timerStarted) {
+            setTimerHasStarted(true);
+        }
+
+        setTimerStarted(!timerStarted);
+    }
+
     function loadStartTimerButton() {
         let id: string;
         if (timerStarted) {
@@ -67,7 +82,21 @@ function PomodoroTimer() {
             id = styles.timerNotStarted;
         }
         
-        return <button id={id} onClick={() => setTimerStarted(!timerStarted)}>Start</button>
+        return <button id={id} onClick={() => startStopOnClick()}>Start</button>
+    }
+
+    function resetButtonOnClick() {
+        optionSet(option); // triggers re-render
+        setTimerHasStarted(false);
+    }
+
+    function loadResetButton() {
+        if (timerHasStarted) {
+            return <button onClick={() => resetButtonOnClick()}>Reset</button>;
+        }
+        return;
+
+         
     }
 
 
@@ -84,6 +113,9 @@ function PomodoroTimer() {
             <div className={styles.controls}>
                 {loadStartTimerButton()}
             </div>
+        </div>
+        <div className={styles.resetButtonArea}>
+            {loadResetButton()}
         </div>
     </div>
 }

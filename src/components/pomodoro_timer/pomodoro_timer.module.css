@@ -4,6 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-flow: column nowrap;
 }
 
 .pomodoroTimer {
@@ -110,5 +111,42 @@
 
 #timerStarted:active {
     background-color: #c94b4b;
+    transition: background-color .2s;
+}
+
+
+.resetButtonArea {
+    width: 50%;
+    height: auto;
+    margin-top: -20vh;
+    background-color: #FDF6E3;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+.resetButtonArea > button {
+    border: none;
+    width: 40%;
+    height: 100%;
+    font-size: 300%;
+
+    background-color: #ffcf6e;
+
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+
+    transition: background-color .2s;
+}
+
+.resetButtonArea > button:hover {
+    background-color: #e1b762;
+
+    transition: background-color .2s;
+}
+
+.resetButtonArea > button:active {
+    background-color: #c09c53;
+
     transition: background-color .2s;
 }
