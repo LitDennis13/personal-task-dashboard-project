@@ -1,18 +1,8 @@
-import { useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import styles from "./pomodoro_timer.module.css";
 
 function PomodoroTimer() {
-    const timeOptions = [1500, 300, 900];
-    const [option, setOption] = useOutletContext<any>()[0];
-    const [timerStarted, setTimerStarted] = useOutletContext<any>()[1];
-    const [timeRemaining, setTimeRemaining] = useOutletContext<any>()[2];
-
-    function onNavigationOptionSelect(index: number) {
-        setOption(index);
-        setTimerStarted(false);
-        setTimeRemaining(timeOptions[index]);
-    }
+    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[0];
 
     function loadNavigationBarOptions() {
         let numOfOptions = 3;
@@ -45,7 +35,7 @@ function PomodoroTimer() {
                 classStyle = "";
             }
 
-            returnArray[index] = <button key={index} id={id} className={classStyle} onClick={() => onNavigationOptionSelect(index)}>{element}</button>;
+            returnArray[index] = <button key={index} id={id} className={classStyle} onClick={() => optionSet(index)}>{element}</button>;
         });
 
         return returnArray;
@@ -68,12 +58,6 @@ function PomodoroTimer() {
         return <p>{onScreenMinutes}:{onScreenSeconds}</p>;
     }
 
-    function onStartStopClick() {        
-        setTimerStarted(!timerStarted);
-        
-        
-    }
-
     function loadStartTimerButton() {
         let id: string;
         if (timerStarted) {
@@ -83,19 +67,9 @@ function PomodoroTimer() {
             id = styles.timerNotStarted;
         }
         
-        return <button id={id} onClick={() => onStartStopClick()}>Start</button>
+        return <button id={id} onClick={() => setTimerStarted(!timerStarted)}>Start</button>
     }
 
-
-    useEffect(() => {
-        const intervalID = setInterval(() => {
-            if (timerStarted) {
-                setTimeRemaining(timeRemaining - 1);
-            }
-        }, 1000);
-
-        return () => clearInterval(intervalID);
-    });
 
     return <div className={styles.mainStyle}>
         <div className={styles.pomodoroTimer}>
