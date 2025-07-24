@@ -1,10 +1,34 @@
-import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+
 import styles from "./pomodoro_timer.module.css";
+import clickSoundEffect from "../../assets/bubble_sound_effect.m4a";
+
+function playClickSoundEffect() {
+    new Audio(clickSoundEffect).play();
+}
 
 function PomodoroTimer() {
-    let [timerHasStarted, setTimerHasStarted] = useState(false);
-    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[0];
+    const appName = useOutletContext<any>()[0];
+    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[1];
+    let [timerHasStarted, setTimerHasStarted] = useOutletContext<any>()[2];
+    let setDocumentTitle = useOutletContext<any>()[3];
+
+    function isTimerDone() {
+        if (timeRemaining == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    function loadPomodoroTimerStyle() {
+        if (isTimerDone()) {
+            return styles.pomodoroTimerWithHardReset;
+        }
+        else {
+            return styles.pomodoroTimer;
+        }
+    }
+
 
     function onNavigationBarChange(index: number) {
         optionSet(index);
@@ -71,37 +95,53 @@ function PomodoroTimer() {
         }
 
         setTimerStarted(!timerStarted);
+
+        playClickSoundEffect();
     }
 
     function loadStartTimerButton() {
+        if (isTimerDone()) return;
+
         let id: string;
+
         if (timerStarted) {
             id = styles.timerStarted;
         }
         else {
             id = styles.timerNotStarted;
+            setDocumentTitle(appName);
         }
         
         return <button id={id} onClick={() => startStopOnClick()}>Start</button>
     }
 
+    function loadResetAreaStyle() {
+        if (timerHasStarted) {
+            return styles.resetButtonArea;
+        }
+        return styles.resetButtonAreaNoButton;
+    }
+
     function resetButtonOnClick() {
         optionSet(option); // triggers re-render
         setTimerHasStarted(false);
+        playClickSoundEffect();
     }
 
     function loadResetButton() {
         if (timerHasStarted) {
+            if (isTimerDone()) {
+                return <button id={styles.resetOptionOnly} onClick={() => resetButtonOnClick()}>Reset</button>;
+            }
             return <button onClick={() => resetButtonOnClick()}>Reset</button>;
         }
+        setDocumentTitle(appName);
         return;
-
-         
     }
 
 
     return <div className={styles.mainStyle}>
-        <div className={styles.pomodoroTimer}>
+        <div className={loadPomodoroTimerStyle()}>
             <nav className={styles.navigationBar}>
                 {loadNavigationBarOptions().map((element) => {
                     return element;
@@ -114,7 +154,7 @@ function PomodoroTimer() {
                 {loadStartTimerButton()}
             </div>
         </div>
-        <div className={styles.resetButtonArea}>
+        <div className={loadResetAreaStyle()}>
             {loadResetButton()}
         </div>
     </div>

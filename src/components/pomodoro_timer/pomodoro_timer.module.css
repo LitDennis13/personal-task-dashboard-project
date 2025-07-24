@@ -15,6 +15,14 @@
     grid-template: 1.5fr 7fr 2fr / 1fr;
 }
 
+.pomodoroTimerWithHardReset {
+    width: 50%;
+    height: 49%;
+    margin-bottom: 20vh;
+    display: grid;
+    grid-template: 1.5fr 7fr / 1fr;
+}
+
 .navigationBar {
     grid-area: 1 / 1 / 2 / 2;
     display: flex;
@@ -61,7 +69,7 @@
 }
 
 .timer > p {
-    font-size: 1400%;
+    font-size: 14.5vw;
 }
 
 .controls {
@@ -76,7 +84,7 @@
     border: none;
     width: 40%;
     height: 90%;
-    font-size: 300%;
+    font-size: 3.7vw;
 
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
@@ -117,19 +125,23 @@
 
 .resetButtonArea {
     width: 50%;
-    height: auto;
+    height: 10.3%;
     margin-top: -20vh;
     background-color: #FDF6E3;
     display: flex;
     justify-content: center;
     align-items: start;
 }
+.resetButtonAreaNoButton {
+    height: auto;
+    margin-top: -20vh;
+}
 
 .resetButtonArea > button {
     border: none;
     width: 40%;
     height: 100%;
-    font-size: 300%;
+    font-size: 3.5vw;
 
     background-color: #ffcf6e;
 
@@ -149,4 +161,12 @@
     background-color: #c09c53;
 
     transition: background-color .2s;
+}
+
+#resetOptionOnly {
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
