@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./other/josh-comeau-css-reset.css";
 import "./main.css";
 
-import App from './components/page_layout/App';
+import App from './components/App/App';
 import ErrorPage from './components/error_page/error_page';
 import NotFound from './components/not_found/not_found';
 import Dashboard from './components/dashboard/dashboard';
