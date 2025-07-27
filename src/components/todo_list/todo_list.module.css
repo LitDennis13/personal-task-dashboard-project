@@ -17,31 +17,37 @@
 
 .sideBar {
     grid-area: 1 / 1 / 2 / 2;
+    display: grid;
+    grid-template: 10fr 1fr / 1fr;
+
+    background-color: #b4c2de;
+}
+
+.listTodoLists {
+    grid-area: 1 / 1 / 2 / 2;
     display: flex;
     flex-flow: column nowrap;
     justify-content: start;
     align-items: center;
-
-    background-color: #b4c2de;
 }
 
-.sideBar > button {
+.listTodoLists > button {
     border: none;
     font-size: 1.5vw;
     font-weight: bold;
     width: 100%;
-    height: 8%;
+    height: 8vh;
     background-color: #b4c2de;
-
     transition: font-size .2s;
+    /* border: 2px solid red; */
 }
 
-.sideBar > button:hover {
+.listTodoLists > button:hover {
     font-size: 2vw;
     transition: font-size .2s;
 }
 
-.sideBar > button:active {
+.listTodoLists > button:active {
     font-size: 3vw;
     transition: font-size .2s;
 
@@ -49,8 +55,32 @@
 
 #selected {
     font-size: 3vw;
+    height: 20vh;
     transition: font-size .2s;
+}
 
+.addTodoList {
+    border: none;
+    background-color: #b4c2de;
+    font-size: 2vw;
+    /* border: 2px solid red; */
+
+    border-bottom-left-radius: 22px;
+    border-bottom-right-radius: 22px;
+
+    transition: background-color .2s;
+}
+
+.addTodoList:hover {
+    background-color: #949fb7;
+
+    transition: background-color .2s;
+}
+
+.addTodoList:active {
+    background-color: #798397;
+
+    transition: background-color .2s;
 }
 
 .mainArea {
