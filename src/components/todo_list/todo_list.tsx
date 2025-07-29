@@ -62,8 +62,8 @@ function TodoList() {
         selectedTodoList.name = name;
 
         for (let i = 0; i < todoListData.length; i++) {
-            if (todoListData[i].listID == selectedTodoList.listID) {
-                todoListData[i] = selectedTodoList;
+            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                (todoListData[i] as TodoListType) = selectedTodoList;
                 break;
             }
         }
@@ -71,7 +71,7 @@ function TodoList() {
     }
 
     function loadTodoListNameField() {
-        if (selectedTodoList.listID == 0) {
+        if (selectedTodoList.listID === 0) {
             return <input type="text" value={selectedTodoList.name} readOnly/>;
         }
         else {
@@ -81,12 +81,32 @@ function TodoList() {
 
     function fixEmptyTodoListNames() {
         for (let i = 0; i < todoListData.length; i++) {
-            if (todoListData[i].listID == selectedTodoList.listID && emptyOrWhiteSpace(todoListData[i].name)) {
-                todoListData[i].name = "Untitled List";
+            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID && emptyOrWhiteSpace(todoListData[i].name)) {
+                (todoListData[i] as TodoListType).name = "Untitled List";
                 setTodoListData([...todoListData]);
             }
         }
     }
+
+    function deleteListButtonOnClick() {
+        let index = 0;
+        for (let i = 0; i < todoListData.length; i++) {
+            if ((todoListData[i] as TodoListType).listID === selectedTodoList.listID) {
+                index = i;
+                break;
+            }
+        }
+        todoListData.splice(index, 1);
+
+        setTodoListData([...todoListData]);
+        setSelectedTodoList(todoListData[0]);
+    }
+
+    function loadDeleteListButton() {
+        if (selectedTodoList.listID != 0) return <button className={styles.deleteListButton} onClick={() => deleteListButtonOnClick()}>Delete List</button>;
+        else return "";
+    }
+
 
     useEffect(() => {
         if (todoListNameDisplay.current !== null && newListMade == true) {
@@ -94,7 +114,6 @@ function TodoList() {
             setNewListMade(false);
         }
     }, [newListMade]);
-
 
     return <div className={styles.mainStyle}>
         <div className={styles.sideBar}>
@@ -107,6 +126,7 @@ function TodoList() {
             <div className={styles.todoListNameDisplay}>
                 {loadTodoListNameField()}
             </div>
+            {loadDeleteListButton()}
             <div className={styles.todoListDisplay}>{}</div>
             <form className={styles.addTodoArea}>
                 {/* <input type="text" placeholder="Add Todo" /> */}
