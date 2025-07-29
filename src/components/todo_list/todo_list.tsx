@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import styles from "./todo_list.module.css";
 
@@ -18,6 +18,9 @@ function TodoList() {
     let [newID, setNewID] = useOutletContext<any>()[5];
 
     let [selectedTodoList, setSelectedTodoList] = useState<TodoListType>(todoListData[0]);
+    let [newListMade, setNewListMade] = useState(false);
+
+    let todoListNameDisplay = useRef(null);
 
     function sideBarOptionOnClick(todoList: TodoListType) {
         setSelectedTodoList(todoList);
@@ -26,15 +29,16 @@ function TodoList() {
     function loadSideBarOptions() {
         let options: any[] = [];
         let id: string;
+        let displayName: string;
         
         todoListData.map((element: TodoListType, index: number) => {
-            if (element.listID == selectedTodoList.listID) {
-                id = styles.selected;
-            }
-            else {
-                id = "";
-            }
-            options[index] = <button id={id} key={index} onClick={() => sideBarOptionOnClick(element)}>{element.name}</button>;
+            if (element.listID == selectedTodoList.listID) id = styles.selected;
+            else id = "";
+            
+            displayName = element.name;
+            if (element.name === "") displayName = "Untitled List";
+
+            options[index] = <button id={id} key={index} onClick={() => sideBarOptionOnClick(element)}>{displayName}</button>;
         });
 
         return options;
@@ -43,14 +47,14 @@ function TodoList() {
     function onNewListClick() {
         let newTodoList: TodoListType = {
             listID: newID,
-            name: "Untitled List",
+            name: "",
             list: []
         };
 
         setTodoListData([...todoListData, newTodoList]);
         setSelectedTodoList(newTodoList);
         setNewID(newID + 1);
-
+        setNewListMade(true);
     }
 
     function updateTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
@@ -68,10 +72,10 @@ function TodoList() {
 
     function loadTodoListNameField() {
         if (selectedTodoList.listID == 0) {
-            return <input type="text" value={selectedTodoList.name} onChange={(event) => updateTodoListName(event)} readOnly/>;
+            return <input type="text" value={selectedTodoList.name} readOnly/>;
         }
         else {
-            return <input type="text" value={selectedTodoList.name} onChange={(event) => updateTodoListName(event)} onBlur={() => fixEmptyTodoListNames()} />;
+            return <input ref={todoListNameDisplay} type="text" value={selectedTodoList.name} placeholder="Untitled List" onChange={(event) => updateTodoListName(event)} onBlur={() => fixEmptyTodoListNames()} />;
         }
     }
 
@@ -83,6 +87,14 @@ function TodoList() {
             }
         }
     }
+
+    useEffect(() => {
+        if (todoListNameDisplay.current !== null && newListMade == true) {
+            (todoListNameDisplay.current as HTMLInputElement).focus();
+            setNewListMade(false);
+        }
+    }, [newListMade]);
+
 
     return <div className={styles.mainStyle}>
         <div className={styles.sideBar}>
