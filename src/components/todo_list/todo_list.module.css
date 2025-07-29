@@ -98,15 +98,22 @@
     grid-area: 1 / 1 / 2 / 2;
     width: 100%;
     height: 100%;
-    
     justify-self: start;
     align-self: center;
 
 }
 
-.todoListNameDisplay > p {
-    font-size: 4vw;
+.todoListNameDisplay > input {
+    font-size: 3.8vw;
     font-weight: bold;
+    background-color: inherit;
+    border: none;
+    /* border: 2px solid red; */
+    width: auto;
+}
+
+.todoListNameDisplay > input:focus, .todoListNameDisplay > input:active {
+    outline: none;
 }
 
 
