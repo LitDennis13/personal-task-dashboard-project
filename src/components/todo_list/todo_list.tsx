@@ -129,7 +129,8 @@ function TodoList() {
             {loadDeleteListButton()}
             <div className={styles.todoListDisplay}>{}</div>
             <form className={styles.addTodoArea}>
-                {/* <input type="text" placeholder="Add Todo" /> */}
+                <button>+</button>
+                <input type="text" placeholder="Add Todo" />
             </form>
         </div>
     </div>

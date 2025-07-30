@@ -88,7 +88,7 @@
     grid-area: 1 / 2 / 2 / 3;
     
     display: grid;
-    grid-template: 1fr 6fr 1fr / 3fr 1fr;
+    grid-template: 1.5fr 9fr 1fr / 3fr 1fr;
     padding: 2vh 2vw;
 
     background-color: #FDF6E3;
@@ -114,7 +114,7 @@
     width: auto;
 }
 
-.todoListNameDisplay > input:focus, .todoListNameDisplay > input:active {
+.todoListNameDisplay > input:focus, .todoListNameDisplay > input:active, .addTodoArea > input:focus, .addTodoArea > input:active {
     outline: none;
 }
 
@@ -147,11 +147,49 @@
     grid-area: 2 / 1 / 3 / 3;
     width: 100%;
     height: 100%;
+    /* border: 2px solid rebeccapurple; */
 }
 
 .addTodoArea {
     grid-area: 3 / 1 / 4 / 3;
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.addTodoArea > button {
+    height: 100%;
+    width: 5%;
+    border: none;
+    font-size: 250%;
+    
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    background-color: #b4c2de;
+    
+    transition: background-color .2s;
+}
+
+.addTodoArea > button:hover {
+    background-color: #8fa2c7;
+    transition: background-color .2s;
+}
+
+.addTodoArea > button:active {
+    background-color: #6e81a7;
+    transition: background-color .2s;
+}
+
+.addTodoArea > input {
+    width: 100%;
+    height: 100%;
+    font-size: 250%;
+    border: none;
+
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    background-color: #b4c2de;
 }
 
