@@ -20,6 +20,15 @@ function TodoList() {
     let [selectedTodoList, setSelectedTodoList] = useState<TodoListType>(todoListData[0]);
     let [newListMade, setNewListMade] = useState(false);
 
+    let newTodoDefaultState: TodoType = {
+        todoID: 0,
+        name: "",
+        note: "",
+        hasNote: false,
+        isComplete: false
+    };
+    let [newTodo, setNewTodo] = useState<TodoType>(newTodoDefaultState);
+
     let todoListNameDisplay = useRef(null);
 
     function sideBarOptionOnClick(todoList: TodoListType) {
@@ -107,6 +116,29 @@ function TodoList() {
         else return "";
     }
 
+    function updateNewTodo(event: React.ChangeEvent<HTMLInputElement>) {
+        newTodo.name = event.target.value;
+        setNewTodo({...newTodo});
+    }
+
+    function addNewTodo(event: (React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>)) {
+        event.preventDefault();
+
+        if (!emptyOrWhiteSpace(newTodo.name)) {
+            newTodo.todoID = newID;
+            
+            for (let i = 0; i < todoListData.length; i++) {
+                if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                    (todoListData[i] as TodoListType).list.push(newTodo);
+                    break;
+                }
+            }
+        }
+
+        setNewID(newID + 1);
+        setTodoListData([...todoListData]);
+        setNewTodo({...newTodoDefaultState});
+    }
 
     useEffect(() => {
         if (todoListNameDisplay.current !== null && newListMade == true) {
@@ -114,6 +146,8 @@ function TodoList() {
             setNewListMade(false);
         }
     }, [newListMade]);
+
+    console.log(todoListData);
 
     return <div className={styles.mainStyle}>
         <div className={styles.sideBar}>
@@ -128,9 +162,9 @@ function TodoList() {
             </div>
             {loadDeleteListButton()}
             <div className={styles.todoListDisplay}>{}</div>
-            <form className={styles.addTodoArea}>
-                <button>+</button>
-                <input type="text" placeholder="Add Todo" />
+            <form className={styles.addTodoArea} onSubmit={(event) => addNewTodo(event)}>
+                <button onClick={(event) => addNewTodo(event)}>+</button>
+                <input type="text" placeholder="Add Todo" value={newTodo.name} onChange={(event) => updateNewTodo(event)} />
             </form>
         </div>
     </div>
