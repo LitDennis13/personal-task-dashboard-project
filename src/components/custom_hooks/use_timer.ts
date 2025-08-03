@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import timerEndSoundEffect from "../../assets/timer_end_sound.mp3";
+import timerEndSoundEffect from "../../assets/audio/timer_end_sound.mp3";
 
 function playTimerEndSoundEffect() {
     new Audio(timerEndSoundEffect).play();

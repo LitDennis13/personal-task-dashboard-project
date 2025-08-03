@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import styles from "./todo_list.module.css";
+import NoteIcon from "../../assets/images/notes.svg";
+import CircleIcon from "../../assets/images/circle.svg";
+import CircleCheckIcon from "../../assets/images/check_circle.svg";
 
 import type { TodoType, TodoListType } from "../App/App";
 
@@ -120,8 +123,16 @@ function TodoList() {
         let todos: any[] = [];
 
         selectedTodoList.list.map((todo: TodoType, index: number) => {
+            let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
+
             let todoEntry = <div key={index} className={styles.todoCard}>
+                <div className={styles.checkCompletedArea}>
+                    <button>
+                        <img src={IconImage} alt="Completed/Not Completed icon" />
+                    </button>
+                </div>
                 <p className={styles.todoName}>{todo.name}</p>
+                {todo.hasNote ? <img className={styles.noteIcon} src={NoteIcon} alt="Note Icon" /> : ""}
             </div>;
 
 
