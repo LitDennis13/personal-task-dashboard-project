@@ -116,6 +116,24 @@ function TodoList() {
         else return "";
     }
 
+    function loadTodosFromList() {
+        let todos: any[] = [];
+
+        selectedTodoList.list.map((todo: TodoType, index: number) => {
+            let todoEntry = <div key={index} className={styles.todoCard}>
+                <p className={styles.todoName}>{todo.name}</p>
+            </div>;
+
+
+            todos.push(todoEntry);
+        });
+
+
+        return todos;
+    }
+
+
+
     function updateNewTodo(event: React.ChangeEvent<HTMLInputElement>) {
         newTodo.name = event.target.value;
         setNewTodo({...newTodo});
@@ -161,7 +179,7 @@ function TodoList() {
                 {loadTodoListNameField()}
             </div>
             {loadDeleteListButton()}
-            <div className={styles.todoListDisplay}>{}</div>
+            <div className={styles.todoListDisplay}>{loadTodosFromList()}</div>
             <form className={styles.addTodoArea} onSubmit={(event) => addNewTodo(event)}>
                 <button onClick={(event) => addNewTodo(event)}>+</button>
                 <input type="text" placeholder="Add Todo" value={newTodo.name} onChange={(event) => updateNewTodo(event)} />

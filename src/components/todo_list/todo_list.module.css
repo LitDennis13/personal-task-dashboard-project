@@ -26,18 +26,19 @@
 
 .listTodoLists {
     grid-area: 1 / 1 / 2 / 2;
-    height: 79.3vh;
+    height: 79.3vh; /* height of the grid area space */
     display: flex;
     flex-flow: column nowrap;
     justify-content: start;
     align-items: center;
-    overflow-y: scroll;
+    row-gap: 1vh;
 
+    overflow-y: scroll;
     -ms-overflow-style: none;  /* Hide scroll bar on IE and Edge */
     scrollbar-width: none;     /* Hide scroll bar on Firefox */
 }
 
-.hide-listTodoLists::-webkit-scrollbar {
+.listTodoLists::-webkit-scrollbar {
   display: none;             /* Hide scroll bar on Chrome, Safari, Opera */
 }
 
@@ -46,7 +47,7 @@
     font-size: 1.5vw;
     font-weight: bold;
     width: 100%;
-    height: 8vh;
+    height: 69px;
     background-color: #b4c2de;
     transition: font-size .2s;
     /* border: 2px solid red; */
@@ -65,7 +66,7 @@
 
 #selected {
     font-size: 3vw;
-    height: 20vh;
+    height: 172px;
     transition: font-size .2s;
 }
 
@@ -154,10 +155,40 @@
 
 .todoListDisplay {
     grid-area: 2 / 1 / 3 / 3;
-    width: 100%;
-    height: 100%;
-    /* border: 2px solid rebeccapurple; */
+    height: 67.5vh; /* height of the grid area space */
+    width: 100%; 
+
+    
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* Hide scroll bar on IE and Edge */
+    scrollbar-width: none;     /* Hide scroll bar on Firefox */
 }
+
+.todoListDisplay::-webkit-scrollbar {
+  display: none;             /* Hide scroll bar on Chrome, Safari, Opera */
+}
+
+.todoCard {
+    width: 100%;
+    height: 52px;
+    display: grid;
+    grid-template: 1fr / 1fr 20fr;
+    background-color: #b4c2de;
+
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.todoName {
+    grid-area: 1 / 2 / 2 / 3;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: start;
+    align-items: center;
+    font-size: 28px;
+}
+
+
 
 .addTodoArea {
     grid-area: 3 / 1 / 4 / 3;
