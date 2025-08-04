@@ -119,6 +119,22 @@ function TodoList() {
         else return "";
     }
 
+    function updateCompletionStatus(ID: number) {
+        for (let i = 0; i < selectedTodoList.list.length; i++) {
+            if ((selectedTodoList.list[i] as TodoType).todoID == ID) {
+                (selectedTodoList.list[i] as TodoType).isComplete = !(selectedTodoList.list[i] as TodoType).isComplete;
+            }
+        }
+
+        for (let i = 0; i < todoListData.length; i++) {
+            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                (todoListData[i] as TodoListType) = selectedTodoList;
+                break;
+            }
+        }
+        setTodoListData([...todoListData]);
+    }
+
     function loadTodosFromList() {
         let todos: any[] = [];
 
@@ -127,7 +143,7 @@ function TodoList() {
 
             let todoEntry = <div key={index} className={styles.todoCard}>
                 <div className={styles.checkCompletedArea}>
-                    <button>
+                    <button onClick={() => updateCompletionStatus(todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -175,8 +191,6 @@ function TodoList() {
             setNewListMade(false);
         }
     }, [newListMade]);
-
-    console.log(todoListData);
 
     return <div className={styles.mainStyle}>
         <div className={styles.sideBar}>
