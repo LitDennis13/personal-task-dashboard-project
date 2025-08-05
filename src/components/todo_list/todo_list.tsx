@@ -34,6 +34,8 @@ function TodoList() {
 
     let todoListNameDisplay = useRef(null);
 
+    let [draggingTodoID, setDraggingTodoID] = useState(-1);
+
     function sideBarOptionOnClick(todoList: TodoListType) {
         setSelectedTodoList(todoList);
     }
@@ -135,13 +137,39 @@ function TodoList() {
         setTodoListData([...todoListData]);
     }
 
+    
+    function onDropFunction(droppedTodoID: number) {
+        let oldID = droppedTodoID;
+        let newID = draggingTodoID;
+
+        for (let i = 0; i < selectedTodoList.list.length; i++) {
+            if ((selectedTodoList as TodoListType).list[i].todoID == oldID) {
+                (selectedTodoList as TodoListType).list[i].todoID = newID;
+            }
+            else if ((selectedTodoList as TodoListType).list[i].todoID == newID) {
+                (selectedTodoList as TodoListType).list[i].todoID = oldID;
+            } 
+        }
+
+        (selectedTodoList as TodoListType).list.sort((entry1, entry2) => entry1.todoID - entry2.todoID);
+
+        for (let i = 0; i < todoListData.length; i++) {
+            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                (todoListData[i] as TodoListType) = selectedTodoList;
+                break;
+            }
+        }
+        setTodoListData([...todoListData]);
+    }
+
     function loadTodosFromList() {
-        let todos: any[] = [];
+        let notCompleteTodos: any[] = [];
+        let completeTodos: any[] = [];
 
         selectedTodoList.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
-            let todoEntry = <div key={index} className={styles.todoCard}>
+            let todoEntry = <div key={index} className={styles.todoCard} draggable={todo.isComplete ? "false" : "true"} onDragStart={() => setDraggingTodoID(todo.todoID)} onDragOver={(event) => event.preventDefault()} onDrop={() => onDropFunction(todo.todoID)}>
                 <div className={styles.checkCompletedArea}>
                     <button onClick={() => updateCompletionStatus(todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
@@ -151,12 +179,15 @@ function TodoList() {
                 {todo.hasNote ? <img className={styles.noteIcon} src={NoteIcon} alt="Note Icon" /> : ""}
             </div>;
 
-
-            todos.push(todoEntry);
+            if (todo.isComplete) {
+                completeTodos.push(todoEntry);
+            }
+            else {
+                notCompleteTodos.push(todoEntry);
+            }
         });
 
-
-        return todos;
+        return [...notCompleteTodos, ...completeTodos];
     }
 
 
@@ -191,7 +222,7 @@ function TodoList() {
             setNewListMade(false);
         }
     }, [newListMade]);
-
+    
     return <div className={styles.mainStyle}>
         <div className={styles.sideBar}>
             <div className={styles.listTodoLists}>

@@ -48,6 +48,7 @@
     font-weight: bold;
     width: 100%;
     height: 69px;
+    min-height: 69px;
     background-color: #b4c2de;
     transition: font-size .2s;
     /* border: 2px solid red; */
@@ -130,10 +131,10 @@
 
 .deleteListButton {
     grid-area: 1 / 2 / 2 / 3;
-    width: 90%;
-    height: 90%;
+    width: 100%;
+    height: 80%;
     justify-self: center;
-    align-self: center;
+    align-self: start;
     font-size: 2.6vw;
     font-weight: bold;
     background-color: #EF4444;
@@ -155,12 +156,14 @@
 
 .todoListDisplay {
     grid-area: 2 / 1 / 3 / 3;
-    height: 67.5vh; /* height of the grid area space */
+    height: 66.5vh; /* height of the grid area space */
     width: 100%; 
+    justify-self: center;
+    align-self: start;
     display: flex;
     flex-flow: column nowrap;
-    row-gap: 2px;
-    
+    row-gap: 5px;
+
     overflow-y: scroll;
     -ms-overflow-style: none;  /* Hide scroll bar on IE and Edge */
     scrollbar-width: none;     /* Hide scroll bar on Firefox */
@@ -173,6 +176,7 @@
 .todoCard {
     width: 100%;
     height: 52px;
+    min-height: 52px;
     display: grid;
     grid-template: 1fr / 1fr 20fr 2fr;
     background-color: #b4c2de;
@@ -225,6 +229,7 @@
     justify-content: start;
     align-items: center;
     font-size: 28px;
+    /* text-decoration: line-through; */
 }
 
 .noteIcon {
