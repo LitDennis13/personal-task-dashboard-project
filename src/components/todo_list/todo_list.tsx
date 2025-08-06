@@ -34,7 +34,8 @@ function TodoList() {
 
     let todoListNameDisplay = useRef(null);
 
-    let [draggingTodoID, setDraggingTodoID] = useState(-1);
+    let [draggingTodo, setDraggingTodo] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
+    let [recentTodoDragOver, setRecentTodoDragOver] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
 
     function sideBarOptionOnClick(todoList: TodoListType) {
         setSelectedTodoList(todoList);
@@ -137,29 +138,67 @@ function TodoList() {
         setTodoListData([...todoListData]);
     }
 
+    function onTodoDragStart(todo: TodoType) {
+        setDraggingTodo(todo);
+        setRecentTodoDragOver(todo);
+    }
+
+    function onTodoDragOver(event: React.DragEvent<HTMLDivElement>, currentTodoDragOver: TodoType) {
+        event.preventDefault();
+
+        if (recentTodoDragOver.todoID !== currentTodoDragOver.todoID) {
+            console.log("Dragging " + draggingTodo.name);
+            console.log("recent: " + recentTodoDragOver.name);
+            console.log("current: " + currentTodoDragOver.name);
+            console.log("\n");
+
+            let oldID = currentTodoDragOver.todoID;
+            let newID = draggingTodo.todoID;
+
+            for (let i = 0; i < selectedTodoList.list.length; i++) {
+                if ((selectedTodoList as TodoListType).list[i].todoID == oldID) {
+                    (selectedTodoList as TodoListType).list[i].todoID = newID;
+                }
+                else if ((selectedTodoList as TodoListType).list[i].todoID == newID) {
+                    (selectedTodoList as TodoListType).list[i].todoID = oldID;
+                } 
+            }
+
+            (selectedTodoList as TodoListType).list.sort((entry1, entry2) => entry1.todoID - entry2.todoID);
+
+            for (let i = 0; i < todoListData.length; i++) {
+                if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                    (todoListData[i] as TodoListType) = selectedTodoList;
+                    break;
+                }
+            }
+            setTodoListData([...todoListData]);
+            setRecentTodoDragOver(currentTodoDragOver);
+        }
+    }
     
-    function onDropFunction(droppedTodoID: number) {
-        let oldID = droppedTodoID;
-        let newID = draggingTodoID;
+    function onDropTodoFunction(droppedTodo: TodoType) {
+        // let oldID = droppedTodo.todoID;
+        // let newID = draggingTodo.todoID;
 
-        for (let i = 0; i < selectedTodoList.list.length; i++) {
-            if ((selectedTodoList as TodoListType).list[i].todoID == oldID) {
-                (selectedTodoList as TodoListType).list[i].todoID = newID;
-            }
-            else if ((selectedTodoList as TodoListType).list[i].todoID == newID) {
-                (selectedTodoList as TodoListType).list[i].todoID = oldID;
-            } 
-        }
+        // for (let i = 0; i < selectedTodoList.list.length; i++) {
+        //     if ((selectedTodoList as TodoListType).list[i].todoID == oldID) {
+        //         (selectedTodoList as TodoListType).list[i].todoID = newID;
+        //     }
+        //     else if ((selectedTodoList as TodoListType).list[i].todoID == newID) {
+        //         (selectedTodoList as TodoListType).list[i].todoID = oldID;
+        //     } 
+        // }
 
-        (selectedTodoList as TodoListType).list.sort((entry1, entry2) => entry1.todoID - entry2.todoID);
+        // (selectedTodoList as TodoListType).list.sort((entry1, entry2) => entry1.todoID - entry2.todoID);
 
-        for (let i = 0; i < todoListData.length; i++) {
-            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                (todoListData[i] as TodoListType) = selectedTodoList;
-                break;
-            }
-        }
-        setTodoListData([...todoListData]);
+        // for (let i = 0; i < todoListData.length; i++) {
+        //     if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+        //         (todoListData[i] as TodoListType) = selectedTodoList;
+        //         break;
+        //     }
+        // }
+        // setTodoListData([...todoListData]);
     }
 
     function loadTodosFromList() {
@@ -169,7 +208,7 @@ function TodoList() {
         selectedTodoList.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
-            let todoEntry = <div key={index} className={styles.todoCard} draggable={todo.isComplete ? "false" : "true"} onDragStart={() => setDraggingTodoID(todo.todoID)} onDragOver={(event) => event.preventDefault()} onDrop={() => onDropFunction(todo.todoID)}>
+            let todoEntry = <div key={index} className={styles.todoCard} draggable={todo.isComplete ? "false" : "true"} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)} onDrop={() => onDropTodoFunction(todo)}>
                 <div className={styles.checkCompletedArea}>
                     <button onClick={() => updateCompletionStatus(todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
