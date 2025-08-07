@@ -147,11 +147,6 @@ function TodoList() {
         event.preventDefault();
 
         if (recentTodoDragOver.todoID !== currentTodoDragOver.todoID) {
-            console.log("Dragging " + draggingTodo.name);
-            console.log("recent: " + recentTodoDragOver.name);
-            console.log("current: " + currentTodoDragOver.name);
-            console.log("\n");
-
             let oldID = currentTodoDragOver.todoID;
             let newID = draggingTodo.todoID;
 
