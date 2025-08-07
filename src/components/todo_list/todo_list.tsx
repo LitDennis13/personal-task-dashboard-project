@@ -203,7 +203,7 @@ function TodoList() {
     }
 
     function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
-        if (event.target instanceof Element && event.target.parentNode !== null && event.target.parentNode.id === TODO_CHECK_BUTTON) {
+        if (event.target instanceof Element && event.target.parentNode !== null && (event.target.parentNode as Element).id === TODO_CHECK_BUTTON) {
             return;
         }
         if (todoID === selectedTodoID) {
@@ -276,7 +276,7 @@ function TodoList() {
     }
 
     function onMainPageClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        if (event.target instanceof Element && event.target !== null && event.target.parentNode !== null && event.target.parentNode.parentNode !== null && event.target.parentNode.parentNode.parentNode !== null && event.target.parentNode.parentNode.parentNode.id !== TODO_CARD_ID && event.target.parentNode.id !== TODO_CARD_ID) {
+        if (event.target instanceof Element && event.target.parentNode !== null && event.target.parentNode.parentNode !== null && event.target.parentNode.parentNode.parentNode !== null && (event.target.parentNode.parentNode.parentNode as Element).id !== TODO_CARD_ID && (event.target.parentNode as Element).id !== TODO_CARD_ID) {
             setSelectedTodoID(-1);
         }
     }
