@@ -17,6 +17,9 @@ function emptyOrWhiteSpace(inString: string) {
 }
 
 function TodoList() {
+    const TODO_CARD_ID = "TodoCard";
+    const TODO_CHECK_BUTTON = "TodoCheckButton";
+
     let [todoListData, setTodoListData] = useOutletContext<any>()[4];
     let [newID, setNewID] = useOutletContext<any>()[5];
 
@@ -37,8 +40,11 @@ function TodoList() {
     let [draggingTodo, setDraggingTodo] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
     let [recentTodoDragOver, setRecentTodoDragOver] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
 
+    let [selectedTodoID, setSelectedTodoID] = useState(-1);
+
     function sideBarOptionOnClick(todoList: TodoListType) {
         setSelectedTodoList(todoList);
+        setSelectedTodoID(-1);
     }
 
     function loadSideBarOptions() {
@@ -118,7 +124,7 @@ function TodoList() {
     }
 
     function loadDeleteListButton() {
-        if (selectedTodoList.listID != 0) return <button className={styles.deleteListButton} onClick={() => deleteListButtonOnClick()}>Delete List</button>;
+        if (selectedTodoList.listID != 0 && selectedTodoID === -1) return <button className={styles.deleteListButton} onClick={() => deleteListButtonOnClick()}>Delete List</button>;
         else return "";
     }
 
@@ -196,6 +202,18 @@ function TodoList() {
         // setTodoListData([...todoListData]);
     }
 
+    function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
+        if (event.target instanceof Element && event.target.parentNode !== null && event.target.parentNode.id === TODO_CHECK_BUTTON) {
+            return;
+        }
+        if (todoID === selectedTodoID) {
+            setSelectedTodoID(-1);
+        }
+        else {
+            setSelectedTodoID(todoID);
+        }
+    }
+
     function loadTodosFromList() {
         let notCompleteTodos: any[] = [];
         let completeTodos: any[] = [];
@@ -203,9 +221,9 @@ function TodoList() {
         selectedTodoList.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
-            let todoEntry = <div key={index} className={styles.todoCard} draggable={todo.isComplete ? "false" : "true"} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)} onDrop={() => onDropTodoFunction(todo)}>
+            let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)} onDrop={() => onDropTodoFunction(todo)}>
                 <div className={styles.checkCompletedArea}>
-                    <button onClick={() => updateCompletionStatus(todo.todoID)}>
+                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -223,8 +241,6 @@ function TodoList() {
 
         return [...notCompleteTodos, ...completeTodos];
     }
-
-
 
     function updateNewTodo(event: React.ChangeEvent<HTMLInputElement>) {
         newTodo.name = event.target.value;
@@ -250,6 +266,21 @@ function TodoList() {
         setNewTodo({...newTodoDefaultState});
     }
 
+    function loadEditTodoArea() {
+        if (selectedTodoID !== -1) {
+            return <div className={styles.editTodoArea}>
+
+            </div>;
+        }
+        return "";
+    }
+
+    function onMainPageClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (event.target instanceof Element && event.target !== null && event.target.parentNode !== null && event.target.parentNode.parentNode !== null && event.target.parentNode.parentNode.parentNode !== null && event.target.parentNode.parentNode.parentNode.id !== TODO_CARD_ID && event.target.parentNode.id !== TODO_CARD_ID) {
+            setSelectedTodoID(-1);
+        }
+    }
+
     useEffect(() => {
         if (todoListNameDisplay.current !== null && newListMade == true) {
             (todoListNameDisplay.current as HTMLInputElement).focus();
@@ -257,23 +288,27 @@ function TodoList() {
         }
     }, [newListMade]);
     
-    return <div className={styles.mainStyle}>
+    return <div className={styles.mainStyle}  onClick={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>
             <div className={styles.listTodoLists}>
                 {loadSideBarOptions()}
             </div>
             <button className={styles.addTodoList} onClick={() => onNewListClick()}>+ New List</button>
         </div>
-        <div className={styles.mainArea}>
+        <div id={selectedTodoID !== -1 ? styles.showEditTodoArea : ""} className={styles.mainArea}>
             <div className={styles.todoListNameDisplay}>
                 {loadTodoListNameField()}
             </div>
+
             {loadDeleteListButton()}
+
             <div className={styles.todoListDisplay}>{loadTodosFromList()}</div>
             <form className={styles.addTodoArea} onSubmit={(event) => addNewTodo(event)}>
                 <button onClick={(event) => addNewTodo(event)}>+</button>
                 <input type="text" placeholder="Add Todo" value={newTodo.name} onChange={(event) => updateNewTodo(event)} />
             </form>
+
+            {loadEditTodoArea()}
         </div>
     </div>
 }
