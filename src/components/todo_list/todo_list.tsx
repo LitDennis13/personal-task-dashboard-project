@@ -19,6 +19,7 @@ function emptyOrWhiteSpace(inString: string) {
 function TodoList() {
     const TODO_CARD_ID = "TodoCard";
     const TODO_CHECK_BUTTON = "TodoCheckButton";
+    const EDIT_TODO_AREA = "EditTodoArea";
 
     let [todoListData, setTodoListData] = useOutletContext<any>()[4];
     let [newID, setNewID] = useOutletContext<any>()[5];
@@ -147,6 +148,7 @@ function TodoList() {
     function onTodoDragStart(todo: TodoType) {
         setDraggingTodo(todo);
         setRecentTodoDragOver(todo);
+        setSelectedTodoID(-1);
     }
 
     function onTodoDragOver(event: React.DragEvent<HTMLDivElement>, currentTodoDragOver: TodoType) {
@@ -267,16 +269,42 @@ function TodoList() {
     }
 
     function loadEditTodoArea() {
-        if (selectedTodoID !== -1) {
-            return <div className={styles.editTodoArea}>
+        let todo: TodoType = newTodoDefaultState;
+        for (let i = 0; i < selectedTodoList.list.length; i++) {
+            if (selectedTodoList.list[i].todoID === selectedTodoID) {
+                todo = selectedTodoList.list[i];
+            }
+        }
+        
+        let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
+        if (selectedTodoID !== -1) {
+            return <div id={EDIT_TODO_AREA} className={styles.editTodoArea}>
+                <div className={styles.editTodoCompletionStatus}>
+                    <button onClick={() => updateCompletionStatus(todo.todoID)}>
+                        <img src={IconImage} alt="Completed/Not Completed icon" />
+                    </button>
+                </div>
+
+                <input type="text" placeholder="Untitled Todo" className={styles.editTodoName}/>
+
+                
+                <input type="text" placeholder="Note" className={styles.editTodoNote} />
             </div>;
         }
         return "";
     }
 
     function onMainPageClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        if (event.target instanceof Element && event.target.parentNode !== null && event.target.parentNode.parentNode !== null && event.target.parentNode.parentNode.parentNode !== null && (event.target.parentNode.parentNode.parentNode as Element).id !== TODO_CARD_ID && (event.target.parentNode as Element).id !== TODO_CARD_ID) {
+        console.log(event.target);
+        if (event.target instanceof Element && event.target.parentNode !== null 
+            && event.target.parentNode.parentNode !== null 
+            && event.target.parentNode.parentNode.parentNode !== null 
+            && (event.target.parentNode.parentNode.parentNode as Element).id !== TODO_CARD_ID 
+            && (event.target.parentNode as Element).id !== TODO_CARD_ID 
+            && (event.target.parentNode.parentNode.parentNode as Element).id !== EDIT_TODO_AREA 
+            && (event.target.parentNode as Element).id !== EDIT_TODO_AREA) {
+
             setSelectedTodoID(-1);
         }
     }
