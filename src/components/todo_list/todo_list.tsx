@@ -305,7 +305,7 @@ function TodoList() {
         setTodoListData([...todoListData]);
     }
 
-    function onTodoNoteChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {
+    function onTodoNoteChange(event: React.ChangeEvent<HTMLTextAreaElement>, todoIndex: number) {
         selectedTodoList.list[todoIndex].note = event.target.value;
 
         if (emptyOrWhiteSpace(selectedTodoList.list[todoIndex].note)) {
@@ -347,7 +347,7 @@ function TodoList() {
                 <input type="text" placeholder="Untitled Todo" value={todo.name} onChange={(event) => onTodoNameChange(event, todoIndex)} className={styles.editTodoName}/>
 
                 
-                <input type="text" placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoIndex))} className={styles.editTodoNote} />
+                <textarea placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoIndex))} className={styles.editTodoNote}></textarea>
             </div>;
         }
         return "";
@@ -361,7 +361,8 @@ function TodoList() {
             && (event.target.parentNode.parentNode.parentNode as Element).id !== TODO_CARD_ID 
             && (event.target.parentNode as Element).id !== TODO_CARD_ID 
             && (event.target.parentNode.parentNode.parentNode as Element).id !== EDIT_TODO_AREA 
-            && (event.target.parentNode as Element).id !== EDIT_TODO_AREA) {
+            && (event.target.parentNode as Element).id !== EDIT_TODO_AREA
+            && (event.target as Element).id !== EDIT_TODO_AREA) {
 
             closeTodoEditArea()
         }
