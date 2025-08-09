@@ -43,9 +43,34 @@ function TodoList() {
 
     let [selectedTodoID, setSelectedTodoID] = useState(-1);
 
+    function closeTodoEditArea() {
+        let todo: TodoType = newTodoDefaultState;
+        let todoIndex: number = -1;
+        for (let i = 0; i < selectedTodoList.list.length; i++) {
+            if (selectedTodoList.list[i].todoID === selectedTodoID) {
+                todo = selectedTodoList.list[i];
+                todoIndex = i;
+            }
+        }
+
+        if (emptyOrWhiteSpace(todo.name)) {
+            selectedTodoList.list[todoIndex].name = "Untitled Todo";
+            
+            for (let i = 0; i < todoListData.length; i++) {
+                if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                    (todoListData[i] as TodoListType) = selectedTodoList;
+                    break;
+                }
+            }
+            setTodoListData([...todoListData]);
+        }
+
+        setSelectedTodoID(-1);
+    }
+
     function sideBarOptionOnClick(todoList: TodoListType) {
         setSelectedTodoList(todoList);
-        setSelectedTodoID(-1);
+        closeTodoEditArea();
     }
 
     function loadSideBarOptions() {
@@ -148,7 +173,7 @@ function TodoList() {
     function onTodoDragStart(todo: TodoType) {
         setDraggingTodo(todo);
         setRecentTodoDragOver(todo);
-        setSelectedTodoID(-1);
+        closeTodoEditArea()
     }
 
     function onTodoDragOver(event: React.DragEvent<HTMLDivElement>, currentTodoDragOver: TodoType) {
@@ -209,7 +234,7 @@ function TodoList() {
             return;
         }
         if (todoID === selectedTodoID) {
-            setSelectedTodoID(-1);
+            closeTodoEditArea()
         }
         else {
             setSelectedTodoID(todoID);
@@ -229,7 +254,7 @@ function TodoList() {
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
-                <p className={styles.todoName}>{todo.name}</p>
+                <p className={styles.todoName}>{emptyOrWhiteSpace(todo.name) ? "Untitled Todo" : todo.name}</p>
                 {todo.hasNote ? <img className={styles.noteIcon} src={NoteIcon} alt="Note Icon" /> : ""}
             </div>;
 
@@ -268,11 +293,44 @@ function TodoList() {
         setNewTodo({...newTodoDefaultState});
     }
 
+    function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {
+        selectedTodoList.list[todoIndex].name = event.target.value;
+
+        for (let i = 0; i < todoListData.length; i++) {
+            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                (todoListData[i] as TodoListType) = selectedTodoList;
+                break;
+            }
+        }
+        setTodoListData([...todoListData]);
+    }
+
+    function onTodoNoteChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {
+        selectedTodoList.list[todoIndex].note = event.target.value;
+
+        if (emptyOrWhiteSpace(selectedTodoList.list[todoIndex].note)) {
+            selectedTodoList.list[todoIndex].hasNote = false;
+        }
+        else {
+            selectedTodoList.list[todoIndex].hasNote = true;
+        }
+
+        for (let i = 0; i < todoListData.length; i++) {
+            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                (todoListData[i] as TodoListType) = selectedTodoList;
+                break;
+            }
+        }
+        setTodoListData([...todoListData]);
+    }
+
     function loadEditTodoArea() {
         let todo: TodoType = newTodoDefaultState;
+        let todoIndex: number = -1;
         for (let i = 0; i < selectedTodoList.list.length; i++) {
             if (selectedTodoList.list[i].todoID === selectedTodoID) {
                 todo = selectedTodoList.list[i];
+                todoIndex = i;
             }
         }
         
@@ -286,10 +344,10 @@ function TodoList() {
                     </button>
                 </div>
 
-                <input type="text" placeholder="Untitled Todo" className={styles.editTodoName}/>
+                <input type="text" placeholder="Untitled Todo" value={todo.name} onChange={(event) => onTodoNameChange(event, todoIndex)} className={styles.editTodoName}/>
 
                 
-                <input type="text" placeholder="Note" className={styles.editTodoNote} />
+                <input type="text" placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoIndex))} className={styles.editTodoNote} />
             </div>;
         }
         return "";
@@ -305,7 +363,7 @@ function TodoList() {
             && (event.target.parentNode.parentNode.parentNode as Element).id !== EDIT_TODO_AREA 
             && (event.target.parentNode as Element).id !== EDIT_TODO_AREA) {
 
-            setSelectedTodoID(-1);
+            closeTodoEditArea()
         }
     }
 
