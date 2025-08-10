@@ -374,6 +374,8 @@ function TodoList() {
             setNewListMade(false);
         }
     }, [newListMade]);
+
+    console.log("Hello, World!");
     
     return <div className={styles.mainStyle}  onClick={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>
