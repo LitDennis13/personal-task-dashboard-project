@@ -20,16 +20,6 @@ function PomodoroTimer() {
         return false;
     }
 
-    function loadPomodoroTimerStyle() {
-        if (isTimerDone()) {
-            return styles.pomodoroTimerWithHardReset;
-        }
-        else {
-            return styles.pomodoroTimer;
-        }
-    }
-
-
     function onNavigationBarChange(index: number) {
         optionSet(index);
         setTimerHasStarted(false);
@@ -100,7 +90,7 @@ function PomodoroTimer() {
     }
 
     function loadStartTimerButton() {
-        if (isTimerDone()) return;
+        if (isTimerDone()) return "";
 
         let id: string;
 
@@ -111,15 +101,8 @@ function PomodoroTimer() {
             id = styles.timerNotStarted;
             setDocumentTitle(appName);
         }
-        
-        return <button id={id} onClick={() => startStopOnClick()}>Start</button>
-    }
-
-    function loadResetAreaStyle() {
-        if (timerHasStarted) {
-            return styles.resetButtonArea;
-        }
-        return styles.resetButtonAreaNoButton;
+        console.log(timerStarted + "  " + !isTimerDone());
+        return <button id={id} className={styles.resetButton + " " + (timerHasStarted ? styles.startButtonWithReset : styles.startButtonOptionOnly)}onClick={() => startStopOnClick()}>Start</button>
     }
 
     function resetButtonOnClick() {
@@ -130,18 +113,16 @@ function PomodoroTimer() {
 
     function loadResetButton() {
         if (timerHasStarted) {
-            if (isTimerDone()) {
-                return <button id={styles.resetOptionOnly} onClick={() => resetButtonOnClick()}>Reset</button>;
-            }
-            return <button onClick={() => resetButtonOnClick()}>Reset</button>;
+            console.log(styles.resetButton + " " + (isTimerDone() ? styles.resetOptionOnly : styles.resetOptionWithStart));
+            return <button className={styles.resetButton + " " + (isTimerDone() ? styles.resetOptionOnly : styles.resetOptionWithStart)} onClick={() => resetButtonOnClick()}>Reset</button>;
         }
         setDocumentTitle(appName);
-        return;
+        return "";
     }
 
 
     return <div className={styles.mainStyle}>
-        <div className={loadPomodoroTimerStyle()}>
+        <div className={styles.pomodoroTimer}>
             <nav className={styles.navigationBar}>
                 {loadNavigationBarOptions().map((element) => {
                     return element;
@@ -152,11 +133,10 @@ function PomodoroTimer() {
             </div>
             <div className={styles.controls}>
                 {loadStartTimerButton()}
+                {loadResetButton()}
             </div>
         </div>
-        <div className={loadResetAreaStyle()}>
-            {loadResetButton()}
-        </div>
+        
     </div>
 }
 

@@ -15,14 +15,6 @@
     grid-template: 1.5fr 7fr 2fr / 1fr;
 }
 
-.pomodoroTimerWithHardReset {
-    width: 50%;
-    height: 49%;
-    margin-bottom: 20vh;
-    display: grid;
-    grid-template: 1.5fr 7fr / 1fr;
-}
-
 .navigationBar {
     grid-area: 1 / 1 / 2 / 2;
     display: flex;
@@ -82,12 +74,25 @@
 
 .controls > button {
     border: none;
-    width: 40%;
+    width: 35%;
     height: 90%;
     font-size: 3.7vw;
+}
+
+.startButtonOptionOnly {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
+}
+
+.startButtonWithReset {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+
+    border-top-left-radius: 30px;
+    border-top-right-radius: 0px;
 }
 
 #timerNotStarted {
@@ -109,7 +114,6 @@
 #timerStarted {
     background-color: #ff4343;
     transition: background-color .2s;
-
 }
 
 #timerStarted:hover {
@@ -122,51 +126,37 @@
     transition: background-color .2s;
 }
 
-
-.resetButtonArea {
-    width: 50%;
-    height: 10.3%;
-    margin-top: -20vh;
-    background-color: #FDF6E3;
-    display: flex;
-    justify-content: center;
-    align-items: start;
-}
-.resetButtonAreaNoButton {
-    height: auto;
-    margin-top: -20vh;
-}
-
-.resetButtonArea > button {
-    border: none;
-    width: 40%;
-    height: 100%;
-    font-size: 3.5vw;
-
+.resetButton {
     background-color: #ffcf6e;
 
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
-
     transition: background-color .2s;
 }
 
-.resetButtonArea > button:hover {
-    background-color: #e1b762;
+.resetOptionWithStart {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 
-    transition: background-color .2s;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 30px;
 }
 
-.resetButtonArea > button:active {
-    background-color: #c09c53;
-
-    transition: background-color .2s;
-}
-
-#resetOptionOnly {
+.resetOptionOnly {
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
 
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
 }
+
+.resetButton > button:hover {
+    background-color: #e1b762;
+
+    transition: background-color .2s;
+}
+
+.resetButton > button:active {
+    background-color: #c09c53;
+
+    transition: background-color .2s;
+}
+
