@@ -43,26 +43,28 @@ function TodoList() {
 
     let [selectedTodoID, setSelectedTodoID] = useState(-1);
 
-    function closeTodoEditArea() {
-        let todo: TodoType = newTodoDefaultState;
-        let todoIndex: number = -1;
-        for (let i = 0; i < selectedTodoList.list.length; i++) {
-            if (selectedTodoList.list[i].todoID === selectedTodoID) {
-                todo = selectedTodoList.list[i];
-                todoIndex = i;
-            }
-        }
-
-        if (emptyOrWhiteSpace(todo.name)) {
-            selectedTodoList.list[todoIndex].name = "Untitled Todo";
-            
-            for (let i = 0; i < todoListData.length; i++) {
-                if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                    (todoListData[i] as TodoListType) = selectedTodoList;
-                    break;
+    function closeTodoEditArea(instantClose: boolean = false) {
+        if (!instantClose) {
+            let todo: TodoType = newTodoDefaultState;
+            let todoIndex: number = -1;
+            for (let i = 0; i < selectedTodoList.list.length; i++) {
+                if (selectedTodoList.list[i].todoID === selectedTodoID) {
+                    todo = selectedTodoList.list[i];
+                    todoIndex = i;
                 }
             }
-            setTodoListData([...todoListData]);
+
+            if (emptyOrWhiteSpace(todo.name)) {
+                selectedTodoList.list[todoIndex].name = "Untitled Todo";
+                
+                for (let i = 0; i < todoListData.length; i++) {
+                    if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                        (todoListData[i] as TodoListType) = selectedTodoList;
+                        break;
+                    }
+                }
+                setTodoListData([...todoListData]);
+            }
         }
 
         setSelectedTodoID(-1);
@@ -324,6 +326,20 @@ function TodoList() {
         setTodoListData([...todoListData]);
     }
 
+    function onTodoDeleteClick(todoIndex: number) {
+        selectedTodoList.list.splice(todoIndex, 1);
+
+        for (let i = 0; i < todoListData.length; i++) {
+            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+                (todoListData[i] as TodoListType) = selectedTodoList;
+                break;
+            }
+        }
+
+        setTodoListData([...todoListData]);
+        closeTodoEditArea(true);
+    }
+
     function loadEditTodoArea() {
         let todo: TodoType = newTodoDefaultState;
         let todoIndex: number = -1;
@@ -345,16 +361,16 @@ function TodoList() {
                 </div>
 
                 <input type="text" placeholder="Untitled Todo" value={todo.name} onChange={(event) => onTodoNameChange(event, todoIndex)} className={styles.editTodoName}/>
-
                 
                 <textarea placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoIndex))} className={styles.editTodoNote}></textarea>
+
+                <button className={styles.deleteTodoButton} onClick={() => onTodoDeleteClick(todoIndex)}>Delete Todo</button>
             </div>;
         }
         return "";
     }
 
     function onMainPageClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        console.log(event.target);
         if (event.target instanceof Element && event.target.parentNode !== null 
             && event.target.parentNode.parentNode !== null 
             && event.target.parentNode.parentNode.parentNode !== null 
@@ -364,7 +380,7 @@ function TodoList() {
             && (event.target.parentNode as Element).id !== EDIT_TODO_AREA
             && (event.target as Element).id !== EDIT_TODO_AREA) {
 
-            closeTodoEditArea()
+            closeTodoEditArea(true);
         }
     }
 
@@ -374,8 +390,6 @@ function TodoList() {
             setNewListMade(false);
         }
     }, [newListMade]);
-
-    console.log("Hello, World!");
     
     return <div className={styles.mainStyle}  onClick={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>

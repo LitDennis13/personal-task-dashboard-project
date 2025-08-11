@@ -254,13 +254,8 @@
     justify-self: center;
     align-self: center;
 
-
-
     border-radius: 10px;
-
 }
-
-
 
 .addTodoArea {
     grid-area: 3 / 1 / 4 / 3;
@@ -312,7 +307,7 @@
     border-radius: 18px;
 
     display: grid;
-    grid-template: 1fr 10fr / 1fr 10fr;
+    grid-template: 1fr 10fr 1fr / 1fr 10fr;
     width: 100%;
     min-height: 100%;
     padding: 1vh 1vw;
@@ -400,4 +395,29 @@
 .editTodoNote::-webkit-scrollbar-thumb {
     background-color: #ffffff;
     border-radius: 10px;
+}
+
+.deleteTodoButton {
+    grid-area: 3 / 1 / 4 / 3;
+    width: 100%;
+    height: 100%;
+    font-size: 2.4vw;
+    font-weight: bold;
+
+    background-color: #EF4444;
+    border: none;
+    border-radius: 10px;
+
+    transition: background-color .2s;
+
+}
+
+.deleteTodoButton:hover {
+    background-color: #d73b3b;
+    transition: background-color .2s;
+}
+
+.deleteTodoButton:active {
+    background-color: #c13535;
+    transition: background-color .2s;
 }
