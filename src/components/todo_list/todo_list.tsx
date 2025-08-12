@@ -20,12 +20,17 @@ function TodoList() {
     const TODO_CARD_ID = "TodoCard";
     const TODO_CHECK_BUTTON = "TodoCheckButton";
     const EDIT_TODO_AREA = "EditTodoArea";
+    const DELETE_LIST_BUTTON = "DeleteListButton";
+    const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
     let [todoListData, setTodoListData] = useOutletContext<any>()[4];
     let [newID, setNewID] = useOutletContext<any>()[5];
 
     let [selectedTodoList, setSelectedTodoList] = useState<TodoListType>(todoListData[0]);
     let [newListMade, setNewListMade] = useState(false);
+
+    let [deleteListPressed, setDeleteListPressed] = useState(false);
+    let [deleteTodoPressed, setDeleteTodoPressed] = useState(false);
 
     let newTodoDefaultState: TodoType = {
         todoID: 0,
@@ -34,6 +39,7 @@ function TodoList() {
         hasNote: false,
         isComplete: false
     };
+    
     let [newTodo, setNewTodo] = useState<TodoType>(newTodoDefaultState);
 
     let todoListNameDisplay = useRef(null);
@@ -72,7 +78,7 @@ function TodoList() {
 
     function sideBarOptionOnClick(todoList: TodoListType) {
         setSelectedTodoList(todoList);
-        closeTodoEditArea();
+        closeTodoEditArea(true);
     }
 
     function loadSideBarOptions() {
@@ -138,6 +144,10 @@ function TodoList() {
     }
 
     function deleteListButtonOnClick() {
+        setDeleteListPressed(true);
+    }
+
+    function confirmDeleteListButtonOnClick() {
         let index = 0;
         for (let i = 0; i < todoListData.length; i++) {
             if ((todoListData[i] as TodoListType).listID === selectedTodoList.listID) {
@@ -149,10 +159,18 @@ function TodoList() {
 
         setTodoListData([...todoListData]);
         setSelectedTodoList(todoListData[0]);
+        setDeleteListPressed(false);
     }
 
     function loadDeleteListButton() {
-        if (selectedTodoList.listID != 0 && selectedTodoID === -1) return <button className={styles.deleteListButton} onClick={() => deleteListButtonOnClick()}>Delete List</button>;
+        if (selectedTodoList.listID != 0 && selectedTodoID === -1) {
+            if (deleteListPressed) {
+                return <button id={DELETE_LIST_BUTTON} className={styles.deleteListButton} onClick={() => confirmDeleteListButtonOnClick()}>Confirm</button>;
+            }
+            else {
+                return <button id={DELETE_LIST_BUTTON} className={styles.deleteListButton} onClick={() => deleteListButtonOnClick()}>Delete List</button>;
+            }
+        }
         else return "";
     }
 
@@ -302,7 +320,11 @@ function TodoList() {
         setTodoListData([...todoListData]);
     }
 
-    function onTodoDeleteClick(todoIndex: number) {
+    function onTodoDeleteClick() {
+        setDeleteTodoPressed(true);
+    }
+
+    function onConfirmTodoDeleteClick(todoIndex: number) {
         selectedTodoList.list.splice(todoIndex, 1);
 
         for (let i = 0; i < todoListData.length; i++) {
@@ -314,6 +336,7 @@ function TodoList() {
 
         setTodoListData([...todoListData]);
         closeTodoEditArea(true);
+        setDeleteTodoPressed(false);
     }
 
     function loadEditTodoArea() {
@@ -340,23 +363,36 @@ function TodoList() {
                 
                 <textarea placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoIndex))} className={styles.editTodoNote}></textarea>
 
-                <button className={styles.deleteTodoButton} onClick={() => onTodoDeleteClick(todoIndex)}>Delete Todo</button>
+                <button id={DELETE_TODO_BUTTON} className={styles.deleteTodoButton} 
+                    onClick={deleteTodoPressed ? () => onConfirmTodoDeleteClick(todoIndex) : () => onTodoDeleteClick()}>
+                        {deleteTodoPressed ? "Confirm" :"Delete Todo"}
+                </button>
             </div>;
         }
         return "";
     }
 
     function onMainPageClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        if (event.target instanceof Element && event.target.parentNode !== null 
-            && event.target.parentNode.parentNode !== null 
-            && event.target.parentNode.parentNode.parentNode !== null 
-            && (event.target.parentNode.parentNode.parentNode as Element).id !== TODO_CARD_ID 
-            && (event.target.parentNode as Element).id !== TODO_CARD_ID 
-            && (event.target.parentNode.parentNode.parentNode as Element).id !== EDIT_TODO_AREA 
-            && (event.target.parentNode as Element).id !== EDIT_TODO_AREA
-            && (event.target as Element).id !== EDIT_TODO_AREA) {
+        if (event.target instanceof Element) {
+            if (event.target.parentNode !== null 
+                && event.target.parentNode.parentNode !== null 
+                && event.target.parentNode.parentNode.parentNode !== null 
+                && (event.target.parentNode.parentNode.parentNode as Element).id !== TODO_CARD_ID 
+                && (event.target.parentNode as Element).id !== TODO_CARD_ID 
+                && (event.target.parentNode.parentNode.parentNode as Element).id !== EDIT_TODO_AREA 
+                && (event.target.parentNode as Element).id !== EDIT_TODO_AREA
+                && (event.target as Element).id !== EDIT_TODO_AREA) {
 
-            closeTodoEditArea(true);
+                closeTodoEditArea(true);
+            }
+
+            if (event.target.id !== DELETE_LIST_BUTTON) {
+                setDeleteListPressed(false);
+            }
+
+            if (event.target.id !== DELETE_TODO_BUTTON) {
+                setDeleteTodoPressed(false);
+            }
         }
     }
 
