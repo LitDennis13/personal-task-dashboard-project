@@ -206,30 +206,6 @@ function TodoList() {
             setRecentTodoDragOver(currentTodoDragOver);
         }
     }
-    
-    function onDropTodoFunction(droppedTodo: TodoType) {
-        // let oldID = droppedTodo.todoID;
-        // let newID = draggingTodo.todoID;
-
-        // for (let i = 0; i < selectedTodoList.list.length; i++) {
-        //     if ((selectedTodoList as TodoListType).list[i].todoID == oldID) {
-        //         (selectedTodoList as TodoListType).list[i].todoID = newID;
-        //     }
-        //     else if ((selectedTodoList as TodoListType).list[i].todoID == newID) {
-        //         (selectedTodoList as TodoListType).list[i].todoID = oldID;
-        //     } 
-        // }
-
-        // (selectedTodoList as TodoListType).list.sort((entry1, entry2) => entry1.todoID - entry2.todoID);
-
-        // for (let i = 0; i < todoListData.length; i++) {
-        //     if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-        //         (todoListData[i] as TodoListType) = selectedTodoList;
-        //         break;
-        //     }
-        // }
-        // setTodoListData([...todoListData]);
-    }
 
     function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
         if (event.target instanceof Element && event.target.parentNode !== null && (event.target.parentNode as Element).id === TODO_CHECK_BUTTON) {
@@ -250,7 +226,7 @@ function TodoList() {
         selectedTodoList.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
-            let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)} onDrop={() => onDropTodoFunction(todo)}>
+            let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)}>
                 <div className={styles.checkCompletedArea}>
                     <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
