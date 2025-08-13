@@ -262,7 +262,11 @@ function TodoList() {
             }
         });
 
-        return [...notCompleteTodos, ...completeTodos];
+        return <>
+            {notCompleteTodos}
+            {completeTodos.length !== 0 ? <p className={styles.completedTitle}>Completed</p> : ""}
+            {completeTodos}
+        </>
     }
 
     function updateNewTodo(event: React.ChangeEvent<HTMLInputElement>) {
@@ -417,7 +421,10 @@ function TodoList() {
 
             {loadDeleteListButton()}
 
-            <div className={styles.todoListDisplay}>{loadTodosFromList()}</div>
+            <div className={styles.todoListDisplay}>
+                {loadTodosFromList()}
+            </div>
+
             <form className={styles.addTodoArea} onSubmit={(event) => addNewTodo(event)}>
                 <button onClick={(event) => addNewTodo(event)}>+</button>
                 <input type="text" placeholder="Add Todo" value={newTodo.name} onChange={(event) => updateNewTodo(event)} />
