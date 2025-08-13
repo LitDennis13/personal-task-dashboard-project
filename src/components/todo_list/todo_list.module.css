@@ -200,11 +200,16 @@
     min-height: 52px;
     display: grid;
     grid-template: 1fr / 1fr 20fr 2fr;
-    background-color: #b4c2de;
-
     border-radius: 10px;
 }
 
+.todoCardNotSelected {
+    background-color: #b4c2de;
+}
+
+.todoCardSelected {
+    background-color: #a1abbf;
+}
 
 .checkCompletedArea {
     grid-area: 1 / 1 / 2 / 2;
