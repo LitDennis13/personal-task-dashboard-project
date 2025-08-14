@@ -4,6 +4,8 @@ import styles from "./todo_list.module.css";
 import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
 import CircleCheckIcon from "../../assets/images/check_circle.svg";
+import UpArrow from "../../assets/images/up_arrow.svg";
+import DownArrow from "../../assets/images/down_arrow.svg";
 
 import type { TodoType, TodoListType } from "../App/App";
 
@@ -162,14 +164,68 @@ function TodoList() {
         setDeleteListPressed(false);
     }
 
-    function loadDeleteListButton() {
+    function moveListUpOnClick() {
+        for (let index = 1; index < todoListData.length; index++) {
+            let indexBefore = index - 1;
+
+            if (todoListData[index].listID === selectedTodoList.listID) {
+                if (todoListData[indexBefore].listID === 0) {
+                    break;
+                }
+                else {
+                    let temp = todoListData[indexBefore];
+                    todoListData[indexBefore] = todoListData[index];
+                    todoListData[index] = temp;
+                    setTodoListData([...todoListData]);
+                    break;
+                }
+            }
+        }
+    }
+
+    function moveListDownOnClick() {
+        for (let index = 0; index < todoListData.length; index++) {
+            let indexAfter = index + 1;
+
+            if (todoListData[index].listID === selectedTodoList.listID && indexAfter < todoListData.length) {
+                let temp = todoListData[indexAfter];
+                todoListData[indexAfter] = todoListData[index];
+                todoListData[index] = temp;
+                setTodoListData([...todoListData]);
+                break;
+            }
+        }
+    }
+
+    function loadTodoListManagement() {
         if (selectedTodoList.listID != 0 && selectedTodoID === -1) {
+            let deleteButton: any;
+            let loadMoveListUp = true;
+            let loadMoveListDown = true;
+
+            if (todoListData[1].listID === selectedTodoList.listID) loadMoveListUp = false;
+            if (todoListData[todoListData.length - 1].listID === selectedTodoList.listID) loadMoveListDown = false;
+
+            let deleteButtonStyles = styles.deleteListButton + " " + (loadMoveListUp || loadMoveListDown ? styles.deleteListButtonWithListMoves : styles.deleteListButtonOnly);
+
             if (deleteListPressed) {
-                return <button id={DELETE_LIST_BUTTON} className={styles.deleteListButton} onClick={() => confirmDeleteListButtonOnClick()}>Confirm</button>;
-            }
+                deleteButton = <button id={DELETE_LIST_BUTTON} className={deleteButtonStyles} onClick={() => confirmDeleteListButtonOnClick()}>Confirm</button>;
+            } 
             else {
-                return <button id={DELETE_LIST_BUTTON} className={styles.deleteListButton} onClick={() => deleteListButtonOnClick()}>Delete List</button>;
+                deleteButton = <button id={DELETE_LIST_BUTTON} className={deleteButtonStyles} onClick={() => deleteListButtonOnClick()}>Delete List</button>;
             }
+
+            return <div className={styles.todoListManagementArea}>
+                {loadMoveListUp ? <button className={styles.moveListButton + " " + (loadMoveListDown ? styles.moveListUpButton : styles.moveListUpOnlyButton)} onClick={() => moveListUpOnClick()}>
+                    <img src={UpArrow} alt="Move list up" />
+                </button> : ""}
+
+                {loadMoveListDown ? <button className={styles.moveListButton + " " + (loadMoveListUp ? styles.moveListDownButton : styles.moveListDownOnlyButton)} onClick={() => moveListDownOnClick()}>
+                    <img src={DownArrow} alt="Move list down" />
+                </button> : ""}
+
+                {deleteButton}
+            </div>
         }
         else return "";
     }
@@ -419,7 +475,8 @@ function TodoList() {
                 {loadTodoListNameField()}
             </div>
 
-            {loadDeleteListButton()}
+            {loadTodoListManagement()}
+
 
             <div className={styles.todoListDisplay}>
                 {loadTodosFromList()}

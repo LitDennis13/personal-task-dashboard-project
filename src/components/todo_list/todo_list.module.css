@@ -138,19 +138,93 @@
     outline: none;
 }
 
-.deleteListButton {
+.todoListManagementArea {
     grid-area: 1 / 2 / 2 / 3;
-    width: 100%;
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 5fr;
     height: 80%;
+}
+
+.moveListButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #ffbb00;
+
+    border: none;
+}
+
+.moveListButton > img {
+    width: 100%;
+    height: auto;
+    
+    transform: scale(1);
+
+    transition: transform .2s;
+}
+
+.moveListButton:hover > img {
+    transform: scale(1.3);
+
+    transition: transform .2s;
+}
+
+.moveListButton:active > img {
+    transform: scale(1.6);
+
+    transition: transform .2s;
+}
+
+.moveListUpButton {
+    grid-area: 1 / 1 / 2 / 2;
+
+    border-top-left-radius: 15px;
+}
+
+.moveListUpOnlyButton {
+    grid-area: 1 / 1 / 3 / 2;
+
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+.moveListDownButton {
+    grid-area: 2 / 1 / 3 / 2;
+
+    border-bottom-left-radius: 15px;
+}
+
+.moveListDownOnlyButton {
+    grid-area: 1 / 1 / 3 / 2;
+
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+.deleteListButton {
+    width: 100%;
+    height: 100%;
     justify-self: center;
     align-self: start;
     font-size: 2.6vw;
     font-weight: bold;
     background-color: #EF4444;
     border: none;
-    border-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
 
     transition: background-color .2s;
+}
+.deleteListButtonWithListMoves {
+    grid-area: 1 / 2 / 3 / 3;
+}
+
+.deleteListButtonOnly {
+    grid-area: 1 / 1 / 3 / 3;
+    
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
 }
 
 .deleteListButton:hover {
@@ -208,7 +282,7 @@
 }
 
 .todoCardSelected {
-    background-color: #a1abbf;
+    background-color: #6395f7;
 }
 
 .checkCompletedArea {
