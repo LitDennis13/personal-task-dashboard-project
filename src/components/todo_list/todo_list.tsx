@@ -98,7 +98,11 @@ function TodoList() {
             options[index] = <button id={id} key={index} onClick={() => sideBarOptionOnClick(element)}>{displayName}</button>;
         });
 
-        return options;
+        return <>
+            {options[0]}
+            {options.length > 1 ? <div className={styles.sideBarLineBreak}></div> : ""}
+            {options.slice(1, options.length)}
+        </>;
     }
 
     function onNewListClick() {
