@@ -6,8 +6,13 @@ import CircleIcon from "../../assets/images/circle.svg";
 import CircleCheckIcon from "../../assets/images/check_circle.svg";
 import UpArrow from "../../assets/images/up_arrow.svg";
 import DownArrow from "../../assets/images/down_arrow.svg";
+import TaskCompleteSoundEffect from "../../assets/audio/task_complete_sound.mp3";
 
 import type { TodoType, TodoListType } from "../App/App";
+
+function playTaskCompleteSoundEffect() {
+    new Audio(TaskCompleteSoundEffect).play();
+}
 
 function emptyOrWhiteSpace(inString: string) {
     for (let i = 0; i < inString.length; i++) {
@@ -238,6 +243,10 @@ function TodoList() {
         for (let i = 0; i < selectedTodoList.list.length; i++) {
             if ((selectedTodoList.list[i] as TodoType).todoID == ID) {
                 (selectedTodoList.list[i] as TodoType).isComplete = !(selectedTodoList.list[i] as TodoType).isComplete;
+
+                if ((selectedTodoList.list[i] as TodoType).isComplete) {
+                    playTaskCompleteSoundEffect();
+                }
             }
         }
 

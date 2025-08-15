@@ -148,13 +148,13 @@
     border-bottom-right-radius: 0px;
 }
 
-.resetButton > button:hover {
+.resetButton:hover {
     background-color: #e1b762;
 
     transition: background-color .2s;
 }
 
-.resetButton > button:active {
+.resetButton:active {
     background-color: #c09c53;
 
     transition: background-color .2s;
