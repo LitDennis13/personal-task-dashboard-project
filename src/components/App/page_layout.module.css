@@ -6,6 +6,10 @@
     background-color: #FDFDFD;
 }
 
+#changeBackgroundColor {
+    background-color: #FDF6E3;
+}
+
 .navigationBarLocation {
     grid-area: 1 / 1 / 2 / 2;
 }

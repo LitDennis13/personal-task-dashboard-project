@@ -1,9 +1,19 @@
 import styles from "./notes.module.css";
+import AddNoteIcon from "../../assets/images/add_note_icon.svg";
 
 function Notes() {
 
-    return <div>
-        <h1>Notes</h1>
+    function loadAddNoteButton() {
+        return <button className={styles.addNoteButton} >
+            <img src={AddNoteIcon} alt="Add Note Button" />
+            <p>Add Note</p>
+        </button>;
+         
+    }
+
+    return <div className={styles.mainPage}>
+        
+        {loadAddNoteButton()}
     </div>
 }
 

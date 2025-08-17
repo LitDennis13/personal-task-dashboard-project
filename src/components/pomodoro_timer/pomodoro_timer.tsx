@@ -101,7 +101,6 @@ function PomodoroTimer() {
             id = styles.timerNotStarted;
             setDocumentTitle(appName);
         }
-        console.log(timerStarted + "  " + !isTimerDone());
         return <button id={id} className={styles.resetButton + " " + (timerHasStarted ? styles.startButtonWithReset : styles.startButtonOptionOnly)}onClick={() => startStopOnClick()}>Start</button>
     }
 

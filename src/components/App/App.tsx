@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Outlet } from "react-router";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router";
 import NavigationBar from "../navigation_bar/navigation_bar";
 import useTimer from "../custom_hooks/use_timer";
 
@@ -41,7 +41,20 @@ function App() {
     let [newID, setNewID] = useState(1);
     let [todoListData, setTodoListData] = useState([defaultTodoListData]);
 
-    return <div className={styles.mainStyle}>
+    // Notes Stuff
+    let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
+    let location = useLocation();
+
+    useEffect(() => {
+        if (location.pathname === "/notes") {
+            setChangeBackGroundColor(true);
+        }
+        else {
+            setChangeBackGroundColor(false);
+        }
+    }, [location]);
+
+    return <div id={changeBackgroundColor ? styles.changeBackgroundColor : ""}className={styles.mainStyle}>
         <div className={styles.navigationBarLocation}>
             <NavigationBar />
         </div>
