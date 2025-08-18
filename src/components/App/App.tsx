@@ -17,7 +17,11 @@ export interface TodoListType {
     listID: number;
     name: string;
     list: TodoType[];
+}
 
+export interface NoteType {
+    noteID: number;
+    note: string;
 }
 
 
@@ -42,6 +46,7 @@ function App() {
     let [todoListData, setTodoListData] = useState([defaultTodoListData]);
 
     // Notes Stuff
+    let [notesData, setNotesData] = useState<NoteType[]>([{noteID: 0, note: "test"}]);
     let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
     let location = useLocation();
 
@@ -60,7 +65,7 @@ function App() {
         </div>
         <div className={styles.mainContent}>
             <Outlet context={[appName, [option, timerStarted, timeRemaining, optionSet, setTimerStarted], [timerHasStarted, setTimerHasStarted], setDocumentTitle,
-                [todoListData, setTodoListData], [newID, setNewID]]}/>
+                [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData]]}/>
         </div>
     </div>
 }
