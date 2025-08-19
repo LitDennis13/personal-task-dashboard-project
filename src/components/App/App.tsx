@@ -46,7 +46,8 @@ function App() {
     let [todoListData, setTodoListData] = useState([defaultTodoListData]);
 
     // Notes Stuff
-    let [notesData, setNotesData] = useState<NoteType[]>([{noteID: 0, note: "test"}]);
+    // let [notesData, setNotesData] = useState<NoteType[]>([{noteID: 0, note: "test"}]);
+    let [notesData, setNotesData] = useState<NoteType[]>([{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},]);
     let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
     let location = useLocation();
 
