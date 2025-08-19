@@ -82,6 +82,12 @@
 }
 
 .noteEntry {
+    display: grid;
+    grid-template: 2fr 5fr / 1fr;
+    padding: 3%;
+    row-gap: 2%;
+
+
     background-color: #ffda75;
     transition: background-color .2s;
 }
@@ -94,4 +100,65 @@
 .noteEntry:active {
     background-color: #ffbb00;
     transition: background-color .2s;
+}
+
+.noteEntry > .title {
+    width: 100%;
+    height: 100%;
+    font-size: 200%;
+    font-weight: bold;
+    text-align: center;
+
+    resize: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+
+    border: none;
+    background-color: inherit;
+
+}
+.noteEntry > .title:focus {
+    outline: none;
+}
+
+.noteEntry > .title::-webkit-scrollbar {
+    height: 5px;
+}
+
+.noteEntry > .title::-webkit-scrollbar-track {
+    background-color: inherit;
+}
+
+.noteEntry > .title::-webkit-scrollbar-thumb {
+    background-color: #80aafe;
+    border-radius: 10px;
+}
+
+.noteEntry > .note {
+    width: 100%;
+    height: 100%;
+    resize: none;
+
+    overflow-y: auto;
+
+    border: none;
+    background-color: inherit;
+}
+
+.noteEntry > .note:focus {
+    outline: none;
+}
+
+.noteEntry > .note::-webkit-scrollbar {
+    width: var(--scroll-bar-width);
+}
+
+.noteEntry > .note::-webkit-scrollbar-track {
+    background-color: inherit;
+}
+
+.noteEntry > .note::-webkit-scrollbar-thumb {
+    background-color: #80aafe;
+    border-radius: 10px;
 }

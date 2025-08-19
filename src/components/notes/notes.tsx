@@ -27,8 +27,24 @@ function Notes() {
         let returnData: any[] = [];
 
         for (let i = 0; i < notesData.length; i++) {
-            let noteEntry = <button key={i} className={styles.noteEntry}>
+            let foundNewLine = false;
+            let title = "";
+            let note = "";
+            for (const c of (notesData[i] as NoteType).note) {
+                if (c === "\n" && !foundNewLine) {
+                    foundNewLine = true;
+                }
+                else if (!foundNewLine) {
+                    title += c;
+                }
+                else {
+                    note += c;
+                }
+            }
 
+            let noteEntry = <button key={i} className={styles.noteEntry}>
+                <textarea className={styles.title} value={title} readOnly></textarea>
+                <textarea className={styles.note} value={note} readOnly></textarea>
             </button>;
             returnData.push(noteEntry);
         }

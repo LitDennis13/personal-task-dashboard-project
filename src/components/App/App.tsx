@@ -46,8 +46,8 @@ function App() {
     let [todoListData, setTodoListData] = useState([defaultTodoListData]);
 
     // Notes Stuff
-    // let [notesData, setNotesData] = useState<NoteType[]>([{noteID: 0, note: "test"}]);
-    let [notesData, setNotesData] = useState<NoteType[]>([{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},]);
+    let [notesData, setNotesData] = useState<NoteType[]>([{noteID: 0, note: "Test Note NameTest Note NameTest Note NameTest Note NameTest Note NameTest Note NameTest Note Name\nOther stuff in the note\nMore Stuff in the Note\nMore Stuff in the Note\nMore Stuff in the Note\nMore Stuff in the Note\nMore Stuff in the Note\nMore Stuff in the Note\nMore Stuff in the Note\nMore Stuff in the Note"}]);
+    // let [notesData, setNotesData] = useState<NoteType[]>([{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},{noteID: 0, note: "test"},]);
     let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
     let location = useLocation();
 
