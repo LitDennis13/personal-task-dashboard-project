@@ -5,6 +5,41 @@ import styles from "./notes.module.css";
 import AddNoteIcon from "../../assets/images/add_note_icon.svg";
 import type { NoteType } from "../App/App";
 
+function leftRightWhiteSpaceRemoval(str: string) {
+    let addToStringOne = false;
+    let addToStringTwo = false;
+
+    let stringOne = "";
+    let stringTwo = "";
+    let returnString = "";
+
+    for (let i = 0; i < str.length; i++) {
+        if (addToStringOne) {
+            stringOne += str[i];
+        }
+        else if (str[i] !== " " && str[i] !== "\n") {
+            addToStringOne = true;
+            stringOne += str[i];
+        }
+    }
+
+    for (let i = stringOne.length - 1; i >= 0 ; i--) {
+        if (addToStringTwo) {
+            stringTwo += stringOne[i];
+        }
+        else if (stringOne[i] !== " " && stringOne[i] !== "\n") {
+            addToStringTwo = true;
+            stringTwo += stringOne[i];
+        }
+    }
+
+    for (let i = stringTwo.length - 1; i >= 0; i--) {
+        returnString += stringTwo[i];
+    }
+
+    return returnString;
+}
+
 function Notes() {
     const EDIT_NOTE_AREA_DIV_ID = "EditNoteAreaDiv";
     const EDIT_NOTE_AREA_ID = "EditNoteArea";
@@ -30,7 +65,7 @@ function Notes() {
         }
     }
 
-    function noteOnClick(noteIndex: number) {
+    function showNoteEditor(noteIndex: number) {
         if (editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
             editNoteDialog.current.showModal();
             setSelectedNoteIndex(noteIndex);
@@ -56,7 +91,7 @@ function Notes() {
                 }
             }
 
-            let noteEntry = <button key={i} className={styles.noteEntry} onClick={() => noteOnClick(i)}>
+            let noteEntry = <button key={i} className={styles.noteEntry} onClick={() => showNoteEditor(i)}>
                 <textarea className={styles.title} value={title === "" ? "Untitled Note" : title} readOnly></textarea>
                 <textarea className={styles.note} value={note} readOnly></textarea>
             </button>;
@@ -67,6 +102,18 @@ function Notes() {
 
     function addNoteButtonOnClick() {
         checkAndHandleScrollBarLoaded();
+
+        let newNote: NoteType = {
+            noteID: newID,
+            note: "",
+        };
+
+        notesData.push(newNote);
+
+        showNoteEditor(notesData.length - 1);
+
+        setNotesData([...notesData]);
+        setNewID(newID + 1);
     }
 
     function loadAddNoteButton() {
@@ -94,8 +141,10 @@ function Notes() {
 
     function onDialogClick(event: React.MouseEvent<HTMLDialogElement, MouseEvent>) {
         if ((event.target as Element).id !== EDIT_NOTE_AREA_ID && (event.target as Element).id !== EDIT_NOTE_AREA_DIV_ID&& editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
+            (notesData[selectedNoteIndex] as NoteType).note = leftRightWhiteSpaceRemoval((notesData[selectedNoteIndex] as NoteType).note);
             editNoteDialog.current.close();
             setSelectedNoteIndex(-1);
+            setNotesData([...notesData]);
         }
     }
 
