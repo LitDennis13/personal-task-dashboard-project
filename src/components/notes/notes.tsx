@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
+import type { NoteType } from "../App/App";
 import styles from "./notes.module.css";
 import AddNoteIcon from "../../assets/images/add_note_icon.svg";
-import type { NoteType } from "../App/App";
+import NoteEditorCloseSoundEffect from "../../assets/audio/note_editor_close_sound_effect.mp3";
 
 function leftRightWhiteSpaceRemoval(str: string) {
     let addToStringOne = false;
@@ -38,6 +39,10 @@ function leftRightWhiteSpaceRemoval(str: string) {
     }
 
     return returnString;
+}
+
+function playNoteEditorCloseSoundEffect() {
+    new Audio(NoteEditorCloseSoundEffect).play();
 }
 
 function Notes() {
@@ -132,7 +137,6 @@ function Notes() {
         }
     }
     
-
     function noteEditorOnChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
         (notesData[selectedNoteIndex] as NoteType).note = event.target.value;
 
@@ -143,6 +147,7 @@ function Notes() {
         if ((event.target as Element).id !== EDIT_NOTE_AREA_ID && (event.target as Element).id !== EDIT_NOTE_AREA_DIV_ID&& editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
             (notesData[selectedNoteIndex] as NoteType).note = leftRightWhiteSpaceRemoval((notesData[selectedNoteIndex] as NoteType).note);
             editNoteDialog.current.close();
+            playNoteEditorCloseSoundEffect();
             setSelectedNoteIndex(-1);
             setNotesData([...notesData]);
         }
