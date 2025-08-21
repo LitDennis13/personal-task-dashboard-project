@@ -193,11 +193,6 @@
     overflow-y: auto;
 }
 
-.editNoteDialog > div > textarea::first-line {
-    font-size: 175%;
-    font-weight: bold;
-}
-
 .editNoteDialog > div > textarea:focus {
     outline: none;
 }
