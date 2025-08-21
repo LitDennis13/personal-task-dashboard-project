@@ -48,6 +48,7 @@ function playNoteEditorCloseSoundEffect() {
 function Notes() {
     const EDIT_NOTE_AREA_DIV_ID = "EditNoteAreaDiv";
     const EDIT_NOTE_AREA_ID = "EditNoteArea";
+    const DELETE_NOTE_BUTTON_ID = "DeleteNoteButton";
 
     let [notesData, setNotesData] = useOutletContext<any>()[6];
     let [newID, setNewID] = useOutletContext<any>()[5];
@@ -58,6 +59,8 @@ function Notes() {
     let editNoteDialog = useRef<HTMLDialogElement>(null);
     let editNoteArea = useRef<HTMLTextAreaElement>(null);
     let [selectedNoteIndex, setSelectedNoteIndex] = useState(-1);
+
+    let [pressedNoteDelete, setPressedNoteDelete] = useState(false);
 
     function checkAndHandleScrollBarLoaded() {
         if (mainPage !== null && mainPage.current instanceof HTMLDivElement) {
@@ -143,13 +146,45 @@ function Notes() {
         setNotesData([...notesData]);
     }
 
-    function onDialogClick(event: React.MouseEvent<HTMLDialogElement, MouseEvent>) {
-        if ((event.target as Element).id !== EDIT_NOTE_AREA_ID && (event.target as Element).id !== EDIT_NOTE_AREA_DIV_ID&& editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
-            (notesData[selectedNoteIndex] as NoteType).note = leftRightWhiteSpaceRemoval((notesData[selectedNoteIndex] as NoteType).note);
+    function closeNoteEditor() {
+        if (editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
             editNoteDialog.current.close();
             playNoteEditorCloseSoundEffect();
             setSelectedNoteIndex(-1);
             setNotesData([...notesData]);
+            setPressedNoteDelete(false);
+        }
+    }
+
+    function onDeleteNotePress() {
+        setPressedNoteDelete(true);
+    }
+
+    function onConfirmDeleteNote() {
+        closeNoteEditor();
+        notesData.splice(selectedNoteIndex, 1);
+        setNotesData([...notesData]);
+        setPressedNoteDelete(false);
+        setSelectedNoteIndex(-1);
+    }
+
+    function loadDeleteButton() {
+        if (pressedNoteDelete) {
+            return <button id={DELETE_NOTE_BUTTON_ID} onClick={() => onConfirmDeleteNote()}>Confirm</button>;
+        }
+        else {
+            return <button id={DELETE_NOTE_BUTTON_ID} onClick={() => onDeleteNotePress()}>Delete Note</button>;
+        }
+    }
+
+    function onDialogClick(event: React.MouseEvent<HTMLDialogElement, MouseEvent>) {
+        if ((event.target as Element).id !== EDIT_NOTE_AREA_ID && (event.target as Element).id !== EDIT_NOTE_AREA_DIV_ID && (event.target as Element).id !== DELETE_NOTE_BUTTON_ID && editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
+            (notesData[selectedNoteIndex] as NoteType).note = leftRightWhiteSpaceRemoval((notesData[selectedNoteIndex] as NoteType).note);
+            closeNoteEditor();
+        }
+
+        if ((event.target as Element).id !== DELETE_NOTE_BUTTON_ID) {
+            setPressedNoteDelete(false);
         }
     }
 
@@ -164,6 +199,7 @@ function Notes() {
         <dialog ref={editNoteDialog} className={styles.editNoteDialog} onMouseDown={(event) => onDialogClick(event)}>
             <div id={EDIT_NOTE_AREA_DIV_ID}>
                 <textarea id={EDIT_NOTE_AREA_ID} ref={editNoteArea} value={noteEditorValue()} placeholder="Untitled Note" onChange={(event) => noteEditorOnChange(event)}></textarea>
+                {loadDeleteButton()}
             </div>
         </dialog>
     </div>
