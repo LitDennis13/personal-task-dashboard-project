@@ -162,3 +162,55 @@
     background-color: #80aafe;
     border-radius: 10px;
 }
+
+.editNoteDialog {
+    width: 85vw;
+    height: 85vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 0px;
+    margin: 0px;
+}
+
+.editNoteDialog > div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1vw;
+}
+
+.editNoteDialog > div > textarea {
+    width: 100%;
+    height: 100%;
+    resize: none;
+    font-size: 150%;
+
+    overflow-y: auto;
+}
+
+.editNoteDialog > div > textarea::first-line {
+    font-size: 175%;
+    font-weight: bold;
+}
+
+.editNoteDialog > div > textarea:focus {
+    outline: none;
+}
+
+.editNoteDialog > div > textarea::-webkit-scrollbar {
+    width: var(--scroll-bar-width);
+}
+
+.editNoteDialog > div > textarea::-webkit-scrollbar-track {
+    background-color: inherit;
+}
+
+.editNoteDialog > div > textarea::-webkit-scrollbar-thumb {
+    background-color: #80aafe;
+    border-radius: 10px;
+}
