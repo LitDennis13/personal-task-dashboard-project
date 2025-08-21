@@ -171,6 +171,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
 
+    border: none;
+    border-radius: 15px;
+    background-color: #fde5a2;
+
     padding: 0px;
     margin: 0px;
 }
@@ -191,6 +195,10 @@
     font-size: 150%;
 
     overflow-y: auto;
+
+    border: 2px solid #ffbb00;
+    border-radius: 15px;
+    background-color: inherit;
 }
 
 .editNoteDialog > div > textarea:focus {
@@ -199,10 +207,12 @@
 
 .editNoteDialog > div > textarea::-webkit-scrollbar {
     width: var(--scroll-bar-width);
+    
 }
 
 .editNoteDialog > div > textarea::-webkit-scrollbar-track {
     background-color: inherit;
+    margin: 10px 0px;
 }
 
 .editNoteDialog > div > textarea::-webkit-scrollbar-thumb {

@@ -57,7 +57,7 @@ function Notes() {
             }
 
             let noteEntry = <button key={i} className={styles.noteEntry} onClick={() => noteOnClick(i)}>
-                <textarea className={styles.title} value={title} readOnly></textarea>
+                <textarea className={styles.title} value={title === "" ? "Untitled Note" : title} readOnly></textarea>
                 <textarea className={styles.note} value={note} readOnly></textarea>
             </button>;
             returnData.push(noteEntry);
@@ -84,6 +84,7 @@ function Notes() {
             return (notesData[selectedNoteIndex] as NoteType).note;
         }
     }
+    
 
     function noteEditorOnChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
         (notesData[selectedNoteIndex] as NoteType).note = event.target.value;
@@ -108,7 +109,7 @@ function Notes() {
 
         <dialog ref={editNoteDialog} className={styles.editNoteDialog} onMouseDown={(event) => onDialogClick(event)}>
             <div id={EDIT_NOTE_AREA_DIV_ID}>
-                <textarea id={EDIT_NOTE_AREA_ID} ref={editNoteArea} value={noteEditorValue()} onChange={(event) => noteEditorOnChange(event)}></textarea>
+                <textarea id={EDIT_NOTE_AREA_ID} ref={editNoteArea} value={noteEditorValue()} placeholder="Untitled Note" onChange={(event) => noteEditorOnChange(event)}></textarea>
             </div>
         </dialog>
     </div>
