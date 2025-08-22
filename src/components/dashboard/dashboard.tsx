@@ -40,8 +40,8 @@ function Dashboard() {
     }
 
 
-    return <div className={styles.mainStyle} onClick={() => navigateToPomodoroTimer()}>
-        <div className={styles.pomodoroSpace}>
+    return <div className={styles.mainStyle}>
+        <div className={styles.pomodoroSpace} onClick={() => navigateToPomodoroTimer()}>
             <p className={styles.timerTitle}>{loadTimerTitle()}</p>
             <p className={styles.timeRemaining}>{timerStarted ? loadTimer(timeRemaining) : ""}</p>
         </div>
