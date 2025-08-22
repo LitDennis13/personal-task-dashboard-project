@@ -7,6 +7,23 @@ function playClickSoundEffect() {
     new Audio(clickSoundEffect).play();
 }
 
+export function loadTimer(timeLeft: number) {
+        let minutes = Math.floor(timeLeft/60);
+        let seconds = timeLeft - minutes*60;
+
+        let onScreenMinutes = minutes.toString();
+        let onScreenSeconds = seconds.toString();
+
+        if (minutes < 10) {
+            onScreenMinutes = "0" + onScreenMinutes;
+        }
+        if (seconds < 10) {
+            onScreenSeconds = "0" + onScreenSeconds;
+        }
+
+        return onScreenMinutes + ":"+ onScreenSeconds;
+    }
+
 function PomodoroTimer() {
     const appName = useOutletContext<any>()[0];
     const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[1];
@@ -62,22 +79,6 @@ function PomodoroTimer() {
         return returnArray;
     }
 
-    function loadTimer() {
-        let minutes = Math.floor(timeRemaining/60);
-        let seconds = timeRemaining - minutes*60;
-
-        let onScreenMinutes = minutes.toString();
-        let onScreenSeconds = seconds.toString();
-
-        if (minutes < 10) {
-            onScreenMinutes = "0" + onScreenMinutes;
-        }
-        if (seconds < 10) {
-            onScreenSeconds = "0" + onScreenSeconds;
-        }
-
-        return <p>{onScreenMinutes}:{onScreenSeconds}</p>;
-    }
 
     function startStopOnClick() {
         if (!timerStarted) {
@@ -112,7 +113,6 @@ function PomodoroTimer() {
 
     function loadResetButton() {
         if (timerHasStarted) {
-            console.log(styles.resetButton + " " + (isTimerDone() ? styles.resetOptionOnly : styles.resetOptionWithStart));
             return <button className={styles.resetButton + " " + (isTimerDone() ? styles.resetOptionOnly : styles.resetOptionWithStart)} onClick={() => resetButtonOnClick()}>Reset</button>;
         }
         setDocumentTitle(appName);
@@ -128,7 +128,7 @@ function PomodoroTimer() {
                 })}
             </nav>
             <div className={styles.timer}>
-                {loadTimer()}
+                <p>{loadTimer(timeRemaining)}</p>
             </div>
             <div className={styles.controls}>
                 {loadStartTimerButton()}

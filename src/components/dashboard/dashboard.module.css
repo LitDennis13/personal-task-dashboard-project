@@ -7,7 +7,37 @@
 
 .pomodoroSpace {
     grid-area: 1 / 1 / 2 / 2;
-    background-color: orchid;
+    transform: scale(1);
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+
+
+    background-color: #FDF6E3;
+    border-radius: 0px;
+
+    transition: transform .2s, border-radius .2s;
+}
+.pomodoroSpace:hover {
+    transform: scale(1.03);
+    border-radius: 15px;
+
+    transition: transform .2s, border-radius .2s;
+}
+
+.pomodoroSpace:active {
+    transform: scale(1.05);
+
+    transition: transform .2s;
+}
+
+.timerTitle {
+    font-size: 250%;
+}
+
+.timeRemaining {
+    font-size: 13vw;
 }
 
 .todoSpace {
