@@ -58,6 +58,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
 .timer > p {
@@ -70,6 +71,8 @@
     display: flex;
     justify-content: center;
     align-items: end;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
 }
 
 .controls > button {

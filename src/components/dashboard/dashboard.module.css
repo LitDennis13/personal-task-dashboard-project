@@ -3,6 +3,11 @@
     height: 100%;
     display: grid;
     grid-template: 1fr 1fr / 1fr 1fr;
+    row-gap: .5vh;
+    column-gap: .5vw;
+}
+.mainStyle > div {
+    border-radius: 15px;
 }
 
 .pomodoroSpace {
@@ -15,21 +20,27 @@
 
 
     background-color: #FDF6E3;
-    border-radius: 0px;
+    
 
-    transition: transform .2s, border-radius .2s;
+    transition: background-color .2s;
 }
-.pomodoroSpace:hover {
-    transform: scale(1.03);
-    border-radius: 15px;
+.timerNotGoing {
+    border: 5px solid #ffbb00;
+}
+.timerGoing {
+    border: 5px solid #0bd894;
+}
 
-    transition: transform .2s, border-radius .2s;
+.pomodoroSpace:hover {
+    background-color: #fee9b0;
+
+    transition: background-color .2s;
 }
 
 .pomodoroSpace:active {
-    transform: scale(1.05);
+    background-color: #fee08e;
 
-    transition: transform .2s;
+    transition: background-color .2s;
 }
 
 .timerTitle {
@@ -42,10 +53,48 @@
 
 .todoSpace {
     grid-area: 1 / 2 / 2 / 3;
-    background-color: bisque;
+    display: grid;
+    grid-template: 1fr 3fr / 1fr;
+    padding: .5vh .5vw;
+
+    background-color: inherit;
+    border: 5px solid #548dff;
+}
+
+.todoSpace > .todoListName {
+    grid-area: 1 / 1 / 2 / 2;
+    font-size: 325%;
+    font-weight: bold;
+
+}
+
+.todoSpace > .todoListArea {
+    grid-area: 2 / 1 / 3 / 2;
+    width: 100%;
+    height: 33.1vh;
+    display: flex;
+    flex-flow: column nowrap;
+    row-gap: 5px;
+
+    overflow-y: auto;
+
+    background-color: inherit;
+}
+
+.todoSpace > .todoListArea::-webkit-scrollbar {
+    width: 12px;
+}
+
+.todoSpace > .todoListArea::-webkit-scrollbar-track {
+    background-color: inherit;
+}
+
+.todoSpace > .todoListArea::-webkit-scrollbar-thumb {
+    background-color: #ffc933;
+    border-radius: 10px;
 }
 
 .noteSpace {
     grid-area: 2 / 1 / 3 / 3;
-    background-color: chocolate;
+    background-color: inherit;
 }

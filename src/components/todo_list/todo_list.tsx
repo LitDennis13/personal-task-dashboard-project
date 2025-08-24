@@ -23,6 +23,26 @@ function emptyOrWhiteSpace(inString: string) {
     return true;
 }
 
+export function updateCompletionStatus(selectedTodoList: TodoListType, todoListData: TodoListType[], setTodoListData: React.Dispatch<React.SetStateAction<TodoListType[]>>, ID: number) {
+    for (let i = 0; i < selectedTodoList.list.length; i++) {
+        if ((selectedTodoList.list[i] as TodoType).todoID == ID) {
+            (selectedTodoList.list[i] as TodoType).isComplete = !(selectedTodoList.list[i] as TodoType).isComplete;
+
+            if ((selectedTodoList.list[i] as TodoType).isComplete) {
+                playTaskCompleteSoundEffect();
+            }
+        }
+    }
+
+    for (let i = 0; i < todoListData.length; i++) {
+        if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
+            (todoListData[i] as TodoListType) = selectedTodoList;
+            break;
+        }
+    }
+    setTodoListData([...todoListData]);
+}
+
 function TodoList() {
     const TODO_CARD_ID = "TodoCard";
     const TODO_CHECK_BUTTON = "TodoCheckButton";
@@ -33,7 +53,7 @@ function TodoList() {
     let [todoListData, setTodoListData] = useOutletContext<any>()[4];
     let [newID, setNewID] = useOutletContext<any>()[5];
 
-    let [selectedTodoList, setSelectedTodoList] = useState<TodoListType>(todoListData[0]);
+    let [selectedTodoList, setSelectedTodoList] = useOutletContext<any>()[7];
     let [newListMade, setNewListMade] = useState(false);
 
     let [deleteListPressed, setDeleteListPressed] = useState(false);
@@ -54,7 +74,7 @@ function TodoList() {
     let [draggingTodo, setDraggingTodo] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
     let [recentTodoDragOver, setRecentTodoDragOver] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
 
-    let [selectedTodoID, setSelectedTodoID] = useState(-1);
+    let [selectedTodoID, setSelectedTodoID] = useOutletContext<any>()[8];
 
     function closeTodoEditArea(instantClose: boolean = false) {
         if (!instantClose) {
@@ -239,26 +259,6 @@ function TodoList() {
         else return "";
     }
 
-    function updateCompletionStatus(ID: number) {
-        for (let i = 0; i < selectedTodoList.list.length; i++) {
-            if ((selectedTodoList.list[i] as TodoType).todoID == ID) {
-                (selectedTodoList.list[i] as TodoType).isComplete = !(selectedTodoList.list[i] as TodoType).isComplete;
-
-                if ((selectedTodoList.list[i] as TodoType).isComplete) {
-                    playTaskCompleteSoundEffect();
-                }
-            }
-        }
-
-        for (let i = 0; i < todoListData.length; i++) {
-            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                (todoListData[i] as TodoListType) = selectedTodoList;
-                break;
-            }
-        }
-        setTodoListData([...todoListData]);
-    }
-
     function onTodoDragStart(todo: TodoType) {
         setDraggingTodo(todo);
         setRecentTodoDragOver(todo);
@@ -315,7 +315,7 @@ function TodoList() {
 
             let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard + " " + (todo.todoID === selectedTodoID ? styles.todoCardSelected : styles.todoCardNotSelected)} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)}>
                 <div className={styles.checkCompletedArea}>
-                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(todo.todoID)}>
+                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoListData, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -427,7 +427,7 @@ function TodoList() {
         if (selectedTodoID !== -1) {
             return <div id={EDIT_TODO_AREA} className={styles.editTodoArea}>
                 <div className={styles.editTodoCompletionStatus}>
-                    <button onClick={() => updateCompletionStatus(todo.todoID)}>
+                    <button onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoListData, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -476,7 +476,7 @@ function TodoList() {
         }
     }, [newListMade]);
     
-    return <div className={styles.mainStyle}  onClick={(event) => onMainPageClick(event)}>
+    return <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>
             <div className={styles.listTodoLists}>
                 {loadSideBarOptions()}
@@ -489,7 +489,6 @@ function TodoList() {
             </div>
 
             {loadTodoListManagement()}
-
 
             <div className={styles.todoListDisplay}>
                 {loadTodosFromList()}

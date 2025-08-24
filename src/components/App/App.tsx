@@ -44,6 +44,10 @@ function App() {
     };
     let [newID, setNewID] = useState(1);
     let [todoListData, setTodoListData] = useState([defaultTodoListData]);
+    let [selectedTodoList, setSelectedTodoList] = useState<TodoListType>(todoListData[0]);
+    let [selectedTodoID, setSelectedTodoID] = useState(-1);
+
+
 
     // Notes Stuff
     let [notesData, setNotesData] = useState<NoteType[]>([]);
@@ -51,7 +55,7 @@ function App() {
     let location = useLocation();
 
     useEffect(() => {
-        if (location.pathname === "/notes") {
+        if (location.pathname === "/notes" || location.pathname === "/") {
             setChangeBackGroundColor(true);
         }
         else {
@@ -65,7 +69,7 @@ function App() {
         </div>
         <div className={styles.mainContent}>
             <Outlet context={[appName, [option, timerStarted, timeRemaining, optionSet, setTimerStarted], [timerHasStarted, setTimerHasStarted], setDocumentTitle,
-                [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData]]}/>
+                [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData], [selectedTodoList, setSelectedTodoList], [selectedTodoID, setSelectedTodoID]]}/>
         </div>
     </div>
 }
