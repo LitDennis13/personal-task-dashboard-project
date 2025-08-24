@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import styles from "./pomodoro_timer.module.css";
 import clickSoundEffect from "../../assets/audio/bubble_sound_effect.m4a";
 
-function playClickSoundEffect() {
+export function playClickSoundEffect() {
     new Audio(clickSoundEffect).play();
 }
 

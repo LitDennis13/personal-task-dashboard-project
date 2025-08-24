@@ -490,9 +490,16 @@ function TodoList() {
 
             {loadTodoListManagement()}
 
-            <div className={styles.todoListDisplay}>
-                {loadTodosFromList()}
-            </div>
+            {((selectedTodoList as TodoListType).list.length >= 1) 
+            ? 
+                <div className={styles.todoListDisplay + " " + styles.withTodos}>
+                    {loadTodosFromList()}
+                </div> 
+            : 
+                <div className={styles.todoListDisplay + " " + styles.withOutTodos}>
+                    <p className={styles.noTodosMessage}> This list has no todos</p>
+                </div>
+            }
 
             <form className={styles.addTodoArea} onSubmit={(event) => addNewTodo(event)}>
                 <button onClick={(event) => addNewTodo(event)}>+</button>

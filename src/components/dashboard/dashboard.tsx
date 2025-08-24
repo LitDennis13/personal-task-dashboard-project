@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
-import { loadTimer } from "../pomodoro_timer/pomodoro_timer";
+import { loadTimer, playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
 import CircleCheckIcon from "../../assets/images/check_circle.svg";
@@ -23,7 +23,6 @@ function Dashboard() {
 
     let [redirect, setRedirect] = useState(0);
 
-
     function loadTimerTitle() {
         if (!timerStarted) {
             return "Timer stopped";
@@ -33,13 +32,13 @@ function Dashboard() {
         }
     }
 
-    function navigateToPomodoroTimer() {
-        // setRedirect(1);
+    function pomodoroSpaceOnClick() {
         if (!timerStarted) {
             setTimerHasStarted(true);
         }
 
         setTimerStarted(!timerStarted);
+        playClickSoundEffect();
     }
 
     function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
@@ -57,7 +56,7 @@ function Dashboard() {
         selectedTodoList.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
-            let todoEntry = <div key={index} className={TodoListStyles.todoCard + " " + TodoListStyles.todoCardNotSelected} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)}>
+            let todoEntry = <div key={index} className={TodoListStyles.todoCard + " " + TodoListStyles.todoCardNotSelected} onClick={(event) => todoOnClickFunction(event, todo.todoID)}>
                 <div className={TodoListStyles.checkCompletedArea}>
                     <button onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoListData, todo.todoID)}>
                         <img id={TODO_COMPLETE_BUTTON_IMAGE_ID} src={IconImage} alt="Completed/Not Completed icon" />
@@ -94,20 +93,30 @@ function Dashboard() {
         }
         return "";
     }
-    
+
 
     return <div className={styles.mainStyle}>
-        <div className={styles.pomodoroSpace + " " + (timerStarted ? styles.timerGoing : styles.timerNotGoing)} onClick={() => navigateToPomodoroTimer()}>
+        <div className={styles.pomodoroSpace + " " + (timerStarted ? styles.timerGoing : styles.timerNotGoing)} onClick={() => pomodoroSpaceOnClick()}>
             <p className={styles.timerTitle}>{loadTimerTitle()}</p>
             <p className={styles.timeRemaining}>{loadTimer(timeRemaining)}</p>
         </div>
 
-        <div className={styles.todoSpace}>
-            <p className={styles.todoListName}>{(selectedTodoList as TodoListType).name}</p>
-            <div className={styles.todoListArea}>
-                {loadTodosFromList()}
+        {((selectedTodoList as TodoListType).list.length >= 1) 
+        ? 
+            <div className={styles.todoSpace + " " + styles.todoSpaceWithTodos}>
+                <input className={styles.todoListName} value={(selectedTodoList as TodoListType).name} readOnly/>
+                <div className={styles.todoListArea}>
+                    {loadTodosFromList()}
+                </div>
+            </div> 
+        : 
+            <div className={styles.todoSpace + " " + styles.todoSpaceWithOutTodos}>
+                <p className={styles.noTodosMessage}> The selected todo List <span>{(selectedTodoList as TodoListType).name}</span> has no todos</p>
             </div>
-        </div>
+        }
+
+
+
         <div className={styles.noteSpace}></div>
 
         {triggerRedirect()}
