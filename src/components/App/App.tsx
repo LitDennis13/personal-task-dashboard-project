@@ -34,7 +34,7 @@ function App() {
 
     // Pomodoro Timer stuff
     let [timerHasStarted, setTimerHasStarted] = useState(false);
-    let [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useTimer(appName, setDocumentTitle, 0);
+    let [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useTimer(appName, setDocumentTitle, 0);
 
     // Todo List stuff
     let defaultTodoListData: TodoListType = {
@@ -68,7 +68,7 @@ function App() {
             <NavigationBar />
         </div>
         <div className={styles.mainContent}>
-            <Outlet context={[appName, [option, timerStarted, timeRemaining, optionSet, setTimerStarted], [timerHasStarted, setTimerHasStarted], setDocumentTitle,
+            <Outlet context={[appName, [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX], [timerHasStarted, setTimerHasStarted], setDocumentTitle,
                 [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData], [selectedTodoList, setSelectedTodoList], [selectedTodoID, setSelectedTodoID]]}/>
         </div>
     </div>

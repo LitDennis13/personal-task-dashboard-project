@@ -10,6 +10,7 @@ function useTimer(appName: string, setDocumentTitle: Function, defaultOption: nu
     let [option, setOption] = useState(defaultOption);
     let [timerStarted, setTimerStarted] = useState(false);
     let [timeRemaining, setTimeRemaining] = useState(timeOptions[defaultOption]);
+    let [playedTimerEndSFX, setPlayedTimerEndSFX] = useState(false);
 
     function optionSet(index: number) {
         setOption(index);
@@ -49,12 +50,13 @@ function useTimer(appName: string, setDocumentTitle: Function, defaultOption: nu
     });
 
     useEffect(() => {
-        if (timeRemaining == 0) {
+        if (timeRemaining === 0 && !playedTimerEndSFX) {
             playTimerEndSoundEffect();
+            setPlayedTimerEndSFX(true);
         }
     });
 
-    return [option, timerStarted, timeRemaining, optionSet, setTimerStarted];
+    return [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX];
 }
 
 export default useTimer;

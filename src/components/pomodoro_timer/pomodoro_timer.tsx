@@ -26,7 +26,7 @@ export function loadTimer(timeLeft: number) {
 
 function PomodoroTimer() {
     const appName = useOutletContext<any>()[0];
-    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[1];
+    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useOutletContext<any>()[1];
     let [timerHasStarted, setTimerHasStarted] = useOutletContext<any>()[2];
     let setDocumentTitle = useOutletContext<any>()[3];
 
@@ -108,6 +108,7 @@ function PomodoroTimer() {
     function resetButtonOnClick() {
         optionSet(option); // triggers re-render
         setTimerHasStarted(false);
+        setPlayedTimerEndSFX(false);
         playClickSoundEffect();
     }
 

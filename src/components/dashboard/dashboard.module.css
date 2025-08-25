@@ -5,6 +5,7 @@
     grid-template: 1fr 1fr / 1fr 1fr;
     row-gap: .5vh;
     column-gap: .5vw;
+    padding: .5vh .5vw;
 }
 .mainStyle > div {
     border-radius: 15px;

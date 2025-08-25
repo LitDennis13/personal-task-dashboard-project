@@ -33,11 +33,16 @@ function Dashboard() {
     }
 
     function pomodoroSpaceOnClick() {
-        if (!timerStarted) {
-            setTimerHasStarted(true);
+        if (timeRemaining === 0) {
+            setRedirect(1);
+        }
+        else {
+            if (!timerStarted) {
+                setTimerHasStarted(true);
+            }
+            setTimerStarted(!timerStarted);
         }
 
-        setTimerStarted(!timerStarted);
         playClickSoundEffect();
     }
 
