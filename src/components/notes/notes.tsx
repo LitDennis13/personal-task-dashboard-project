@@ -58,7 +58,7 @@ function Notes() {
 
     let editNoteDialog = useRef<HTMLDialogElement>(null);
     let editNoteArea = useRef<HTMLTextAreaElement>(null);
-    let [selectedNoteIndex, setSelectedNoteIndex] = useState(-1);
+    let [selectedNoteIndex, setSelectedNoteIndex] = useOutletContext<any>()[9];
 
     let [pressedNoteDelete, setPressedNoteDelete] = useState(false);
 
@@ -99,7 +99,7 @@ function Notes() {
                 }
             }
 
-            let noteEntry = <button key={i} className={styles.noteEntry} onClick={() => showNoteEditor(i)}>
+            let noteEntry = <button key={i} className={styles.noteEntry + " " + styles.notePageNoteEntry} onClick={() => showNoteEditor(i)}>
                 <textarea className={styles.title} value={title === "" ? "Untitled Note" : title} readOnly></textarea>
                 <textarea className={styles.note} value={note} readOnly></textarea>
             </button>;
@@ -190,6 +190,12 @@ function Notes() {
 
     useEffect(() => {
         checkAndHandleScrollBarLoaded();
+    }, []);
+
+    useEffect(() => {
+        if (selectedNoteIndex !== -1) {
+            showNoteEditor(selectedNoteIndex);
+        }
     }, []);
 
     return <div ref={mainPage} className={styles.mainPage + " " + (scrollBarPadding ? styles.mainPageWithScrollBar : styles.mainPageNoScrollBar)}>

@@ -5,10 +5,17 @@ import { loadTimer, playClickSoundEffect } from "../pomodoro_timer/pomodoro_time
 import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
 import CircleCheckIcon from "../../assets/images/check_circle.svg";
+import { updateCompletionStatus } from "../todo_list/todo_list";
+import type { NoteType, TodoListType, TodoType } from "../App/App";
+
 import styles from "./dashboard.module.css";
 import TodoListStyles from "../todo_list/todo_list.module.css";
-import { updateCompletionStatus } from "../todo_list/todo_list";
-import type { TodoListType, TodoType } from "../App/App";
+import NotesStyles from "../notes/notes.module.css";
+
+function min(x: number, y: number) {
+    if (x < y) return x;
+    else return y;
+}
 
 function Dashboard() {
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
@@ -20,6 +27,10 @@ function Dashboard() {
     let [selectedTodoList, setSelectedTodoList] = useOutletContext<any>()[7];
     let [todoListData, setTodoListData] = useOutletContext<any>()[4];
     let [selectedTodoID, setSelectedTodoID] = useOutletContext<any>()[8];
+
+    let [notesData, setNotesData] = useOutletContext<any>()[6];
+    let [selectedNoteIndex, setSelectedNoteIndex] = useOutletContext<any>()[9];
+
 
     let [redirect, setRedirect] = useState(0);
 
@@ -86,6 +97,39 @@ function Dashboard() {
         </>
     }
 
+    function noteOnClick(noteIndex: number) {
+        setSelectedNoteIndex(noteIndex);
+        setRedirect(3);
+    }
+
+    function loadNotes() {
+        let returnData: any[] = [];
+
+        for (let i = 0; i < min(notesData.length, 4); i++) {
+            let foundNewLine = false;
+            let title = "";
+            let note = "";
+            for (const c of (notesData[i] as NoteType).note) {
+                if (c === "\n" && !foundNewLine) {
+                    foundNewLine = true;
+                }
+                else if (!foundNewLine) {
+                    title += c;
+                }
+                else {
+                    note += c;
+                }
+            }
+
+            let noteEntry = <button key={i} className={NotesStyles.noteEntry + " " + NotesStyles.dashBoardNoteEntry} onClick={() => noteOnClick(i)}>
+                <textarea className={NotesStyles.title} value={title === "" ? "Untitled Note" : title} readOnly></textarea>
+                <textarea className={NotesStyles.note} value={note} readOnly></textarea>
+            </button>;
+            returnData.push(noteEntry);
+        }
+        return returnData;
+    }
+
     function triggerRedirect() {
         if (redirect === 1) {
             return <Navigate to={"/pomodoro-timer"} replace/>;
@@ -122,7 +166,16 @@ function Dashboard() {
 
 
 
-        <div className={styles.noteSpace}></div>
+        {((notesData as NoteType[]).length >= 1)
+        ?
+            <div className={styles.noteSpace + " " + styles.hasNotes}>
+                {loadNotes()}
+            </div> 
+        :
+            <div className={styles.noteSpace + " " + styles.hasNoNotes}>
+                <p className={styles.noNotesMessage}>There are no notes</p>
+            </div>
+        }
 
         {triggerRedirect()}
     </div>

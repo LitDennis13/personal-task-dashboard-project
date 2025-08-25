@@ -52,6 +52,7 @@ function App() {
     // Notes Stuff
     let [notesData, setNotesData] = useState<NoteType[]>([]);
     let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
+    let [selectedNoteIndex, setSelectedNoteIndex] = useState(-1);
     let location = useLocation();
 
     useEffect(() => {
@@ -69,7 +70,8 @@ function App() {
         </div>
         <div className={styles.mainContent}>
             <Outlet context={[appName, [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX], [timerHasStarted, setTimerHasStarted], setDocumentTitle,
-                [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData], [selectedTodoList, setSelectedTodoList], [selectedTodoID, setSelectedTodoID]]}/>
+                [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData], [selectedTodoList, setSelectedTodoList], [selectedTodoID, setSelectedTodoID],
+                [selectedNoteIndex, setSelectedNoteIndex]]}/>
         </div>
     </div>
 }

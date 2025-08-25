@@ -83,13 +83,26 @@
 
 .noteEntry {
     display: grid;
-    grid-template: 2fr 5fr / 1fr;
     padding: 3%;
     row-gap: 2%;
 
-
     background-color: #ffda75;
     transition: background-color .2s;
+}
+
+.notePageNoteEntry {
+    grid-template: 2fr 5fr / 1fr;
+
+}
+
+.dashBoardNoteEntry {
+    grid-template: 2.5fr 10fr / 1fr;
+
+    width: 100%;
+    height: 43.7vh;
+
+    border: none;
+    border-radius: 15px;
 }
 
 .noteEntry:hover {
@@ -123,7 +136,7 @@
 }
 
 .noteEntry > .title::-webkit-scrollbar {
-    height: 5px;
+    height: 8px;
 }
 
 .noteEntry > .title::-webkit-scrollbar-track {
