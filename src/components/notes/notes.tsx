@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import type { RootState } from "../../state/store";
+import { incrementNewID } from "../../state/new_id/newID";
 
 import type { NoteType } from "../App/App";
 import styles from "./notes.module.css";
@@ -50,8 +54,11 @@ function Notes() {
     const EDIT_NOTE_AREA_ID = "EditNoteArea";
     const DELETE_NOTE_BUTTON_ID = "DeleteNoteButton";
 
+    const dispatch = useDispatch();
+
+
     let [notesData, setNotesData] = useOutletContext<any>()[6];
-    let [newID, setNewID] = useOutletContext<any>()[5];
+    const newID = useSelector((state: RootState) => state.newID.value);
 
     let mainPage = useRef<HTMLDivElement>(null);
     let [scrollBarPadding, setScrollBarPadding] = useState(false);
@@ -159,7 +166,7 @@ function Notes() {
         showNoteEditor(notesData.length - 1);
 
         setNotesData([...notesData]);
-        setNewID(newID + 1);
+        dispatch(incrementNewID());
     }
 
     function loadAddNoteButton() {

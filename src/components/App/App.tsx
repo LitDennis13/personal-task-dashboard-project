@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
+
 import NavigationBar from "../navigation_bar/navigation_bar";
 import useTimer from "../custom_hooks/use_timer";
 
 import styles from "./page_layout.module.css";
 
-export interface TodoType {
+interface TodoType {
     todoID: number;
     name: string;
     note: string;
@@ -13,13 +14,13 @@ export interface TodoType {
     isComplete: boolean;
 }
 
-export interface TodoListType {
+interface TodoListType {
     listID: number;
     name: string;
     list: TodoType[];
 }
 
-export interface NoteType {
+interface NoteType {
     noteID: number;
     note: string;
 }
@@ -29,11 +30,11 @@ function setDocumentTitle(title: string) {
 }
 
 function App() {
-    let appName = "Personal Task Dashboard";
+    const APP_NAME = "Personal Task Dashboard";
 
     // Pomodoro Timer stuff
     let [timerHasStarted, setTimerHasStarted] = useState(false);
-    let [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useTimer(appName, setDocumentTitle, 0);
+    let [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useTimer(APP_NAME, setDocumentTitle, 0);
 
     // Todo List stuff
     let defaultTodoListData: TodoListType = {
@@ -70,11 +71,15 @@ function App() {
             <NavigationBar />
         </div>
         <div className={styles.mainContent}>
-            <Outlet context={[appName, [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX], [timerHasStarted, setTimerHasStarted], setDocumentTitle,
-                [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData], [selectedTodoList, setSelectedTodoList], [selectedTodoID, setSelectedTodoID],
-                [selectedNoteIndex, setSelectedNoteIndex]]}/>
+            <Outlet context={
+                [APP_NAME, [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX], [timerHasStarted, setTimerHasStarted],
+                setDocumentTitle, [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData], [selectedTodoList, setSelectedTodoList],
+                [selectedTodoID, setSelectedTodoID], [selectedNoteIndex, setSelectedNoteIndex]]
+            }/>
         </div>
     </div>
 }
 
 export default App;
+
+export type {TodoType, TodoListType, NoteType};

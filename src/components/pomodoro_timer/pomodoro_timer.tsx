@@ -1,4 +1,9 @@
 import { useOutletContext } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import type { RootState } from "../../state/store";
+import { setTimerHasStarted } from "../../state/timer_has_started/timerHasStarted";
+
 
 import styles from "./pomodoro_timer.module.css";
 import clickSoundEffect from "../../assets/audio/bubble_sound_effect.m4a";
@@ -8,26 +13,29 @@ export function playClickSoundEffect() {
 }
 
 export function loadTimer(timeLeft: number) {
-        let minutes = Math.floor(timeLeft/60);
-        let seconds = timeLeft - minutes*60;
+    let minutes = Math.floor(timeLeft/60);
+    let seconds = timeLeft - minutes*60;
 
-        let onScreenMinutes = minutes.toString();
-        let onScreenSeconds = seconds.toString();
+    let onScreenMinutes = minutes.toString();
+    let onScreenSeconds = seconds.toString();
 
-        if (minutes < 10) {
-            onScreenMinutes = "0" + onScreenMinutes;
-        }
-        if (seconds < 10) {
-            onScreenSeconds = "0" + onScreenSeconds;
-        }
-
-        return onScreenMinutes + ":"+ onScreenSeconds;
+    if (minutes < 10) {
+        onScreenMinutes = "0" + onScreenMinutes;
+    }
+    if (seconds < 10) {
+        onScreenSeconds = "0" + onScreenSeconds;
     }
 
+    return onScreenMinutes + ":"+ onScreenSeconds;
+}
+
 function PomodoroTimer() {
+    const dispatch = useDispatch();
+
     const appName = useOutletContext<any>()[0];
     const [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useOutletContext<any>()[1];
-    let [timerHasStarted, setTimerHasStarted] = useOutletContext<any>()[2];
+
+    const timerHasStarted = useSelector((state: RootState) => state.timerHasStarted.value);
     let setDocumentTitle = useOutletContext<any>()[3];
 
     function isTimerDone() {
@@ -39,7 +47,7 @@ function PomodoroTimer() {
 
     function onNavigationBarChange(index: number) {
         optionSet(index);
-        setTimerHasStarted(false);
+        dispatch(setTimerHasStarted(false));
     }
 
     function loadNavigationBarOptions() {
@@ -82,7 +90,7 @@ function PomodoroTimer() {
 
     function startStopOnClick() {
         if (!timerStarted) {
-            setTimerHasStarted(true);
+            dispatch(setTimerHasStarted(true));
         }
 
         setTimerStarted(!timerStarted);
@@ -107,7 +115,7 @@ function PomodoroTimer() {
 
     function resetButtonOnClick() {
         optionSet(option); // triggers re-render
-        setTimerHasStarted(false);
+        dispatch(setTimerHasStarted(false));
         setPlayedTimerEndSFX(false);
         playClickSoundEffect();
     }

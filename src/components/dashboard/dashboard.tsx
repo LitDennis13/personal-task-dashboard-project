@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
+import type { RootState } from "../../state/store";
+import { setTimerHasStarted } from "../../state/timer_has_started/timerHasStarted";
 import { loadTimer, playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
@@ -18,10 +21,11 @@ function min(x: number, y: number) {
 }
 
 function Dashboard() {
+    const dispatch = useDispatch();
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
 
     const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[1];
-    let [timerHasStarted, setTimerHasStarted] = useOutletContext<any>()[2];
+    const timerHasStarted = useSelector((state: RootState) => state.timerHasStarted.value);
 
 
     let [selectedTodoList, setSelectedTodoList] = useOutletContext<any>()[7];
@@ -49,7 +53,7 @@ function Dashboard() {
         }
         else {
             if (!timerStarted) {
-                setTimerHasStarted(true);
+                dispatch(setTimerHasStarted(true));
             }
             setTimerStarted(!timerStarted);
         }

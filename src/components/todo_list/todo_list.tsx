@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import type { RootState } from "../../state/store";
+import { incrementNewID } from "../../state/new_id/newID";
+
 import styles from "./todo_list.module.css";
 import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
@@ -43,15 +48,19 @@ export function updateCompletionStatus(selectedTodoList: TodoListType, todoListD
     setTodoListData([...todoListData]);
 }
 
-function TodoList() {
+function TodoList() {    
     const TODO_CARD_ID = "TodoCard";
     const TODO_CHECK_BUTTON = "TodoCheckButton";
     const EDIT_TODO_AREA = "EditTodoArea";
     const DELETE_LIST_BUTTON = "DeleteListButton";
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
+    const dispatch = useDispatch();
+
+
     let [todoListData, setTodoListData] = useOutletContext<any>()[4];
-    let [newID, setNewID] = useOutletContext<any>()[5];
+    const newID = useSelector((state: RootState) => state.newID.value);
+    
 
     let [selectedTodoList, setSelectedTodoList] = useOutletContext<any>()[7];
     let [newListMade, setNewListMade] = useState(false);
@@ -139,7 +148,7 @@ function TodoList() {
 
         setTodoListData([...todoListData, newTodoList]);
         setSelectedTodoList(newTodoList);
-        setNewID(newID + 1);
+        dispatch(incrementNewID());
         setNewListMade(true);
     }
 
@@ -357,7 +366,7 @@ function TodoList() {
             }
         }
 
-        setNewID(newID + 1);
+        dispatch(incrementNewID());
         setTodoListData([...todoListData]);
         setNewTodo({...newTodoDefaultState});
     }
