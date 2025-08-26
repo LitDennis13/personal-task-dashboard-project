@@ -1,0 +1,33 @@
+.mainPage {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.message {
+    font-size: 600%;
+}
+
+.backToDashboardButton {
+    height: 8vh;
+    width: 20vw;
+    font-size: 200%;
+
+    background-color: #b4c2de;
+    border: none;
+    border-radius: 15px;
+
+    transition: background-color .2s;
+}
+
+.backToDashboardButton:hover {
+    background-color: #8fa2c7;
+    transition: background-color .2s;
+}
+
+.backToDashboardButton:active {
+    background-color: #6e81a7;
+    transition: background-color .2s;
+}

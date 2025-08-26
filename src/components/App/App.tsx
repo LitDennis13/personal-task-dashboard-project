@@ -57,11 +57,11 @@ function App() {
 
 
     useEffect(() => {
-        if (location.pathname === "/notes" || location.pathname === "/") {
-            setChangeBackGroundColor(true);
+        if (location.pathname === "/pomodoro-timer" || location.pathname === "/todo-list") {
+            setChangeBackGroundColor(false);
         }
         else {
-            setChangeBackGroundColor(false);
+            setChangeBackGroundColor(true);
         }
     }, [location]);
 
