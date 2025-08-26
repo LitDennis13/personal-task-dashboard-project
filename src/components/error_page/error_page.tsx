@@ -2,9 +2,9 @@ import styles from "./error_page.module.css";
 
 function ErrorPage() {
 
-    return <div>
-        <h1>Error Page</h1>
-
+    return <div className={styles.mainPage}>
+        <p className={styles.messageTitle}>Error Page</p>
+        <p className={styles.messageBody}>Please check the console for errors and/or refresh the page</p>
     </div>
 }
 
