@@ -62,6 +62,9 @@ function Notes() {
 
     let [pressedNoteDelete, setPressedNoteDelete] = useState(false);
 
+    let [noteIDBeingDragged, setNoteIDBeingDragged] = useState(-1);
+    let [recentlyDraggedOverNoteID, setRecentlyDraggedOverNoteID] = useState(-1);
+
     function checkAndHandleScrollBarLoaded() {
         if (mainPage !== null && mainPage.current instanceof HTMLDivElement) {
             if (mainPage.current.scrollHeight > mainPage.current.clientHeight) {
@@ -77,6 +80,39 @@ function Notes() {
         if (editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
             editNoteDialog.current.showModal();
             setSelectedNoteIndex(noteIndex);
+        }
+    }
+
+    function onNoteDragStart(draggingNoteID: number) {
+        setNoteIDBeingDragged(draggingNoteID);
+        setRecentlyDraggedOverNoteID(draggingNoteID);
+    }
+
+    function onNoteDragOver(event: React.DragEvent<HTMLButtonElement>, noteIDBeingDraggedOver: number) {
+        event.preventDefault();
+        
+        if (noteIDBeingDraggedOver !== recentlyDraggedOverNoteID) {            
+            let noteBeingDraggedIndex = -1;
+            let noteBeingDraggedOverIndex = -1;
+
+            for (let i = 0; i < notesData.length; i++) {
+                if ((notesData[i] as NoteType).noteID === noteIDBeingDragged) {
+                    noteBeingDraggedIndex = i;
+                }
+                if ((notesData[i] as NoteType).noteID === noteIDBeingDraggedOver) {
+                    noteBeingDraggedOverIndex = i;
+                }
+            }
+            
+            (notesData[noteBeingDraggedIndex] as NoteType).noteID = noteIDBeingDraggedOver;
+            (notesData[noteBeingDraggedOverIndex] as NoteType).noteID = noteIDBeingDragged;
+
+            (notesData as NoteType[]).sort((x, y) => x.noteID - y.noteID);
+
+            console.log(notesData);
+            setNotesData([...notesData]);
+            setRecentlyDraggedOverNoteID(noteIDBeingDraggedOver);
+            setNoteIDBeingDragged(noteIDBeingDraggedOver);
         }
     }
 
@@ -99,7 +135,9 @@ function Notes() {
                 }
             }
 
-            let noteEntry = <button key={i} className={styles.noteEntry + " " + styles.notePageNoteEntry} onClick={() => showNoteEditor(i)}>
+            let noteEntry = <button key={i} className={styles.noteEntry + " " + styles.notePageNoteEntry} onClick={() => showNoteEditor(i)}
+                draggable="true" onDragStart={() => onNoteDragStart((notesData[i] as NoteType).noteID)} onDragOver={(event) => onNoteDragOver(event, (notesData[i] as NoteType).noteID)}
+            >
                 <textarea className={styles.title} value={title === "" ? "Untitled Note" : title} readOnly></textarea>
                 <textarea className={styles.note} value={note} readOnly></textarea>
             </button>;

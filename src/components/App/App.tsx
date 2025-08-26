@@ -24,7 +24,6 @@ export interface NoteType {
     note: string;
 }
 
-
 function setDocumentTitle(title: string) {
     document.title = title;
 }
@@ -54,6 +53,8 @@ function App() {
     let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
     let [selectedNoteIndex, setSelectedNoteIndex] = useState(-1);
     let location = useLocation();
+
+
 
     useEffect(() => {
         if (location.pathname === "/notes" || location.pathname === "/") {

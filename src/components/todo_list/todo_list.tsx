@@ -262,7 +262,7 @@ function TodoList() {
     function onTodoDragStart(todo: TodoType) {
         setDraggingTodo(todo);
         setRecentTodoDragOver(todo);
-        closeTodoEditArea()
+        closeTodoEditArea();
     }
 
     function onTodoDragOver(event: React.DragEvent<HTMLDivElement>, currentTodoDragOver: TodoType) {
@@ -273,10 +273,10 @@ function TodoList() {
             let newID = draggingTodo.todoID;
 
             for (let i = 0; i < selectedTodoList.list.length; i++) {
-                if ((selectedTodoList as TodoListType).list[i].todoID == oldID) {
+                if ((selectedTodoList as TodoListType).list[i].todoID === oldID) {
                     (selectedTodoList as TodoListType).list[i].todoID = newID;
                 }
-                else if ((selectedTodoList as TodoListType).list[i].todoID == newID) {
+                else if ((selectedTodoList as TodoListType).list[i].todoID === newID) {
                     (selectedTodoList as TodoListType).list[i].todoID = oldID;
                 } 
             }
