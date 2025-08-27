@@ -1,12 +1,10 @@
 import { useOutletContext } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 
-import type { RootState } from "../../state/store";
-import { setTimerHasStarted } from "../../state/timer_has_started/timerHasStarted";
-
+import { useTimerHasStartedStore } from "../../store";
 
 import styles from "./pomodoro_timer.module.css";
 import clickSoundEffect from "../../assets/audio/bubble_sound_effect.m4a";
+import { APP_NAME, setDocumentTitle } from "../App/App";
 
 export function playClickSoundEffect() {
     new Audio(clickSoundEffect).play();
@@ -30,13 +28,11 @@ export function loadTimer(timeLeft: number) {
 }
 
 function PomodoroTimer() {
-    const dispatch = useDispatch();
+    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useOutletContext<any>()[0];
 
-    const appName = useOutletContext<any>()[0];
-    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useOutletContext<any>()[1];
-
-    const timerHasStarted = useSelector((state: RootState) => state.timerHasStarted.value);
-    let setDocumentTitle = useOutletContext<any>()[3];
+    // let [timerHasStarted, setTimerHasStarted] = useOutletContext<any>()[2];
+    const timerHasStarted = useTimerHasStartedStore((state) => state.value);
+    const setTimerHasStarted = useTimerHasStartedStore((state) => state.setTimerHasStarted);
 
     function isTimerDone() {
         if (timeRemaining == 0) {
@@ -108,7 +104,7 @@ function PomodoroTimer() {
         }
         else {
             id = styles.timerNotStarted;
-            setDocumentTitle(appName);
+            setDocumentTitle(APP_NAME);
         }
         return <button id={id} className={styles.resetButton + " " + (timerHasStarted ? styles.startButtonWithReset : styles.startButtonOptionOnly)}onClick={() => startStopOnClick()}>Start</button>
     }
@@ -124,7 +120,7 @@ function PomodoroTimer() {
         if (timerHasStarted) {
             return <button className={styles.resetButton + " " + (isTimerDone() ? styles.resetOptionOnly : styles.resetOptionWithStart)} onClick={() => resetButtonOnClick()}>Reset</button>;
         }
-        setDocumentTitle(appName);
+        setDocumentTitle(APP_NAME);
         return "";
     }
 

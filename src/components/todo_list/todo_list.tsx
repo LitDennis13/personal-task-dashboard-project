@@ -1,10 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useOutletContext } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-
-import type { RootState } from "../../state/store";
-import { incrementNewID } from "../../state/new_id/newID";
-
 import styles from "./todo_list.module.css";
 import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
@@ -14,6 +8,7 @@ import DownArrow from "../../assets/images/down_arrow.svg";
 import TaskCompleteSoundEffect from "../../assets/audio/task_complete_sound.mp3";
 
 import type { TodoType, TodoListType } from "../App/App";
+import { TodoListDataStore, useNewIDStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
 
 function playTaskCompleteSoundEffect() {
     new Audio(TaskCompleteSoundEffect).play();
@@ -28,7 +23,7 @@ function emptyOrWhiteSpace(inString: string) {
     return true;
 }
 
-export function updateCompletionStatus(selectedTodoList: TodoListType, todoListData: TodoListType[], setTodoListData: React.Dispatch<React.SetStateAction<TodoListType[]>>, ID: number) {
+export function updateCompletionStatus(selectedTodoList: TodoListType, todoListData: TodoListType[], setTodoListData: any, ID: number) {
     for (let i = 0; i < selectedTodoList.list.length; i++) {
         if ((selectedTodoList.list[i] as TodoType).todoID == ID) {
             (selectedTodoList.list[i] as TodoType).isComplete = !(selectedTodoList.list[i] as TodoType).isComplete;
@@ -58,11 +53,15 @@ function TodoList() {
     const dispatch = useDispatch();
 
 
-    let [todoListData, setTodoListData] = useOutletContext<any>()[4];
-    const newID = useSelector((state: RootState) => state.newID.value);
+    const todoListData = TodoListDataStore((state) => state.value);
+    const setTodoListData = TodoListDataStore((state) => state.setTodoListData);
     
+    const newID = useNewIDStore((state) => state.value);
+    const incrementNewID = useNewIDStore((state) => state.incrementNewID);
 
-    let [selectedTodoList, setSelectedTodoList] = useOutletContext<any>()[7];
+    const selectedTodoList = useSelectedTodoListStore((state) => state.value);
+    const setSelectedTodoList = useSelectedTodoListStore((state) => state.setSelectedTodoList);
+
     let [newListMade, setNewListMade] = useState(false);
 
     let [deleteListPressed, setDeleteListPressed] = useState(false);
@@ -83,7 +82,8 @@ function TodoList() {
     let [draggingTodo, setDraggingTodo] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
     let [recentTodoDragOver, setRecentTodoDragOver] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
 
-    let [selectedTodoID, setSelectedTodoID] = useOutletContext<any>()[8];
+    const selectedTodoID = useSelectedTodoIDStore((state) => state.value);
+    const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
 
     function closeTodoEditArea() {
         if (selectedTodoID !== -1) {
@@ -148,13 +148,14 @@ function TodoList() {
 
         setTodoListData([...todoListData, newTodoList]);
         setSelectedTodoList(newTodoList);
-        dispatch(incrementNewID());
+        incrementNewID();
         setNewListMade(true);
     }
 
     function updateTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
         let name = event.target.value;
         selectedTodoList.name = name;
+        console.log(selectedTodoList.name);
 
         for (let i = 0; i < todoListData.length; i++) {
             if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
@@ -366,7 +367,7 @@ function TodoList() {
             }
         }
 
-        dispatch(incrementNewID());
+        incrementNewID();
         setTodoListData([...todoListData]);
         setNewTodo({...newTodoDefaultState});
     }
@@ -484,8 +485,8 @@ function TodoList() {
             setNewListMade(false);
         }
     }, [newListMade]);
-    
-    return <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
+
+return <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>
             <div className={styles.listTodoLists}>
                 {loadSideBarOptions()}

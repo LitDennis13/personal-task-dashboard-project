@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+
+import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore, useTimerHasStartedStore } from "../../store";
 
 import type { RootState } from "../../state/store";
 import { setTimerHasStarted } from "../../state/timer_has_started/timerHasStarted";
@@ -24,16 +25,26 @@ function Dashboard() {
     const dispatch = useDispatch();
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
 
-    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[1];
-    const timerHasStarted = useSelector((state: RootState) => state.timerHasStarted.value);
+    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[0];
+
+    const setTimerHasStarted = useTimerHasStartedStore((state) => state.setTimerHasStarted);
+    
+
+    const selectedTodoList = useSelectedTodoListStore((state) => state.value);
+    const setSelectedTodoList = useSelectedTodoListStore((state) => state.setSelectedTodoList);
+
+    const todoListData = TodoListDataStore((state) => state.value);
+    const setTodoListData = TodoListDataStore((state) => state.setTodoListData);
 
 
-    let [selectedTodoList, setSelectedTodoList] = useOutletContext<any>()[7];
-    let [todoListData, setTodoListData] = useOutletContext<any>()[4];
-    let [selectedTodoID, setSelectedTodoID] = useOutletContext<any>()[8];
+    const selectedTodoID = useSelectedTodoIDStore((state) => state.value);
+    const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
 
-    let [notesData, setNotesData] = useOutletContext<any>()[6];
-    let [selectedNoteIndex, setSelectedNoteIndex] = useOutletContext<any>()[9];
+    const notesData = useNotesDataStore((state) => state.value);
+    const setNotesData = useNotesDataStore((state) => state.setSelectedTodoID);
+
+    const selectedNoteIndex = useSelectedNoteIndexStore((state) => state.value);
+    const setSelectedNoteIndex = useSelectedNoteIndexStore((state) => state.setSelectedTodoID);
 
 
     let [redirect, setRedirect] = useState(0);
