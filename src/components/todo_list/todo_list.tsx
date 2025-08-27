@@ -76,8 +76,8 @@ function TodoList() {
 
     let [selectedTodoID, setSelectedTodoID] = useOutletContext<any>()[8];
 
-    function closeTodoEditArea(instantClose: boolean = false) {
-        if (!instantClose) {
+    function closeTodoEditArea() {
+        if (selectedTodoID !== -1) {
             let todo: TodoType = newTodoDefaultState;
             let todoIndex: number = -1;
             for (let i = 0; i < selectedTodoList.list.length; i++) {
@@ -105,7 +105,7 @@ function TodoList() {
 
     function sideBarOptionOnClick(todoList: TodoListType) {
         setSelectedTodoList(todoList);
-        closeTodoEditArea(true);
+        closeTodoEditArea();
     }
 
     function loadSideBarOptions() {
@@ -408,7 +408,7 @@ function TodoList() {
         }
 
         setTodoListData([...todoListData]);
-        closeTodoEditArea(true);
+        closeTodoEditArea();
         setDeleteTodoPressed(false);
     }
 
@@ -456,7 +456,7 @@ function TodoList() {
                 && (event.target.parentNode as Element).id !== EDIT_TODO_AREA
                 && (event.target as Element).id !== EDIT_TODO_AREA) {
 
-                closeTodoEditArea(true);
+                closeTodoEditArea();
             }
 
             if (event.target.id !== DELETE_LIST_BUTTON) {
