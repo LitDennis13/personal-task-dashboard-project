@@ -50,8 +50,6 @@ function TodoList() {
     const DELETE_LIST_BUTTON = "DeleteListButton";
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
-    const dispatch = useDispatch();
-
 
     const todoListData = TodoListDataStore((state) => state.value);
     const setTodoListData = TodoListDataStore((state) => state.setTodoListData);

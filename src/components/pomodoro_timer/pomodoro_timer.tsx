@@ -43,7 +43,7 @@ function PomodoroTimer() {
 
     function onNavigationBarChange(index: number) {
         optionSet(index);
-        dispatch(setTimerHasStarted(false));
+        setTimerHasStarted(false);
     }
 
     function loadNavigationBarOptions() {
@@ -86,7 +86,7 @@ function PomodoroTimer() {
 
     function startStopOnClick() {
         if (!timerStarted) {
-            dispatch(setTimerHasStarted(true));
+            setTimerHasStarted(true);
         }
 
         setTimerStarted(!timerStarted);
@@ -111,7 +111,7 @@ function PomodoroTimer() {
 
     function resetButtonOnClick() {
         optionSet(option); // triggers re-render
-        dispatch(setTimerHasStarted(false));
+        setTimerHasStarted(false);
         setPlayedTimerEndSFX(false);
         playClickSoundEffect();
     }

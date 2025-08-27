@@ -50,8 +50,6 @@ function Notes() {
     const EDIT_NOTE_AREA_ID = "EditNoteArea";
     const DELETE_NOTE_BUTTON_ID = "DeleteNoteButton";
 
-    const dispatch = useDispatch();
-
 
     const notesData = useNotesDataStore((state) => state.value);
     const setNotesData = useNotesDataStore((state) => state.setSelectedTodoID);

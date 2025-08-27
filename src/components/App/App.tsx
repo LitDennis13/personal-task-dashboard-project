@@ -8,7 +8,7 @@ import styles from "./page_layout.module.css";
 
 export const APP_NAME = "Personal Task Dashboard";
 
-export interface TodoType {
+interface TodoType {
     todoID: number;
     name: string;
     note: string;
