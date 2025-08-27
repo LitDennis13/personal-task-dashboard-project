@@ -5,6 +5,8 @@ import useTimer from "../custom_hooks/use_timer";
 
 import styles from "./page_layout.module.css";
 
+export const APP_NAME = "Personal Task Dashboard";
+
 export interface TodoType {
     todoID: number;
     name: string;
@@ -24,37 +26,17 @@ export interface NoteType {
     note: string;
 }
 
-function setDocumentTitle(title: string) {
+export function setDocumentTitle(title: string) {
     document.title = title;
 }
 
 function App() {
-    let appName = "Personal Task Dashboard";
 
     // Pomodoro Timer stuff
-    let [timerHasStarted, setTimerHasStarted] = useState(false);
-    let [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useTimer(appName, setDocumentTitle, 0);
+    let [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useTimer(APP_NAME, setDocumentTitle, 0);
 
-    // Todo List stuff
-    let defaultTodoListData: TodoListType = {
-        listID: 0,
-        name: "My Day",
-        list: [],
-    };
-    let [newID, setNewID] = useState(1);
-    let [todoListData, setTodoListData] = useState([defaultTodoListData]);
-    let [selectedTodoList, setSelectedTodoList] = useState<TodoListType>(todoListData[0]);
-    let [selectedTodoID, setSelectedTodoID] = useState(-1);
-
-
-
-    // Notes Stuff
-    let [notesData, setNotesData] = useState<NoteType[]>([]);
     let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
-    let [selectedNoteIndex, setSelectedNoteIndex] = useState(-1);
     let location = useLocation();
-
-
 
     useEffect(() => {
         if (location.pathname === "/pomodoro-timer" || location.pathname === "/todo-list") {
@@ -65,14 +47,13 @@ function App() {
         }
     }, [location]);
 
+    
     return <div id={changeBackgroundColor ? styles.changeBackgroundColor : ""}className={styles.mainStyle}>
         <div className={styles.navigationBarLocation}>
             <NavigationBar />
         </div>
         <div className={styles.mainContent}>
-            <Outlet context={[appName, [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX], [timerHasStarted, setTimerHasStarted], setDocumentTitle,
-                [todoListData, setTodoListData], [newID, setNewID], [notesData, setNotesData], [selectedTodoList, setSelectedTodoList], [selectedTodoID, setSelectedTodoID],
-                [selectedNoteIndex, setSelectedNoteIndex]]}/>
+            <Outlet context={[[option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX]]}/>
         </div>
     </div>
 }

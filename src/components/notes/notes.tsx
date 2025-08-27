@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { useOutletContext } from "react-router-dom";
 
 import type { NoteType } from "../App/App";
 import styles from "./notes.module.css";
 import AddNoteIcon from "../../assets/images/add_note_icon.svg";
 import NoteEditorCloseSoundEffect from "../../assets/audio/note_editor_close_sound_effect.mp3";
+import { useNewIDStore, useNotesDataStore, useSelectedNoteIndexStore } from "../../store";
 
 function leftRightWhiteSpaceRemoval(str: string) {
     let addToStringOne = false;
@@ -50,15 +50,20 @@ function Notes() {
     const EDIT_NOTE_AREA_ID = "EditNoteArea";
     const DELETE_NOTE_BUTTON_ID = "DeleteNoteButton";
 
-    let [notesData, setNotesData] = useOutletContext<any>()[6];
-    let [newID, setNewID] = useOutletContext<any>()[5];
+    const notesData = useNotesDataStore((state) => state.value);
+    const setNotesData = useNotesDataStore((state) => state.setSelectedTodoID);
+
+    const selectedNoteIndex = useSelectedNoteIndexStore((state) => state.value);
+    const setSelectedNoteIndex = useSelectedNoteIndexStore((state) => state.setSelectedTodoID);
+
+    const newID = useNewIDStore((state) => state.value);
+    const incrementNewID = useNewIDStore((state) => state.incrementNewID);
 
     let mainPage = useRef<HTMLDivElement>(null);
     let [scrollBarPadding, setScrollBarPadding] = useState(false);
 
     let editNoteDialog = useRef<HTMLDialogElement>(null);
     let editNoteArea = useRef<HTMLTextAreaElement>(null);
-    let [selectedNoteIndex, setSelectedNoteIndex] = useOutletContext<any>()[9];
 
     let [pressedNoteDelete, setPressedNoteDelete] = useState(false);
 
@@ -159,7 +164,7 @@ function Notes() {
         showNoteEditor(notesData.length - 1);
 
         setNotesData([...notesData]);
-        setNewID(newID + 1);
+        incrementNewID();
     }
 
     function loadAddNoteButton() {
