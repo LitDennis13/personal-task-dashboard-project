@@ -14,8 +14,6 @@ import PomodoroTimer from './components/pomodoro_timer/pomodoro_timer';
 import TodoList from './components/todo_list/todo_list';
 import Notes from './components/notes/notes';
 
-import { store } from './state/store';
-
 
 const router = createBrowserRouter([
 {
