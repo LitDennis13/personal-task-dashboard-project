@@ -2,10 +2,9 @@ import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
 import { APP_NAME, type TodoType, min, setDocumentTitle } from "../App/App";
+import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore, useTimerHasStartedStore } from "../../store";
 import { getTimerString, playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { updateCompletionStatus } from "../todo_list/todo_list";
-
-import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore, useTimerHasStartedStore } from "../../store";
 
 import styles from "./dashboard.module.css";
 import TodoListStyles from "../todo_list/todo_list.module.css";
@@ -15,7 +14,6 @@ import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
 import CircleCheckIcon from "../../assets/images/check_circle.svg";
 
-
 function Dashboard() {
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
 
@@ -23,13 +21,11 @@ function Dashboard() {
 
     const setTimerHasStarted = useTimerHasStartedStore((state) => state.setTimerHasStarted);
     
-
     const selectedTodoList = useSelectedTodoListStore((state) => state.value);
 
     const todoListData = TodoListDataStore((state) => state.value);
+
     const setTodoCompletionStatus = TodoListDataStore((state) => state.setTodoCompletionStatus);
-
-
 
     const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
 
@@ -56,7 +52,7 @@ function Dashboard() {
             if (!timerStarted) {
                 setTimerHasStarted(true);
             }
-            if (timerStarted) {
+            if (timerStarted) { // resets document name to APP_NAME
                 setDocumentTitle(APP_NAME);
             }
             setTimerStarted(!timerStarted);
@@ -150,7 +146,6 @@ function Dashboard() {
         }
         return "";
     }
-
 
     return <div className={styles.mainStyle}>
         <div className={styles.pomodoroSpace + " " + (timerStarted ? styles.timerGoing : styles.timerNotGoing)} onClick={() => pomodoroSpaceOnClick()}>
