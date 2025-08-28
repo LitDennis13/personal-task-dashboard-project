@@ -92,7 +92,6 @@
 
 .notePageNoteEntry {
     grid-template: 2fr 5fr / 1fr;
-
 }
 
 .dashBoardNoteEntry {
@@ -224,7 +223,6 @@
 
 .editNoteDialog > div > textarea::-webkit-scrollbar {
     width: var(--scroll-bar-width);
-    
 }
 
 .editNoteDialog > div > textarea::-webkit-scrollbar-track {

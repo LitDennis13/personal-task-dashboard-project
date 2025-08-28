@@ -72,20 +72,50 @@ export const useSelectedTodoIDStore = create<SelectedTodoIDStore>((set) => ({
 }));
 
 
+
 type NotesDataStore = {
     value: NoteType[];
-    setSelectedTodoID: (newNotesData: NoteType[]) => void;
+    setNotesData: (newNotesData: NoteType[]) => void;
+    addNewNote: (newNoteID: number) => void;
+    updateNote: (noteID: number, newNote: string) => void;
+    deleteNote: (noteIndex: number) => void;
+    updateNotePosition: (oldID: number, oldIndex: number, newID: number, newIndex: number) => void;
 };
 
 export const useNotesDataStore = create<NotesDataStore>((set) => ({
     value: [],
-    setSelectedTodoID: (newNotesData) => {
+    setNotesData: (newNotesData) => {
         set({value: newNotesData});
+    },
+    addNewNote: (newNoteID) => {
+        let tempNote: NoteType = {noteID: newNoteID, note: ""};
+        set((state) => ({value: [...state.value, tempNote]}));
+    },
+    updateNote: (noteID, newNote) => {
+        set((state) => {
+            state.value[noteID].note = newNote;
+            return {value: [...state.value]};
+        });
+    },
+    deleteNote: (noteIndex) => {
+        set((state) => {
+            state.value.splice(noteIndex, 1);
+            return {value: [...state.value]};
+        });
+    },
+    updateNotePosition: (oldID, oldIndex, newID, newIndex) => {
+        set((state) => {
+            state.value[newIndex].noteID = oldID;
+            state.value[oldIndex].noteID = newID;
+
+            state.value.sort((x, y) => x.noteID - y.noteID);
+
+            return {value: [...state.value]};
+        });
     }
 }));
 
 
-//        let [selectedNoteIndex, setSelectedNoteIndex] = useState(-1);
 type SelectedNoteIndexStore = {
     value: number;
     setSelectedTodoID: (newValue: number) => void;

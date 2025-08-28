@@ -27,14 +27,19 @@ interface NoteType {
     note: string;
 }
 
-export function setDocumentTitle(title: string) {
+function setDocumentTitle(title: string) {
     document.title = title;
 }
 
-function App() {
+function min(x: number, y: number) {
+    if (x < y) return x;
+    else return y;
+}
 
+function App() {
     // Pomodoro Timer stuff
     let [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useTimer(APP_NAME, setDocumentTitle, 0);
+
 
     let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
     let location = useLocation();
@@ -62,3 +67,5 @@ function App() {
 export default App;
 
 export type {TodoType, TodoListType, NoteType};
+
+export { setDocumentTitle, min };

@@ -1,23 +1,20 @@
 import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
-import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore, useTimerHasStartedStore } from "../../store";
-
+import { type TodoType, min } from "../App/App";
 import { loadTimer, playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
-import NoteIcon from "../../assets/images/notes.svg";
-import CircleIcon from "../../assets/images/circle.svg";
-import CircleCheckIcon from "../../assets/images/check_circle.svg";
 import { updateCompletionStatus } from "../todo_list/todo_list";
-import type { NoteType, TodoListType, TodoType } from "../App/App";
+
+import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore, useTimerHasStartedStore } from "../../store";
 
 import styles from "./dashboard.module.css";
 import TodoListStyles from "../todo_list/todo_list.module.css";
 import NotesStyles from "../notes/notes.module.css";
 
-function min(x: number, y: number) {
-    if (x < y) return x;
-    else return y;
-}
+import NoteIcon from "../../assets/images/notes.svg";
+import CircleIcon from "../../assets/images/circle.svg";
+import CircleCheckIcon from "../../assets/images/check_circle.svg";
+
 
 function Dashboard() {
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
@@ -28,21 +25,16 @@ function Dashboard() {
     
 
     const selectedTodoList = useSelectedTodoListStore((state) => state.value);
-    const setSelectedTodoList = useSelectedTodoListStore((state) => state.setSelectedTodoList);
 
     const todoListData = TodoListDataStore((state) => state.value);
     const setTodoListData = TodoListDataStore((state) => state.setTodoListData);
 
 
-    const selectedTodoID = useSelectedTodoIDStore((state) => state.value);
     const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
 
     const notesData = useNotesDataStore((state) => state.value);
-    const setNotesData = useNotesDataStore((state) => state.setSelectedTodoID);
 
-    const selectedNoteIndex = useSelectedNoteIndexStore((state) => state.value);
     const setSelectedNoteIndex = useSelectedNoteIndexStore((state) => state.setSelectedTodoID);
-
 
     let [redirect, setRedirect] = useState(0);
 
@@ -69,7 +61,7 @@ function Dashboard() {
         playClickSoundEffect();
     }
 
-    function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
+    function todoOnClickFunction(event: any, todoID: number) {
         if (event.target instanceof HTMLImageElement && event.target.id === TODO_COMPLETE_BUTTON_IMAGE_ID) {
             return;
         }
@@ -121,7 +113,7 @@ function Dashboard() {
             let foundNewLine = false;
             let title = "";
             let note = "";
-            for (const c of (notesData[i] as NoteType).note) {
+            for (const c of notesData[i].note) {
                 if (c === "\n" && !foundNewLine) {
                     foundNewLine = true;
                 }
@@ -162,23 +154,21 @@ function Dashboard() {
             <p className={styles.timeRemaining}>{loadTimer(timeRemaining)}</p>
         </div>
 
-        {((selectedTodoList as TodoListType).list.length >= 1) 
+        {(selectedTodoList.list.length >= 1) 
         ? 
             <div className={styles.todoSpace + " " + styles.todoSpaceWithTodos}>
-                <input className={styles.todoListName} value={(selectedTodoList as TodoListType).name} readOnly/>
+                <input className={styles.todoListName} value={selectedTodoList.name} readOnly/>
                 <div className={styles.todoListArea}>
                     {loadTodosFromList()}
                 </div>
             </div> 
         : 
             <div className={styles.todoSpace + " " + styles.todoSpaceWithOutTodos}>
-                <p className={styles.noTodosMessage}> The selected todo List <span>{(selectedTodoList as TodoListType).name}</span> has no todos</p>
+                <p className={styles.noTodosMessage}> The selected todo List <span>{selectedTodoList.name}</span> has no todos</p>
             </div>
         }
 
-
-
-        {((notesData as NoteType[]).length >= 1)
+        {(notesData.length >= 1)
         ?
             <div className={styles.noteSpace + " " + styles.hasNotes}>
                 {loadNotes()}
