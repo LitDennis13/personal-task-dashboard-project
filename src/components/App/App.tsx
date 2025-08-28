@@ -68,7 +68,9 @@ function App() {
             <NavigationBar />
         </div>
         <div className={styles.mainContent}>
-            <Outlet context={[[option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX]]}/>
+            <Outlet context={{pomodoroTimerRequirements: [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX],
+                dashboardRequirements: [timerStarted, timeRemaining, setTimerStarted, setPlayedTimerEndSFX]
+            }}/>
         </div>
     </div>
 }

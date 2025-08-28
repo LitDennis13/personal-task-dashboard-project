@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
-import { type TodoType, min } from "../App/App";
-import { loadTimer, playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
+import { APP_NAME, type TodoType, min, setDocumentTitle } from "../App/App";
+import { getTimerString, playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { updateCompletionStatus } from "../todo_list/todo_list";
 
 import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore, useTimerHasStartedStore } from "../../store";
@@ -19,7 +19,7 @@ import CircleCheckIcon from "../../assets/images/check_circle.svg";
 function Dashboard() {
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
 
-    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted] = useOutletContext<any>()[0];
+    const [timerStarted, timeRemaining, setTimerStarted] = useOutletContext<any>().dashboardRequirements;
 
     const setTimerHasStarted = useTimerHasStartedStore((state) => state.setTimerHasStarted);
     
@@ -55,6 +55,9 @@ function Dashboard() {
         else {
             if (!timerStarted) {
                 setTimerHasStarted(true);
+            }
+            if (timerStarted) {
+                setDocumentTitle(APP_NAME);
             }
             setTimerStarted(!timerStarted);
         }
@@ -152,7 +155,7 @@ function Dashboard() {
     return <div className={styles.mainStyle}>
         <div className={styles.pomodoroSpace + " " + (timerStarted ? styles.timerGoing : styles.timerNotGoing)} onClick={() => pomodoroSpaceOnClick()}>
             <p className={styles.timerTitle}>{loadTimerTitle()}</p>
-            <p className={styles.timeRemaining}>{loadTimer(timeRemaining)}</p>
+            <p className={styles.timeRemaining}>{getTimerString(timeRemaining)}</p>
         </div>
 
         {(selectedTodoList.list.length >= 1) 
