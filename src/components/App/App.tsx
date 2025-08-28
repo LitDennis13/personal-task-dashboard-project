@@ -31,6 +31,15 @@ function setDocumentTitle(title: string) {
     document.title = title;
 }
 
+function emptyOrWhiteSpace(inString: string) {
+    for (let i = 0; i < inString.length; i++) {
+        if (inString[i] !== " ") {
+            return false;
+        }
+    }
+    return true;
+}
+
 function min(x: number, y: number) {
     if (x < y) return x;
     else return y;
@@ -68,4 +77,4 @@ export default App;
 
 export type {TodoType, TodoListType, NoteType};
 
-export { setDocumentTitle, min };
+export { setDocumentTitle, emptyOrWhiteSpace, min };

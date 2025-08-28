@@ -27,7 +27,8 @@ function Dashboard() {
     const selectedTodoList = useSelectedTodoListStore((state) => state.value);
 
     const todoListData = TodoListDataStore((state) => state.value);
-    const setTodoListData = TodoListDataStore((state) => state.setTodoListData);
+    const setTodoCompletionStatus = TodoListDataStore((state) => state.setTodoCompletionStatus);
+
 
 
     const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
@@ -61,7 +62,7 @@ function Dashboard() {
         playClickSoundEffect();
     }
 
-    function todoOnClickFunction(event: any, todoID: number) {
+    function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
         if (event.target instanceof HTMLImageElement && event.target.id === TODO_COMPLETE_BUTTON_IMAGE_ID) {
             return;
         }
@@ -78,7 +79,7 @@ function Dashboard() {
 
             let todoEntry = <div key={index} className={TodoListStyles.todoCard + " " + TodoListStyles.todoCardNotSelected} onClick={(event) => todoOnClickFunction(event, todo.todoID)}>
                 <div className={TodoListStyles.checkCompletedArea}>
-                    <button onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoListData, todo.todoID)}>
+                    <button onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoCompletionStatus, todo.todoID)}>
                         <img id={TODO_COMPLETE_BUTTON_IMAGE_ID} src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>

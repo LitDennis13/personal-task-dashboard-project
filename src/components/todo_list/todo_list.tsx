@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+
+import { type TodoType, type TodoListType, emptyOrWhiteSpace } from "../App/App";
+import { TodoListDataStore, useNewIDStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
+
 import styles from "./todo_list.module.css";
+
 import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
 import CircleCheckIcon from "../../assets/images/check_circle.svg";
@@ -7,40 +12,31 @@ import UpArrow from "../../assets/images/up_arrow.svg";
 import DownArrow from "../../assets/images/down_arrow.svg";
 import TaskCompleteSoundEffect from "../../assets/audio/task_complete_sound.mp3";
 
-import type { TodoType, TodoListType } from "../App/App";
-import { TodoListDataStore, useNewIDStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
-
 function playTaskCompleteSoundEffect() {
     new Audio(TaskCompleteSoundEffect).play();
 }
 
-function emptyOrWhiteSpace(inString: string) {
-    for (let i = 0; i < inString.length; i++) {
-        if (inString[i] !== " ") {
-            return false;
-        }
-    }
-    return true;
-}
+function updateCompletionStatus(selectedTodoList: TodoListType, todoListData: TodoListType[], setTodoCompletionStatus: any, ID: number) {
+    let todoIndex = -1;
+    let completionStatus = false;
 
-export function updateCompletionStatus(selectedTodoList: TodoListType, todoListData: TodoListType[], setTodoListData: any, ID: number) {
     for (let i = 0; i < selectedTodoList.list.length; i++) {
-        if ((selectedTodoList.list[i] as TodoType).todoID == ID) {
-            (selectedTodoList.list[i] as TodoType).isComplete = !(selectedTodoList.list[i] as TodoType).isComplete;
-
-            if ((selectedTodoList.list[i] as TodoType).isComplete) {
-                playTaskCompleteSoundEffect();
-            }
+        if (selectedTodoList.list[i].todoID === ID) {
+            todoIndex = i;
+            completionStatus = !selectedTodoList.list[i].isComplete;   
         }
     }
 
     for (let i = 0; i < todoListData.length; i++) {
-        if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-            (todoListData[i] as TodoListType) = selectedTodoList;
+        if (todoListData[i].listID === selectedTodoList.listID) {
+            setTodoCompletionStatus(i, todoIndex, completionStatus);
+
+            if (completionStatus) {
+                playTaskCompleteSoundEffect();
+            }
             break;
         }
     }
-    setTodoListData([...todoListData]);
 }
 
 function TodoList() {    
@@ -52,20 +48,35 @@ function TodoList() {
 
 
     const todoListData = TodoListDataStore((state) => state.value);
-    const setTodoListData = TodoListDataStore((state) => state.setTodoListData);
+    const addTodolist = TodoListDataStore((state) => state.addTodolist);
+    const setTodoListName = TodoListDataStore((state) => state.setTodoListName);
+    const deleteTodoList = TodoListDataStore((state) => state.deleteTodoList);
+    const switchListIDs = TodoListDataStore((state) => state.switchListIDs);
+    const addTodo = TodoListDataStore((state) => state.addTodo);
+    const setTodoName = TodoListDataStore((state) => state.setTodoName);
+    const setTodoNote = TodoListDataStore((state) => state.setTodoNote);
+    const setTodoCompletionStatus = TodoListDataStore((state) => state.setTodoCompletionStatus);
+    const deleteTodo = TodoListDataStore((state) => state.deleteTodo);
+    const updateTodoPosition = TodoListDataStore((state) => state.updateTodoPosition);
     
+
     const newID = useNewIDStore((state) => state.value);
     const incrementNewID = useNewIDStore((state) => state.incrementNewID);
 
     const selectedTodoList = useSelectedTodoListStore((state) => state.value);
     const setSelectedTodoList = useSelectedTodoListStore((state) => state.setSelectedTodoList);
 
-    let [newListMade, setNewListMade] = useState(false);
+    const selectedTodoID = useSelectedTodoIDStore((state) => state.value);
+    const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
 
-    let [deleteListPressed, setDeleteListPressed] = useState(false);
-    let [deleteTodoPressed, setDeleteTodoPressed] = useState(false);
+    const [newListMade, setNewListMade] = useState(false);
+    const [focusOnTodoListName, setFocusOnTodoListName] = useState(false);
 
-    let newTodoDefaultState: TodoType = {
+
+    const [deleteListPressed, setDeleteListPressed] = useState(false);
+    const [deleteTodoPressed, setDeleteTodoPressed] = useState(false);
+
+    const newTodoDefaultState: TodoType = {
         todoID: 0,
         name: "",
         note: "",
@@ -73,18 +84,18 @@ function TodoList() {
         isComplete: false
     };
     
-    let [newTodo, setNewTodo] = useState<TodoType>(newTodoDefaultState);
+    const [newTodo, setNewTodo] = useState<TodoType>(newTodoDefaultState);
 
-    let todoListNameDisplay = useRef(null);
+    const todoListNameDisplay = useRef(null);
 
-    let [draggingTodo, setDraggingTodo] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
-    let [recentTodoDragOver, setRecentTodoDragOver] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
+    const [draggingTodo, setDraggingTodo] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
+    const [recentTodoDragOver, setRecentTodoDragOver] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
 
-    const selectedTodoID = useSelectedTodoIDStore((state) => state.value);
-    const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
-
-    function closeTodoEditArea() {
-        if (selectedTodoID !== -1) {
+    /* This function closes the todo editor by setting the "selectedTodoID" state to -1.
+    It also has an option to check the current todo's name is empty and if so updating 
+    that todo's name to be "Untitled Todo" */
+    function closeTodoEditArea(checkEmptyTodo: boolean = true) {
+        if (checkEmptyTodo) {
             let todo: TodoType = newTodoDefaultState;
             let todoIndex: number = -1;
             for (let i = 0; i < selectedTodoList.list.length; i++) {
@@ -94,19 +105,15 @@ function TodoList() {
                 }
             }
 
-            if (emptyOrWhiteSpace(todo.name)) {
-                selectedTodoList.list[todoIndex].name = "Untitled Todo";
-                
+            if (emptyOrWhiteSpace(todo.name)) {                
                 for (let i = 0; i < todoListData.length; i++) {
-                    if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                        (todoListData[i] as TodoListType) = selectedTodoList;
+                    if (todoListData[i].listID === selectedTodoList.listID) {
+                        setTodoName(i,todoIndex,"Untitled Todo");
                         break;
                     }
                 }
-                setTodoListData([...todoListData]);
             }
         }
-
         setSelectedTodoID(-1);
     }
 
@@ -121,7 +128,7 @@ function TodoList() {
         let displayName: string;
         
         todoListData.map((element: TodoListType, index: number) => {
-            if (element.listID == selectedTodoList.listID) id = styles.selected;
+            if (element.listID === selectedTodoList.listID) id = styles.selected;
             else id = "";
             
             displayName = element.name;
@@ -138,30 +145,20 @@ function TodoList() {
     }
 
     function onNewListClick() {
-        let newTodoList: TodoListType = {
-            listID: newID,
-            name: "",
-            list: []
-        };
-
-        setTodoListData([...todoListData, newTodoList]);
-        setSelectedTodoList(newTodoList);
+        addTodolist(newID);
         incrementNewID();
         setNewListMade(true);
     }
 
     function updateTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
         let name = event.target.value;
-        selectedTodoList.name = name;
-        console.log(selectedTodoList.name);
 
         for (let i = 0; i < todoListData.length; i++) {
-            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                (todoListData[i] as TodoListType) = selectedTodoList;
+            if (todoListData[i].listID === selectedTodoList.listID) {
+                setTodoListName(i, name);
                 break;
             }
         }
-        setTodoListData([...todoListData]);
     }
 
     function loadTodoListNameField() {
@@ -175,9 +172,8 @@ function TodoList() {
 
     function fixEmptyTodoListNames() {
         for (let i = 0; i < todoListData.length; i++) {
-            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID && emptyOrWhiteSpace(todoListData[i].name)) {
-                (todoListData[i] as TodoListType).name = "Untitled List";
-                setTodoListData([...todoListData]);
+            if (todoListData[i].listID === selectedTodoList.listID && emptyOrWhiteSpace(todoListData[i].name)) {
+                setTodoListName(i, "Untitled List");
             }
         }
     }
@@ -187,16 +183,13 @@ function TodoList() {
     }
 
     function confirmDeleteListButtonOnClick() {
-        let index = 0;
         for (let i = 0; i < todoListData.length; i++) {
-            if ((todoListData[i] as TodoListType).listID === selectedTodoList.listID) {
-                index = i;
+            if (todoListData[i].listID === selectedTodoList.listID) {
+                deleteTodoList(i);
                 break;
             }
         }
-        todoListData.splice(index, 1);
-
-        setTodoListData([...todoListData]);
+        
         setSelectedTodoList(todoListData[0]);
         setDeleteListPressed(false);
     }
@@ -205,17 +198,9 @@ function TodoList() {
         for (let index = 1; index < todoListData.length; index++) {
             let indexBefore = index - 1;
 
-            if (todoListData[index].listID === selectedTodoList.listID) {
-                if (todoListData[indexBefore].listID === 0) {
-                    break;
-                }
-                else {
-                    let temp = todoListData[indexBefore];
-                    todoListData[indexBefore] = todoListData[index];
-                    todoListData[index] = temp;
-                    setTodoListData([...todoListData]);
-                    break;
-                }
+            if (todoListData[index].listID === selectedTodoList.listID && todoListData[indexBefore].listID !== 0) {
+                switchListIDs(indexBefore, index);
+                break;
             }
         }
     }
@@ -225,10 +210,7 @@ function TodoList() {
             let indexAfter = index + 1;
 
             if (todoListData[index].listID === selectedTodoList.listID && indexAfter < todoListData.length) {
-                let temp = todoListData[indexAfter];
-                todoListData[indexAfter] = todoListData[index];
-                todoListData[index] = temp;
-                setTodoListData([...todoListData]);
+                switchListIDs(index, indexAfter);
                 break;
             }
         }
@@ -267,37 +249,41 @@ function TodoList() {
         else return "";
     }
 
+    /* This function sets the "draggingTodo" state to the todo that the user has started dragging
+    and it sets the "recentTodoDragOver" state to the todo that the user is dragging as well
+    to signal that the most recent todo that was dragged over was itself */
     function onTodoDragStart(todo: TodoType) {
         setDraggingTodo(todo);
         setRecentTodoDragOver(todo);
         closeTodoEditArea();
     }
 
+    /* This function swaps the todo id's of the todo being dragged and the todo being dragged over and then the todo data gets
+    sorted by id to change the position of the todos */
     function onTodoDragOver(event: React.DragEvent<HTMLDivElement>, currentTodoDragOver: TodoType) {
         event.preventDefault();
 
         if (recentTodoDragOver.todoID !== currentTodoDragOver.todoID) {
+            let oldIndex = -1;
+            let newIndex = -1;
             let oldID = currentTodoDragOver.todoID;
             let newID = draggingTodo.todoID;
 
             for (let i = 0; i < selectedTodoList.list.length; i++) {
-                if ((selectedTodoList as TodoListType).list[i].todoID === oldID) {
-                    (selectedTodoList as TodoListType).list[i].todoID = newID;
+                if (selectedTodoList.list[i].todoID === oldID) {
+                    oldIndex = i;
                 }
-                else if ((selectedTodoList as TodoListType).list[i].todoID === newID) {
-                    (selectedTodoList as TodoListType).list[i].todoID = oldID;
+                if (selectedTodoList.list[i].todoID === newID) {
+                    newIndex = i;
                 } 
             }
 
-            (selectedTodoList as TodoListType).list.sort((entry1, entry2) => entry1.todoID - entry2.todoID);
-
             for (let i = 0; i < todoListData.length; i++) {
-                if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                    (todoListData[i] as TodoListType) = selectedTodoList;
+                if (todoListData[i].listID === selectedTodoList.listID) {
+                    updateTodoPosition(i, oldID, oldIndex, newID, newIndex);
                     break;
                 }
             }
-            setTodoListData([...todoListData]);
             setRecentTodoDragOver(currentTodoDragOver);
         }
     }
@@ -307,7 +293,7 @@ function TodoList() {
             return;
         }
         if (todoID === selectedTodoID) {
-            closeTodoEditArea()
+            closeTodoEditArea();
         }
         else {
             setSelectedTodoID(todoID);
@@ -323,7 +309,7 @@ function TodoList() {
 
             let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard + " " + (todo.todoID === selectedTodoID ? styles.todoCardSelected : styles.todoCardNotSelected)} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)}>
                 <div className={styles.checkCompletedArea}>
-                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoListData, todo.todoID)}>
+                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoCompletionStatus, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -358,47 +344,37 @@ function TodoList() {
             newTodo.todoID = newID;
             
             for (let i = 0; i < todoListData.length; i++) {
-                if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                    (todoListData[i] as TodoListType).list.push(newTodo);
+                if (todoListData[i].listID === selectedTodoList.listID) {
+                    addTodo(i, newTodo);
                     break;
                 }
             }
         }
 
         incrementNewID();
-        setTodoListData([...todoListData]);
         setNewTodo({...newTodoDefaultState});
     }
 
     function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {
-        selectedTodoList.list[todoIndex].name = event.target.value;
+        let name = event.target.value;
 
         for (let i = 0; i < todoListData.length; i++) {
-            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                (todoListData[i] as TodoListType) = selectedTodoList;
+            if (todoListData[i].listID === selectedTodoList.listID) {
+                setTodoName(i, todoIndex, name);
                 break;
             }
         }
-        setTodoListData([...todoListData]);
     }
 
     function onTodoNoteChange(event: React.ChangeEvent<HTMLTextAreaElement>, todoIndex: number) {
-        selectedTodoList.list[todoIndex].note = event.target.value;
-
-        if (emptyOrWhiteSpace(selectedTodoList.list[todoIndex].note)) {
-            selectedTodoList.list[todoIndex].hasNote = false;
-        }
-        else {
-            selectedTodoList.list[todoIndex].hasNote = true;
-        }
+        let note = event.target.value;
 
         for (let i = 0; i < todoListData.length; i++) {
-            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                (todoListData[i] as TodoListType) = selectedTodoList;
+            if (todoListData[i].listID === selectedTodoList.listID) {
+                setTodoNote(i, todoIndex, note);
                 break;
             }
         }
-        setTodoListData([...todoListData]);
     }
 
     function onTodoDeleteClick() {
@@ -406,17 +382,14 @@ function TodoList() {
     }
 
     function onConfirmTodoDeleteClick(todoIndex: number) {
-        selectedTodoList.list.splice(todoIndex, 1);
-
         for (let i = 0; i < todoListData.length; i++) {
-            if ((todoListData[i] as TodoListType).listID == selectedTodoList.listID) {
-                (todoListData[i] as TodoListType) = selectedTodoList;
+            if (todoListData[i].listID === selectedTodoList.listID) {
+                deleteTodo(i, todoIndex);
                 break;
             }
         }
 
-        setTodoListData([...todoListData]);
-        closeTodoEditArea();
+        closeTodoEditArea(false);
         setDeleteTodoPressed(false);
     }
 
@@ -435,7 +408,7 @@ function TodoList() {
         if (selectedTodoID !== -1) {
             return <div id={EDIT_TODO_AREA} className={styles.editTodoArea}>
                 <div className={styles.editTodoCompletionStatus}>
-                    <button onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoListData, todo.todoID)}>
+                    <button onClick={() => updateCompletionStatus(selectedTodoList, todoListData, setTodoCompletionStatus, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -464,7 +437,7 @@ function TodoList() {
                 && (event.target.parentNode as Element).id !== EDIT_TODO_AREA
                 && (event.target as Element).id !== EDIT_TODO_AREA) {
 
-                closeTodoEditArea();
+                closeTodoEditArea(false);
             }
 
             if (event.target.id !== DELETE_LIST_BUTTON) {
@@ -477,14 +450,31 @@ function TodoList() {
         }
     }
 
+    /* This useEffect runs when a new todo list is created and it
+    sets the state of "selectedTodoList" to the new todo list created
+    and sets the state of "focusOnTodoListName" to true so that the
+    useEffect below will make the page focus on the input element
+    that contains the title for the new todo list */
     useEffect(() => {
-        if (todoListNameDisplay.current !== null && newListMade == true) {
-            (todoListNameDisplay.current as HTMLInputElement).focus();
+        if (newListMade) {
+            setSelectedTodoList(todoListData[todoListData.length - 1]);
             setNewListMade(false);
+            setFocusOnTodoListName(true);
         }
+        
     }, [newListMade]);
 
-return <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
+    /* This useEffect runs when the state of "focusOnTodoListName" is changed
+    and if "focusOnTodoListName" is true then the page will focus on the
+    input element for the todo list title */
+    useEffect(() => {
+        if (todoListNameDisplay.current !== null && focusOnTodoListName === true) {
+            (todoListNameDisplay.current as HTMLInputElement).focus();
+            setFocusOnTodoListName(false);
+        }
+    }, [focusOnTodoListName]);
+
+    return <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>
             <div className={styles.listTodoLists}>
                 {loadSideBarOptions()}
@@ -520,3 +510,4 @@ return <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClic
 }
 
 export default TodoList;
+export { updateCompletionStatus };

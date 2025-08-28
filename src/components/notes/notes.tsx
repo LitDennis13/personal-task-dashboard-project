@@ -67,16 +67,16 @@ function Notes() {
     const incrementNewID = useNewIDStore((state) => state.incrementNewID);
 
 
-    let mainPage = useRef<HTMLDivElement>(null);
-    let [scrollBarPadding, setScrollBarPadding] = useState(false);
+    const mainPage = useRef<HTMLDivElement>(null);
+    const [scrollBarPadding, setScrollBarPadding] = useState(false);
 
-    let editNoteDialog = useRef<HTMLDialogElement>(null);
-    let editNoteArea = useRef<HTMLTextAreaElement>(null);
+    const editNoteDialog = useRef<HTMLDialogElement>(null);
+    const editNoteArea = useRef<HTMLTextAreaElement>(null);
 
-    let [pressedNoteDelete, setPressedNoteDelete] = useState(false);
+    const [pressedNoteDelete, setPressedNoteDelete] = useState(false);
 
-    let [noteIDBeingDragged, setNoteIDBeingDragged] = useState(-1);
-    let [recentlyDraggedOverNoteID, setRecentlyDraggedOverNoteID] = useState(-1);
+    const [noteIDBeingDragged, setNoteIDBeingDragged] = useState(-1);
+    const [recentlyDraggedOverNoteID, setRecentlyDraggedOverNoteID] = useState(-1);
 
     /* This function checks if the scroll bar is loaded by checking whether the height of the scroll bar is
     greater than the height of the div on the page. If the scroll bar is greater then the "scrollBarPadding"
