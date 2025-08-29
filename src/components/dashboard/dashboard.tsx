@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
-import { APP_NAME, type TodoType, min, setDocumentTitle } from "../App/App";
+import { type TodoType, min } from "../App/App";
 import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore, useTimerHasStartedStore } from "../../store";
-import { getTimerString, playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
+import { playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { updateCompletionStatus } from "../todo_list/todo_list";
 
 import styles from "./dashboard.module.css";
@@ -17,7 +17,7 @@ import CircleCheckIcon from "../../assets/images/check_circle.svg";
 function Dashboard() {
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
 
-    const [timerStarted, timeRemaining, setTimerStarted] = useOutletContext<any>().dashboardRequirements;
+    const [timerStarted, timerStartStop, getTimerString, isTimerDone] = useOutletContext<any>().dashboardRequirements;
 
     const setTimerHasStarted = useTimerHasStartedStore((state) => state.setTimerHasStarted);
     
@@ -45,17 +45,11 @@ function Dashboard() {
     }
 
     function pomodoroSpaceOnClick() {
-        if (timeRemaining === 0) {
+        if (isTimerDone()) {
             setRedirect(1);
         }
         else {
-            if (!timerStarted) {
-                setTimerHasStarted(true);
-            }
-            if (timerStarted) { // resets document name to APP_NAME
-                setDocumentTitle(APP_NAME);
-            }
-            setTimerStarted(!timerStarted);
+            timerStartStop();
         }
 
         playClickSoundEffect();
@@ -150,7 +144,7 @@ function Dashboard() {
     return <div className={styles.mainStyle}>
         <div className={styles.pomodoroSpace + " " + (timerStarted ? styles.timerGoing : styles.timerNotGoing)} onClick={() => pomodoroSpaceOnClick()}>
             <p className={styles.timerTitle}>{loadTimerTitle()}</p>
-            <p className={styles.timeRemaining}>{getTimerString(timeRemaining)}</p>
+            <p className={styles.timeRemaining}>{getTimerString()}</p>
         </div>
 
         {(selectedTodoList.list.length >= 1) 

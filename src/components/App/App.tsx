@@ -4,7 +4,7 @@ import { Outlet, useLocation } from "react-router";
 import NavigationBar from "../navigation_bar/navigation_bar";
 import useTimer from "../custom_hooks/use_timer";
 
-import styles from "./page_layout.module.css";
+import styles from "./App.module.css";
 
 export const APP_NAME = "Personal Task Dashboard";
 
@@ -47,7 +47,7 @@ function min(x: number, y: number) {
 
 function App() {
     // Pomodoro Timer stuff
-    let [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useTimer(APP_NAME, setDocumentTitle, 0);
+    let [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone] = useTimer(APP_NAME, setDocumentTitle, 0);
 
 
     let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
@@ -68,9 +68,12 @@ function App() {
             <NavigationBar />
         </div>
         <div className={styles.mainContent}>
-            <Outlet context={{pomodoroTimerRequirements: [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX],
-                dashboardRequirements: [timerStarted, timeRemaining, setTimerStarted, setPlayedTimerEndSFX]
-            }}/>
+            <Outlet context={
+                {
+                    pomodoroTimerRequirements: [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone],
+                    dashboardRequirements: [timerStarted, timerStartStop, getTimerString, isTimerDone]
+                }
+            }/>
         </div>
     </div>
 }

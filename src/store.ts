@@ -1,4 +1,5 @@
 import { create } from "zustand";
+
 import { emptyOrWhiteSpace, type NoteType, type TodoListType, type TodoType } from "./components/App/App";
 
 type TimerHasStartedStore = {

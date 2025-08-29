@@ -1,8 +1,5 @@
 import { useOutletContext } from "react-router-dom";
 
-import { useTimerHasStartedStore } from "../../store";
-import { APP_NAME, setDocumentTitle } from "../App/App";
-
 import styles from "./pomodoro_timer.module.css";
 
 import clickSoundEffect from "../../assets/audio/bubble_sound_effect.m4a";
@@ -11,39 +8,12 @@ function playClickSoundEffect() {
     new Audio(clickSoundEffect).play();
 }
 
-function getTimerString(timeLeft: number) {
-    let minutes = Math.floor(timeLeft/60);
-    let seconds = timeLeft - minutes*60;
-
-    let onScreenMinutes = minutes.toString();
-    let onScreenSeconds = seconds.toString();
-
-    if (minutes < 10) {
-        onScreenMinutes = "0" + onScreenMinutes;
-    }
-    if (seconds < 10) {
-        onScreenSeconds = "0" + onScreenSeconds;
-    }
-
-    return onScreenMinutes + ":" + onScreenSeconds;
-}
 
 function PomodoroTimer() {
-    const [option, timerStarted, timeRemaining, optionSet, setTimerStarted, setPlayedTimerEndSFX] = useOutletContext<any>().pomodoroTimerRequirements;
-
-    const timerHasStarted = useTimerHasStartedStore((state) => state.value);
-    const setTimerHasStarted = useTimerHasStartedStore((state) => state.setTimerHasStarted);
-
-    function isTimerDone() {
-        if (timeRemaining == 0) {
-            return true;
-        }
-        return false;
-    }
-
+    const [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone] = useOutletContext<any>().pomodoroTimerRequirements;
+  
     function onNavigationBarChange(index: number) {
         optionSet(index);
-        setTimerHasStarted(false);
     }
 
     function loadNavigationBarOptions() {
@@ -84,14 +54,7 @@ function PomodoroTimer() {
     }
 
     function startStopOnClick() {
-        if (!timerStarted) {
-            setTimerHasStarted(true);
-        }
-        if (timerStarted) { // resets the document title to APP_NAME
-            setDocumentTitle(APP_NAME);
-        }
-
-        setTimerStarted(!timerStarted);
+        timerStartStop();
 
         playClickSoundEffect();
     }
@@ -111,12 +74,7 @@ function PomodoroTimer() {
     }
 
     function resetButtonOnClick() {
-        if (timerStarted) { // resets the document title to APP_NAME
-            setDocumentTitle(APP_NAME);
-        }
-        optionSet(option); // triggers re-render
-        setTimerHasStarted(false);
-        setPlayedTimerEndSFX(false);
+        timerReset();
         playClickSoundEffect();
     }
 
@@ -135,7 +93,7 @@ function PomodoroTimer() {
                 })}
             </nav>
             <div className={styles.timer}>
-                <p>{getTimerString(timeRemaining)}</p>
+                <p>{getTimerString()}</p>
             </div>
             <div className={styles.controls}>
                 {loadStartTimerButton()}
@@ -147,4 +105,4 @@ function PomodoroTimer() {
 }
 
 export default PomodoroTimer;
-export { playClickSoundEffect, getTimerString };
+export { playClickSoundEffect };
