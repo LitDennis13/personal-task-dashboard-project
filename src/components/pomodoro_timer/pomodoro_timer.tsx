@@ -8,7 +8,6 @@ function playClickSoundEffect() {
     new Audio(clickSoundEffect).play();
 }
 
-
 function PomodoroTimer() {
     const [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone] = useOutletContext<any>().pomodoroTimerRequirements;
   
@@ -74,7 +73,7 @@ function PomodoroTimer() {
     }
 
     function resetButtonOnClick() {
-        timerReset();
+        timerReset(option);
         playClickSoundEffect();
     }
 
