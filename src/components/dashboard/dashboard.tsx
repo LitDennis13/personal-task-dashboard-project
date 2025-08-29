@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
 import { type TodoType, min } from "../App/App";
-import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore, useTimerHasStartedStore } from "../../store";
+import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
 import { playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { updateCompletionStatus } from "../todo_list/todo_list";
 
@@ -18,8 +18,6 @@ function Dashboard() {
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
 
     const [timerStarted, timerStartStop, getTimerString, isTimerDone] = useOutletContext<any>().dashboardRequirements;
-
-    const setTimerHasStarted = useTimerHasStartedStore((state) => state.setTimerHasStarted);
     
     const selectedTodoList = useSelectedTodoListStore((state) => state.value);
 

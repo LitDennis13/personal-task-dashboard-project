@@ -2,19 +2,6 @@ import { create } from "zustand";
 
 import { emptyOrWhiteSpace, type NoteType, type TodoListType, type TodoType } from "./components/App/App";
 
-type TimerHasStartedStore = {
-    value: boolean;
-    setTimerHasStarted: (status: boolean) => void;
-};
-
-export const useTimerHasStartedStore = create<TimerHasStartedStore>((set) => ({
-    value: false,
-    setTimerHasStarted: (status: boolean) => {
-        set({value: status});
-    },
-}));
-
-
 type NewIDStore = {
     value: number,
     incrementNewID: () => void;
