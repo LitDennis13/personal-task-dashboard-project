@@ -7,23 +7,21 @@ function playTimerEndSoundEffect() {
 }
 
 function useTimer(appName: string, setDocumentTitle: Function, defaultOption: number): any {
-    const timeOptions = [1, 5, 15];
-    let [option, setOption] = useState(defaultOption);
-    let [timerStarted, setTimerStarted] = useState(false);
-    let [timerHasStarted, setTimerHasStarted] = useState(false);
-    let [playedTimerEndSFX, setPlayedTimerEndSFX] = useState(false);
+    const timeOptions = [25, 5, 15];
+    const [option, setOption] = useState(defaultOption);
+    const [timerStarted, setTimerStarted] = useState(false);
+    const [timerHasStarted, setTimerHasStarted] = useState(false);
+    const [playedTimerEndSFX, setPlayedTimerEndSFX] = useState(false);
 
-    let [endTime, setEndTime] = useState(new Date());
-    let [currentTime, setCurrentTime] = useState(new Date());
-    let [timerPauseTime, setTimerPauseTime] = useState(new Date());
-    let [minutesOffSet, setMinutesOffSet] = useState(-1);
-    let [secondsOffSet, setSecondsOffSet] = useState(-1);
-    let [miliSecondsOffSet, setMiliSecondsOffSet] = useState(-1);
+    const [endTime, setEndTime] = useState(new Date());
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [minutesOffSet, setMinutesOffSet] = useState(-1);
+    const [secondsOffSet, setSecondsOffSet] = useState(-1);
+    const [miliSecondsOffSet, setMiliSecondsOffSet] = useState(-1);
 
-    let [minutesLeft, setMinutesLeft] = useState(timeOptions[defaultOption]);
-    let [secondsLeft, setSecondsLeft] = useState(0);
+    const [minutesLeft, setMinutesLeft] = useState(timeOptions[defaultOption]);
+    const [secondsLeft, setSecondsLeft] = useState(0);
 
-    
     function optionSet(index: number) {
         setOption(index);
         setMinutesLeft(timeOptions[index]);
@@ -34,7 +32,28 @@ function useTimer(appName: string, setDocumentTitle: Function, defaultOption: nu
         setPlayedTimerEndSFX(false);
     }
 
+    function updateEndTime(mintues: number, seconds: number) {
+        let newEndTime = new Date();
+
+        let minutesOFS = 60 - newEndTime.getMinutes();
+        let secondsOFS = 59 - newEndTime.getSeconds();
+        let milisecondsOFS = 1000 - newEndTime.getMilliseconds();
+
+        newEndTime.setMinutes(newEndTime.getMinutes() + minutesOFS + mintues);
+        newEndTime.setSeconds(newEndTime.getSeconds() + secondsOFS + seconds - 1);
+        newEndTime.setMilliseconds(newEndTime.getMilliseconds() + milisecondsOFS);
+        
+        setEndTime(newEndTime);
+        setTimerStarted(true);
+        setMinutesOffSet(minutesOFS);
+        setSecondsOffSet(secondsOFS);
+        setMiliSecondsOffSet(milisecondsOFS);
+    }
+
     function timerStartStop() {
+        if (timerHasStarted && !timerStarted) {
+            updateEndTime(minutesLeft, secondsLeft);
+        }
         if (!timerStarted) {
             setTimerHasStarted(true);
         }
@@ -61,31 +80,12 @@ function useTimer(appName: string, setDocumentTitle: Function, defaultOption: nu
     }
 
     useEffect(() => {
-        console.log("Running End Time Setter");
         if (timerHasStarted) {
-            let newEndTime = new Date();
-
-            let minutesOFS = 60 - newEndTime.getMinutes();
-            let secondsOFS = 59 - newEndTime.getSeconds();
-            let milisecondsOFS = 1000 - newEndTime.getMilliseconds();
-
-            newEndTime.setMinutes(newEndTime.getMinutes() + minutesOFS + timeOptions[option]);
-            newEndTime.setSeconds(newEndTime.getSeconds() + secondsOFS);
-            newEndTime.setMilliseconds(newEndTime.getMilliseconds() + milisecondsOFS);
-
-
-            setEndTime(newEndTime);
-            setTimerStarted(true);
-            setMinutesOffSet(minutesOFS);
-            setSecondsOffSet(secondsOFS);
-            setMiliSecondsOffSet(milisecondsOFS);
+            updateEndTime(timeOptions[option], 0);
         }
     }, [timerHasStarted]);
 
     useEffect(() => {
-        if (timerHasStarted && !timerStarted) {
-            // setTimerPauseTime(new Date());
-        }
         if (!timerStarted) return;
         else if (minutesLeft === 0 && secondsLeft === 0) {
             setTimerStarted(false);
@@ -93,39 +93,26 @@ function useTimer(appName: string, setDocumentTitle: Function, defaultOption: nu
 
         const intervalID = setInterval(() => {
             setCurrentTime(new Date());
-        }, 500);
+        }, 100);
 
         return () => clearInterval(intervalID);
     });
 
     useEffect(() => {
-        console.log("Running Minutes and Seconds Updater");
         if (timerStarted) {
-            currentTime.setMinutes(currentTime.getMinutes() + minutesOffSet);
-            currentTime.setSeconds(currentTime.getSeconds() + secondsOffSet);
+            currentTime.setMinutes(currentTime.getMinutes() + minutesOffSet); // (currentTime.getMinutes() + minutesOffSet) is equal to 60, however after 59 it resets back to 0
+            currentTime.setSeconds(currentTime.getSeconds() + secondsOffSet); // (currentTime.getSeconds() + secondsOffSet) is equal to 60, and the same thing happens as above and it also adds one minute since it thinks it hit 60 seconds
             currentTime.setMilliseconds(currentTime.getMilliseconds() + miliSecondsOffSet);
+           
+            let newMinutesLeft = (endTime.getMinutes() - currentTime.getMinutes());
+            let newSecondsLeft = (endTime.getSeconds() - currentTime.getSeconds());
             
-            let newMinutesLeft = (endTime.getMinutes() - currentTime.getMinutes() - 1);
-            let newSecondsLeft = (endTime.getSeconds() - currentTime.getSeconds() + 60);
-
-            if (newMinutesLeft < 0) {
-                newMinutesLeft = 0;
-                newSecondsLeft = 0;
-            }
-            else if (newMinutesLeft === 0 && newSecondsLeft === 60) {
-                newSecondsLeft = 59;
-            }
-            else if (newSecondsLeft === 60) {
-                newSecondsLeft = 0;
-            }
             setMinutesLeft(newMinutesLeft);
             setSecondsLeft(newSecondsLeft);
         }
     }, [currentTime]);
 
     useEffect(()=>{
-        console.log("Running Document Title Updater");
-
         if (timerStarted) {
             setDocumentTitle(getTimerString() + " - " + appName)
         }
