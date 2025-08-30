@@ -6,7 +6,7 @@ import useTimer from "../custom_hooks/use_timer";
 
 import styles from "./App.module.css";
 
-export const APP_NAME = "Personal Task Dashboard";
+const APP_NAME = "Personal Task Dashboard";
 
 interface TodoType {
     todoID: number;
@@ -46,7 +46,7 @@ function min(x: number, y: number) {
 }
 
 function App() {
-    // Pomodoro Timer stuff
+    // Timer Stuff
     let [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone] = useTimer(APP_NAME, setDocumentTitle, 0);
 
 
@@ -82,4 +82,4 @@ export default App;
 
 export type {TodoType, TodoListType, NoteType};
 
-export { setDocumentTitle, emptyOrWhiteSpace, min };
+export { APP_NAME, setDocumentTitle, emptyOrWhiteSpace, min };
