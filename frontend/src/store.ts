@@ -1,6 +1,39 @@
 import { create } from "zustand";
 
-import { emptyOrWhiteSpace, type NoteType, type TodoListType, type TodoType } from "./components/App/App";
+import { emptyOrWhiteSpace } from "./components/App/App";
+
+import type { TodoListType, TodoType, NoteType } from "./types";
+
+
+fetch("http://localhost:8080/api/v1/todo-lists/getTodoLists", {
+    method: "GET",
+    mode: 'cors',
+    headers: {
+        'Access-Control-Allow-Origin':'*'
+    }
+})
+.then((response) => response.json())
+.then((data) => {
+    console.log(data);
+})
+.catch((error) => {
+    console.error(error);
+});
+
+fetch("http://localhost:8080/api/v1/todo-lists/getTest", {
+    method: "GET",
+    mode: 'cors',
+    headers: {
+        'Access-Control-Allow-Origin':'*'
+    }
+})
+.then((response) => response.text())
+.then((data) => {
+    console.log(data);
+})
+.catch((error) => {
+    console.error(error);
+});
 
 type NewIDStore = {
     value: number,

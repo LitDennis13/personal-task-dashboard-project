@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
-import { type TodoType, type TodoListType, emptyOrWhiteSpace } from "../App/App";
+import { emptyOrWhiteSpace } from "../App/App";
+import type { TodoListType, TodoType } from "../../types";
 import { TodoListDataStore, useNewIDStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
 
 import styles from "./todo_list.module.css";

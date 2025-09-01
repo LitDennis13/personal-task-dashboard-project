@@ -8,25 +8,6 @@ import styles from "./App.module.css";
 
 const APP_NAME = "Personal Task Dashboard";
 
-interface TodoType {
-    todoID: number;
-    name: string;
-    note: string;
-    hasNote: boolean;
-    isComplete: boolean;
-}
-
-interface TodoListType {
-    listID: number;
-    name: string;
-    list: TodoType[];
-}
-
-interface NoteType {
-    noteID: number;
-    note: string;
-}
-
 function setDocumentTitle(title: string) {
     document.title = title;
 }
@@ -47,11 +28,11 @@ function min(x: number, y: number) {
 
 function App() {
     // Timer Stuff
-    let [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone] = useTimer(APP_NAME, setDocumentTitle, 0);
+    const [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone] = useTimer(APP_NAME, setDocumentTitle, 0);
 
 
-    let [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
-    let location = useLocation();
+    const [changeBackgroundColor, setChangeBackGroundColor] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         if (location.pathname === "/pomodoro-timer" || location.pathname === "/todo-list") {
@@ -79,7 +60,5 @@ function App() {
 }
 
 export default App;
-
-export type {TodoType, TodoListType, NoteType};
 
 export { APP_NAME, setDocumentTitle, emptyOrWhiteSpace, min };

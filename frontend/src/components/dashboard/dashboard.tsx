@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
-import { type TodoType, min } from "../App/App";
+import { min } from "../App/App";
+import type { TodoType } from "../../types";
 import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
 import { playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { updateCompletionStatus } from "../todo_list/todo_list";
