@@ -145,9 +145,9 @@ function TodoList() {
         </>;
     }
 
-    function onNewListClick() {
+    async function onNewListClick() {
         addTodolist(newID);
-        incrementNewID();
+        await incrementNewID();
         setNewListMade(true);
     }
 
@@ -338,7 +338,7 @@ function TodoList() {
         setNewTodo({...newTodo});
     }
 
-    function addNewTodo(event: (React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>)) {
+    async function addNewTodo(event: (React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>)) {
         event.preventDefault();
 
         if (!emptyOrWhiteSpace(newTodo.name)) {
@@ -352,7 +352,7 @@ function TodoList() {
             }
         }
 
-        incrementNewID();
+        await incrementNewID();
         setNewTodo({...newTodoDefaultState});
     }
 

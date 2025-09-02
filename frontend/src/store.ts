@@ -5,45 +5,73 @@ import { emptyOrWhiteSpace } from "./components/App/App";
 import type { TodoListType, TodoType, NoteType } from "./types";
 
 
-fetch("http://localhost:8080/api/v1/todo-lists/getTodoLists", {
-    method: "GET",
-    mode: 'cors',
-    headers: {
-        'Access-Control-Allow-Origin':'*'
-    }
-})
-.then((response) => response.json())
-.then((data) => {
-    console.log(data);
-})
-.catch((error) => {
-    console.error(error);
-});
+// fetch("http://localhost:8080/api/v1/todo-list-data/getTodoListData", {
+//     method: "GET",
+//     mode: 'cors',
+//     headers: {
+//         'Access-Control-Allow-Origin':'*'
+//     }
+// })
+// .then((response) => response.json())
+// .then((data) => {
+//     console.log(data);
+// })
+// .catch((error) => {
+//     console.error(error);
+// });
 
-fetch("http://localhost:8080/api/v1/todo-lists/getTest", {
+// fetch("http://localhost:8080/api/v1/new-id/get-and-increment-new-id", {
+//     method: "GET",
+//     mode: 'cors',
+//     headers: {
+//         'Access-Control-Allow-Origin':'*'
+//     }
+// })
+// .then((response) => response.json())
+// .then((data: number) => {
+//     console.log(data);
+// })
+// .catch((error) => {
+//     console.error(error);
+// });
+
+const fetchOptions: RequestInit = {
     method: "GET",
     mode: 'cors',
     headers: {
         'Access-Control-Allow-Origin':'*'
     }
-})
-.then((response) => response.text())
-.then((data) => {
-    console.log(data);
-})
-.catch((error) => {
-    console.error(error);
-});
+};
 
 type NewIDStore = {
-    value: number,
-    incrementNewID: () => void;
+    value: number;
+    updateNewID: () => Promise<void>;
+    incrementNewID: () => Promise<void>;
 };
 
 export const useNewIDStore = create<NewIDStore>((set) => ({
-    value: 1,
-    incrementNewID: () => {
-        set((state) => ({value: state.value + 1}));
+    value: 0,
+    updateNewID: async () => {
+        await fetch("http://localhost:8080/api/v1/new-id/get-new-id", fetchOptions)
+        .then((response) => response.json())
+        .then((data: number) => {
+            set({value: data});
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    },
+
+    incrementNewID: async () => {
+        await fetch("http://localhost:8080/api/v1/new-id/get-and-increment-new-id", fetchOptions)
+        .then((response) => response.json())
+        .then((data: number) => {
+            set({value: data});
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+        
     }
 }));
 

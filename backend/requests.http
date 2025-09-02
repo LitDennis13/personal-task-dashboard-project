@@ -2,5 +2,10 @@
 GET http://localhost:8080/
 
 ###
+GET http://localhost:8080/api/v1/todo-list-data/getTodoListData
 
-GET http://localhost:8080/api/v1/todo-lists/getTodoLists
+###
+GET http://localhost:8080/api/v1/new-id/get-new-id
+
+###
+GET http://localhost:8080/api/v1/new-id/get-and-increment-new-id
