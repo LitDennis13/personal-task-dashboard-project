@@ -18,7 +18,7 @@ public class NewIDController {
         System.out.println("New ID is " + NewID);
         return NewID;
     }
-
+    
     @GetMapping
     @RequestMapping("/get-and-increment-new-id")
     public Integer IncrementID() {

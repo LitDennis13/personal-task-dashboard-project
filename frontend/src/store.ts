@@ -49,6 +49,7 @@ type NewIDStore = {
     incrementNewID: () => Promise<void>;
 };
 
+// SHOULD BE SERVER SIDE STATE
 export const useNewIDStore = create<NewIDStore>((set) => ({
     value: 0,
     updateNewID: async () => {
@@ -97,6 +98,7 @@ type TodoListDataStore = {
     updateTodoPosition: (listIndex: number, oldID: number, oldIndex: number, newID: number, newIndex: number) => void;
 };
 
+// SHOULD BE SERVER SIDE STATE
 export const TodoListDataStore = create<TodoListDataStore>((set) => ({
     value: [defaultTodoListData],
     setTodoListData: (newTodoListData) => {
@@ -203,7 +205,7 @@ export const useSelectedTodoIDStore = create<SelectedTodoIDStore>((set) => ({
 }));
 
 
-
+// SHOULD BE SERVER SIDE STATE
 type NotesDataStore = {
     value: NoteType[];
     setNotesData: (newNotesData: NoteType[]) => void;
