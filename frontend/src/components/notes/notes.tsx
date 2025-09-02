@@ -163,12 +163,12 @@ function Notes() {
         return returnData;
     }
 
-    function addNoteButtonOnClick() {
+    async function addNoteButtonOnClick() {
         checkAndHandleScrollBarLoaded();
 
         addNewNote(newID);
         showNoteEditor(notesData.length);
-        incrementNewID();
+        await incrementNewID();
     }
 
     function loadAddNoteButton() {
