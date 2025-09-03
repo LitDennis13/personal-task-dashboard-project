@@ -4,37 +4,6 @@ import { emptyOrWhiteSpace } from "./components/App/App";
 
 import type { TodoListType, TodoType, NoteType } from "./types";
 
-
-// fetch("http://localhost:8080/api/v1/todo-list-data/getTodoListData", {
-//     method: "GET",
-//     mode: 'cors',
-//     headers: {
-//         'Access-Control-Allow-Origin':'*'
-//     }
-// })
-// .then((response) => response.json())
-// .then((data) => {
-//     console.log(data);
-// })
-// .catch((error) => {
-//     console.error(error);
-// });
-
-// fetch("http://localhost:8080/api/v1/new-id/get-and-increment-new-id", {
-//     method: "GET",
-//     mode: 'cors',
-//     headers: {
-//         'Access-Control-Allow-Origin':'*'
-//     }
-// })
-// .then((response) => response.json())
-// .then((data: number) => {
-//     console.log(data);
-// })
-// .catch((error) => {
-//     console.error(error);
-// });
-
 const fetchOptions: RequestInit = {
     method: "GET",
     mode: 'cors',
@@ -71,8 +40,7 @@ export const useNewIDStore = create<NewIDStore>((set) => ({
         })
         .catch((error) => {
             console.error(error);
-        });
-        
+        }); 
     }
 }));
 

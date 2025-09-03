@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 import { emptyOrWhiteSpace } from "../App/App";
 import type { TodoListType, TodoType } from "../../types";
-import { TodoListDataStore, useNewIDStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
+import { TodoListDataStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
+import { useNewID } from "../custom_hooks/use_newid";
 
 import styles from "./todo_list.module.css";
 
@@ -61,8 +62,7 @@ function TodoList() {
     const updateTodoPosition = TodoListDataStore((state) => state.updateTodoPosition);
     
 
-    const newID = useNewIDStore((state) => state.value);
-    const incrementNewID = useNewIDStore((state) => state.incrementNewID);
+    const [newID, incrementNewID] = useNewID();
 
     const selectedTodoList = useSelectedTodoListStore((state) => state.value);
     const setSelectedTodoList = useSelectedTodoListStore((state) => state.setSelectedTodoList);

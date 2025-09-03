@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
-import { useNewIDStore, useNotesDataStore, useSelectedNoteIndexStore } from "../../store";
+import { useNotesDataStore, useSelectedNoteIndexStore } from "../../store";
 
 import styles from "./notes.module.css";
 
 import AddNoteIcon from "../../assets/images/add_note_icon.svg";
 import NoteEditorCloseSoundEffect from "../../assets/audio/note_editor_close_sound_effect.mp3";
+import { useNewID } from "../custom_hooks/use_newid";
 
 function leftRightWhiteSpaceRemoval(str: string) {
     let addToStringOne = false;
@@ -51,6 +52,8 @@ function Notes() {
     const EDIT_NOTE_AREA_ID = "EditNoteArea";
     const DELETE_NOTE_BUTTON_ID = "DeleteNoteButton";
 
+    const [newID, incrementNewID] = useNewID();
+    
 
     const notesData = useNotesDataStore((state) => state.value);
     const addNewNote = useNotesDataStore((state) => state.addNewNote);
@@ -61,10 +64,6 @@ function Notes() {
 
     const selectedNoteIndex = useSelectedNoteIndexStore((state) => state.value);
     const setSelectedNoteIndex = useSelectedNoteIndexStore((state) => state.setSelectedTodoID);
-
-
-    const newID = useNewIDStore((state) => state.value);
-    const incrementNewID = useNewIDStore((state) => state.incrementNewID);
 
 
     const mainPage = useRef<HTMLDivElement>(null);
@@ -166,8 +165,9 @@ function Notes() {
     async function addNoteButtonOnClick() {
         checkAndHandleScrollBarLoaded();
 
-        addNewNote(newID);
+        if (typeof newID === "number") addNewNote(newID);
         showNoteEditor(notesData.length);
+        
         await incrementNewID();
     }
 
@@ -250,7 +250,7 @@ function Notes() {
             showNoteEditor(selectedNoteIndex);
         }
     }, []);
-
+    
     return <div ref={mainPage} className={styles.mainPage + " " + (scrollBarPadding ? styles.mainPageWithScrollBar : styles.mainPageNoScrollBar)}>
         {loadNotes()}
         {loadAddNoteButton()}
