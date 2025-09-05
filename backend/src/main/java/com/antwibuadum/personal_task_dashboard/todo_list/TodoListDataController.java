@@ -22,10 +22,15 @@ public class TodoListDataController {
 
     @GetMapping
     @RequestMapping("/getTodoListData")
-    public List<TodoList> getTodoLists() {
+    public List<TodoList> getTodoListData() {
         System.out.println("Got Todo List Data");
         return temporaryTodoListData;
     }
 
+    @GetMapping
+    @RequestMapping("/updateLoadedTodoList")
+    public List<TodoList> updateLoadedTodoList() {
 
+        return temporaryTodoListData;
+    }
 }

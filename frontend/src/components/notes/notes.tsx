@@ -6,7 +6,7 @@ import styles from "./notes.module.css";
 
 import AddNoteIcon from "../../assets/images/add_note_icon.svg";
 import NoteEditorCloseSoundEffect from "../../assets/audio/note_editor_close_sound_effect.mp3";
-import { useNewID } from "../custom_hooks/use_newid";
+import { useNewID } from "../custom_hooks/api_hooks/use_newID";
 
 function leftRightWhiteSpaceRemoval(str: string) {
     let addToStringOne = false;

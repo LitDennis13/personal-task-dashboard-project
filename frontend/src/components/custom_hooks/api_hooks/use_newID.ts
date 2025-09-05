@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient, type UseMutateAsyncFunction } from "@tanstack/react-query";
 
-import { fetchNewID, sendIncrementNewID } from "../../api/newID";
+import { fetchNewID, sendIncrementNewID } from "../../../api/NewID/newID";
 
 
 export function useNewID(): [number, UseMutateAsyncFunction<void, Error, void, unknown>] {
@@ -15,10 +15,11 @@ export function useNewID(): [number, UseMutateAsyncFunction<void, Error, void, u
     const { mutateAsync: incrementNewID, isSuccess: incrementSucess } = useMutation({
         mutationFn: sendIncrementNewID,
     });
+    
 
     useEffect(() => {
         queryClient.invalidateQueries({queryKey: ["newID"]});
-        console.log("works");
+        
     }, [incrementSucess]);
 
     return [(newID as number), incrementNewID];

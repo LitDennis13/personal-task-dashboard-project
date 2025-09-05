@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
-
-import { useNewIDStore } from "../../store";
-
 import NavigationBar from "../navigation_bar/navigation_bar";
 import useTimer from "../custom_hooks/use_timer";
 
 import styles from "./App.module.css";
+import { useTodoListData } from "../custom_hooks/api_hooks/use_todoListData";
 
 const APP_NAME = "Personal Task Dashboard";
 
@@ -29,6 +27,10 @@ function min(x: number, y: number) {
 }
 
 function App() {
+    const [todoListData, updateLoadedTodList, loadingTodoListData] = useTodoListData();
+    console.log(loadingTodoListData ? "Loading..." : todoListData);
+
+
    // Timer Stuff
     const [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone] = useTimer(APP_NAME, setDocumentTitle, 0);
 
@@ -44,14 +46,6 @@ function App() {
             setChangeBackGroundColor(true);
         }
     }, [location]);
-
-    //Setup Stuff
-    useEffect(() => {
-        // Set "newID" value to lastest value from database 
-        const updateNewID = useNewIDStore.getState().updateNewID;
-        updateNewID();
-
-    }, []);
 
     
     return <div id={changeBackgroundColor ? styles.changeBackgroundColor : ""}className={styles.mainStyle}>
