@@ -14,7 +14,7 @@ export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void,
         queryFn: () => fetchTodoListData(),
     });
 
-    const { mutateAsync: updateLoadedTodList, isSuccess: updateLoadedTodoListSucess } = useMutation({
+    const { mutateAsync: updateLoadedTodoList, isSuccess: updateLoadedTodoListSucess } = useMutation({
         mutationFn: sendUpdatedLoadedTodoList,
     });
     
@@ -24,7 +24,7 @@ export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void,
         
     // }, [incrementSucess]);
 
-    return [(todoListData as TodoListType[]), updateLoadedTodList, loadingTodoListData];
+    return [(todoListData as TodoListType[]), updateLoadedTodoList, loadingTodoListData];
 }
 
 

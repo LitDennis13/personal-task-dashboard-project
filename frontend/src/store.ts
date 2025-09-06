@@ -90,7 +90,7 @@ export const useLoadedTodoListStore = create<LoadedTodoListStore>((set) => ({
             if (state.value !== null) {
                 state.value.name = newName;
             }
-            return {value: state.value};
+            return {value: {...state.value}};
 
         });
     },
@@ -99,7 +99,7 @@ export const useLoadedTodoListStore = create<LoadedTodoListStore>((set) => ({
             if (state.value !== null) {
                 state.value.list.push(newTodo);
             }
-            return {value: state.value};
+            return {value: {...state.value}};
         });
     },
     setTodoName: (todoIndex, newName) => {
@@ -107,7 +107,7 @@ export const useLoadedTodoListStore = create<LoadedTodoListStore>((set) => ({
             if (state.value !== null) {
                 state.value.list[todoIndex].name = newName;
             }
-            return {value: state.value};
+            return {value: {...state.value}};
         });
     },
     setTodoNote: (todoIndex, newNote) => {
@@ -120,7 +120,7 @@ export const useLoadedTodoListStore = create<LoadedTodoListStore>((set) => ({
                 state.value.list[todoIndex].hasNote = hasNote;
             }
             
-            return {value: state.value};
+            return {value: {...state.value}};
         });
     },
     setTodoCompletionStatus: (todoIndex, status) => {
@@ -128,7 +128,7 @@ export const useLoadedTodoListStore = create<LoadedTodoListStore>((set) => ({
             if (state.value !== null) {
                 state.value.list[todoIndex].isComplete = status;
             }
-            return {value: state.value};
+            return {value: {...state.value}};
         });
     },
     deleteTodo: (todoIndex) => {
@@ -136,7 +136,7 @@ export const useLoadedTodoListStore = create<LoadedTodoListStore>((set) => ({
             if (state.value !== null) {
                 state.value.list.splice(todoIndex, 1);
             }
-            return {value: state.value};
+            return {value: {...state.value}};
         });
     },
     updateTodoPosition: (oldID, oldIndex, newID, newIndex) => {
@@ -147,7 +147,7 @@ export const useLoadedTodoListStore = create<LoadedTodoListStore>((set) => ({
 
                 state.value.list.sort((x, y) => x.todoID - y.todoID);
             }
-            return {value: state.value};
+            return {value: {...state.value}};
         });
     }
 }));

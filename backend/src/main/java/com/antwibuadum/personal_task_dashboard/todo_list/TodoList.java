@@ -1,18 +1,19 @@
 package com.antwibuadum.personal_task_dashboard.todo_list;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class TodoList {
     private Integer listID;
     private String name;
-    private List<Todo> list;
+    private ArrayList<Todo> list;
 
     public TodoList() {
 
     }
 
-    public TodoList(Integer listID, String name, List<Todo> list) {
+    public TodoList(Integer listID, String name, ArrayList<Todo> list) {
         this.listID = listID;
         this.name = name;
         this.list = list;
@@ -26,11 +27,11 @@ public class TodoList {
         this.listID = listID;
     }
 
-    public List<Todo> getList() {
+    public ArrayList<Todo> getList() {
         return list;
     }
 
-    public void setList(List<Todo> list) {
+    public void setList(ArrayList<Todo> list) {
         this.list = list;
     }
 

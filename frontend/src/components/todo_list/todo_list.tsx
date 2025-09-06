@@ -19,7 +19,7 @@ function playTaskCompleteSoundEffect() {
     new Audio(TaskCompleteSoundEffect).play();
 }
 
-function updateCompletionStatus(loadedTodoList: TodoListType, setTodoCompletionStatus: any, ID: number) {
+async function updateCompletionStatus(loadedTodoList: TodoListType, updateLoadedTodoList: any, setTodoCompletionStatus: any, ID: number) {
     let todoIndex = -1;
     let completionStatus = false;
 
@@ -31,6 +31,9 @@ function updateCompletionStatus(loadedTodoList: TodoListType, setTodoCompletionS
     }
 
     setTodoCompletionStatus(todoIndex, completionStatus);
+    console.log(loadedTodoList);
+    await updateLoadedTodoList(loadedTodoList);
+
 
     if (completionStatus) {
         playTaskCompleteSoundEffect();
@@ -50,7 +53,7 @@ function TodoList() {
 
 
 
-    const [todoListData, updateLoadedTodList, loadingTodoListData] = useTodoListData();
+    const [todoListData, updateLoadedTodoList, loadingTodoListData] = useTodoListData();
     // const todoListData = TodoListDataStore((state) => state.value);
     // const addTodolist = TodoListDataStore((state) => state.addTodolist);
     // const setTodoListName = TodoListDataStore((state) => state.setTodoListName);
@@ -154,7 +157,6 @@ function TodoList() {
         // addTodolist(newID);
         // await incrementNewID();
         // setNewListMade(true);
-        await updateLoadedTodList(loadedTodoList);
     }
 
     function updateTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
@@ -295,7 +297,11 @@ function TodoList() {
         }
     }
 
-    function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
+    async function onTodoDragEnd() {
+        await updateLoadedTodoList(loadedTodoList);
+    }
+
+    async function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
         if (event.target instanceof Element && event.target.parentNode !== null && (event.target.parentNode as Element).id === TODO_CHECK_BUTTON) {
             return;
         }
@@ -305,6 +311,8 @@ function TodoList() {
         else {
             setSelectedTodoID(todoID);
         }
+        await updateLoadedTodoList(loadedTodoList);
+
     }
 
     function loadTodosFromList() {
@@ -314,9 +322,9 @@ function TodoList() {
         loadedTodoList.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
-            let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard + " " + (todo.todoID === selectedTodoID ? styles.todoCardSelected : styles.todoCardNotSelected)} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)}>
+            let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard + " " + (todo.todoID === selectedTodoID ? styles.todoCardSelected : styles.todoCardNotSelected)} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)} onDragEnd={() => onTodoDragEnd()}>
                 <div className={styles.checkCompletedArea}>
-                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(loadedTodoList, setTodoCompletionStatus, todo.todoID)}>
+                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(loadedTodoList, updateLoadedTodoList, setTodoCompletionStatus, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -360,6 +368,7 @@ function TodoList() {
 
         await incrementNewID();
         setNewTodo({...newTodoDefaultState});
+        await updateLoadedTodoList(loadedTodoList);
     }
 
     function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {
@@ -388,7 +397,7 @@ function TodoList() {
         setDeleteTodoPressed(true);
     }
 
-    function onConfirmTodoDeleteClick(todoIndex: number) {
+    async function onConfirmTodoDeleteClick(todoIndex: number) {
         for (let i = 0; i < todoListData.length; i++) {
             if (todoListData[i].listID === loadedTodoList.listID) {
                 deleteTodo(todoIndex);
@@ -398,6 +407,7 @@ function TodoList() {
 
         closeTodoEditArea(false);
         setDeleteTodoPressed(false);
+        await updateLoadedTodoList(loadedTodoList);
     }
 
     function loadEditTodoArea() {
@@ -415,7 +425,7 @@ function TodoList() {
         if (selectedTodoID !== -1) {
             return <div id={EDIT_TODO_AREA} className={styles.editTodoArea}>
                 <div className={styles.editTodoCompletionStatus}>
-                    <button onClick={() => updateCompletionStatus(loadedTodoList, setTodoCompletionStatus, todo.todoID)}>
+                    <button onClick={() => updateCompletionStatus(loadedTodoList, updateLoadedTodoList, setTodoCompletionStatus, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -433,7 +443,7 @@ function TodoList() {
         return "";
     }
 
-    function onMainPageClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    async function onMainPageClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
         if (event.target instanceof Element) {
             if (event.target.parentNode !== null 
                 && event.target.parentNode.parentNode !== null 
@@ -444,7 +454,11 @@ function TodoList() {
                 && (event.target.parentNode as Element).id !== EDIT_TODO_AREA
                 && (event.target as Element).id !== EDIT_TODO_AREA) {
 
-                closeTodoEditArea(false);
+                    if (selectedTodoID !== -1) {
+                        closeTodoEditArea(false);
+
+                        await updateLoadedTodoList(loadedTodoList);
+                    }
             }
 
             if (event.target.id !== DELETE_LIST_BUTTON) {
@@ -456,6 +470,17 @@ function TodoList() {
             }
         }
     }
+
+    useEffect(() => {
+        if (!loadingTodoListData) {
+            for (let i = 0; i < todoListData.length; i++) {
+                if (todoListData[i].listID === loadedTodoList.listID) {
+                    setLoadedTodoList(todoListData[i]);
+                    console.log("runs");
+                }
+            }
+        }
+    }, [loadingTodoListData]);
 
     /* This useEffect runs when a new todo list is created and it
     sets the state of "loadedTodoList" to the new todo list created
@@ -519,7 +544,3 @@ function TodoList() {
 
 export default TodoList;
 export { updateCompletionStatus };
-
-function LoadedTodoListStore(arg0: (state: any) => any) {
-    throw new Error("Function not implemented.");
-}
