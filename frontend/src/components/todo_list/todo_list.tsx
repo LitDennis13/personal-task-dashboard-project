@@ -154,6 +154,7 @@ function TodoList() {
         // addTodolist(newID);
         // await incrementNewID();
         // setNewListMade(true);
+        await updateLoadedTodList(loadedTodoList);
     }
 
     function updateTodoListName(event: React.ChangeEvent<HTMLInputElement>) {

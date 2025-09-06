@@ -6,7 +6,7 @@ import { fetchTodoListData, sendUpdatedLoadedTodoList } from "../../../api/TodoL
 import type { TodoListType, TodoType } from "../../../types";
 
 
-export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void, Error, void, unknown>, boolean] {
+export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void, Error, TodoListType, unknown>, boolean] {
     const queryClient = useQueryClient();
 
     const { data: todoListData, isLoading: loadingTodoListData } = useQuery({

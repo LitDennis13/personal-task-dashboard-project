@@ -1,17 +1,16 @@
-const fetchOptions: RequestInit = {
+export const fetchOptionsGet: RequestInit =  {
     method: "GET",
     mode: 'cors',
     headers: {
-        'Access-Control-Allow-Origin':'*'
-    }
-};
-
-export const fetchOptionsGet: RequestInit =  {
-    ...fetchOptions,
-    method: "GET",
+        'Access-Control-Allow-Origin':'*',
+    },
 };
 
 export const fetchOptionsPUT: RequestInit =  {
-    ...fetchOptions,
     method: "PUT",
+    mode: 'cors',
+    headers: {
+        "Content-Type": "application/json",
+        'Access-Control-Allow-Origin':'*',
+    },
 };

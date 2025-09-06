@@ -1,4 +1,4 @@
-import { fetchOptionsGet } from "../fetchOptions";
+import { fetchOptionsGet, fetchOptionsPUT } from "../fetchOptions";
 
 import type { TodoListType } from "../../types";
 
@@ -15,12 +15,15 @@ async function fetchTodoListData() {
     return returnValue;
 }
 
-async function sendUpdatedLoadedTodoList() {
-    // await fetch("http://localhost:8080/api/v1/new-id/get-and-increment-new-id", fetchOptionsGet)
-    // .then((response) => response.json())
-    // .catch((error) => {
-    //     console.error(error);
-    // }); 
+async function sendUpdatedLoadedTodoList(todoList: TodoListType) {
+    await fetch("http://localhost:8080/api/v1/todo-list-data/updateLoadedTodoList", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify(todoList),
+    })
+    .then((response) => response.json())
+    .catch((error) => {
+        console.error(error);
+    }); 
 }
 
 export { fetchTodoListData, sendUpdatedLoadedTodoList };
