@@ -53,7 +53,7 @@ function TodoList() {
 
 
 
-    const [todoListData, updateLoadedTodoList, loadingTodoListData] = useTodoListData();
+    const [todoListData, updateLoadedTodoList, addNewTodoList, loadingTodoListData, addNewTodoListSucess] = useTodoListData();
     // const todoListData = TodoListDataStore((state) => state.value);
     // const addTodolist = TodoListDataStore((state) => state.addTodolist);
     // const setTodoListName = TodoListDataStore((state) => state.setTodoListName);
@@ -154,9 +154,8 @@ function TodoList() {
     }
 
     async function onNewListClick() {
-        // addTodolist(newID);
-        // await incrementNewID();
-        // setNewListMade(true);
+        await addNewTodoList();
+        setNewListMade(true);
     }
 
     function updateTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
@@ -170,15 +169,6 @@ function TodoList() {
         // }
     }
 
-    function loadTodoListNameField() {
-        if (loadedTodoList.listID === 0) {
-            return <input type="text" value={loadedTodoList.name} readOnly/>;
-        }
-        else {
-            return <input ref={todoListNameDisplay} type="text" value={loadedTodoList.name} placeholder="Untitled List" onChange={(event) => updateTodoListName(event)} onBlur={() => fixEmptyTodoListNames()} onBlurCapture={() => console.log("works")} />;
-        }
-    }
-
     function fixEmptyTodoListNames() {
         // for (let i = 0; i < todoListData.length; i++) {
         //     if (todoListData[i].listID === loadedTodoList.listID && emptyOrWhiteSpace(todoListData[i].name)) {
@@ -186,6 +176,21 @@ function TodoList() {
         //     }
         // }
     }
+
+    function todoListNameFieldOnBlur() {
+        fixEmptyTodoListNames();
+    }
+
+    function loadTodoListNameField() {
+        if (loadedTodoList.listID === 0) {
+            return <input type="text" value={loadedTodoList.name} readOnly/>;
+        }
+        else {
+            return <input ref={todoListNameDisplay} type="text" value={loadedTodoList.name} placeholder="Untitled List" onChange={(event) => updateTodoListName(event)} onBlur={() => todoListNameFieldOnBlur()} />;
+        }
+    }
+
+    
 
     function deleteListButtonOnClick() {
         setDeleteListPressed(true);
@@ -311,7 +316,10 @@ function TodoList() {
         else {
             setSelectedTodoID(todoID);
         }
-        await updateLoadedTodoList(loadedTodoList);
+
+        if (selectedTodoID !== -1) {
+            await updateLoadedTodoList(loadedTodoList);
+        }
 
     }
 
@@ -471,12 +479,13 @@ function TodoList() {
         }
     }
 
+    
+
     useEffect(() => {
         if (!loadingTodoListData) {
             for (let i = 0; i < todoListData.length; i++) {
                 if (todoListData[i].listID === loadedTodoList.listID) {
                     setLoadedTodoList(todoListData[i]);
-                    console.log("runs");
                 }
             }
         }
@@ -495,6 +504,7 @@ function TodoList() {
         }
         
     }, [newListMade]);
+    
 
     /* This useEffect runs when the state of "focusOnTodoListName" is changed
     and if "focusOnTodoListName" is true then the page will focus on the

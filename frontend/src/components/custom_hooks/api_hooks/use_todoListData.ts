@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient, type UseMutateAsyncFunction } from "@tanstack/react-query";
 
-import { fetchTodoListData, sendUpdatedLoadedTodoList } from "../../../api/TodoListData/todoListData";
+import { fetchTodoListData, sendAddNewTodoList, sendUpdatedLoadedTodoList } from "../../../api/TodoListData/todoListData";
 
 import type { TodoListType, TodoType } from "../../../types";
 
 
-export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void, Error, TodoListType, unknown>, boolean] {
+export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void, Error, TodoListType, unknown>, UseMutateAsyncFunction<void, Error, void, unknown>, boolean, boolean] {
     const queryClient = useQueryClient();
 
     const { data: todoListData, isLoading: loadingTodoListData } = useQuery({
@@ -17,14 +17,24 @@ export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void,
     const { mutateAsync: updateLoadedTodoList, isSuccess: updateLoadedTodoListSucess } = useMutation({
         mutationFn: sendUpdatedLoadedTodoList,
     });
+
+    const { mutateAsync: addNewTodoList, isSuccess: addNewTodoListSucess } = useMutation({
+        mutationFn: sendAddNewTodoList,
+    });
     
 
-    // useEffect(() => {
-    //     queryClient.invalidateQueries({queryKey: ["todoListData"]});
-        
-    // }, [incrementSucess]);
+    useEffect(() => {
+        if (updateLoadedTodoListSucess || addNewTodoListSucess) {
+            queryClient.invalidateQueries({queryKey: ["todoListData"]});
+        }
 
-    return [(todoListData as TodoListType[]), updateLoadedTodoList, loadingTodoListData];
+    }, [updateLoadedTodoListSucess, addNewTodoListSucess]);
+
+    useEffect(() => {
+        console.log(todoListData);
+    }, [loadingTodoListData]);
+
+    return [(todoListData as TodoListType[]), updateLoadedTodoList, addNewTodoList, loadingTodoListData, addNewTodoListSucess];
 }
 
 

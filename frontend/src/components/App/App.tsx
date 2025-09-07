@@ -27,10 +27,6 @@ function min(x: number, y: number) {
 }
 
 function App() {
-    const [todoListData, updateLoadedTodList, loadingTodoListData] = useTodoListData();
-    // console.log(loadingTodoListData ? "Loading..." : todoListData);
-
-
    // Timer Stuff
     const [option, timerStarted, timerHasStarted, timerStartStop, timerReset, optionSet, getTimerString, isTimerDone] = useTimer(APP_NAME, setDocumentTitle, 0);
 

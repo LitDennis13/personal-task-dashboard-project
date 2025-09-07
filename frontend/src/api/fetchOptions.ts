@@ -14,3 +14,11 @@ export const fetchOptionsPUT: RequestInit =  {
         'Access-Control-Allow-Origin':'*',
     },
 };
+
+export const fetchOptionsPOST: RequestInit =  {
+    method: "POST",
+    mode: 'cors',
+    headers: {
+        'Access-Control-Allow-Origin':'*',
+    },
+};
