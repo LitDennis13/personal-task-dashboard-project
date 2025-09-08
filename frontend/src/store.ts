@@ -12,38 +12,6 @@ const fetchOptions: RequestInit = {
     }
 };
 
-type NewIDStore = {
-    value: number;
-    updateNewID: () => Promise<void>;
-    incrementNewID: () => Promise<void>;
-};
-
-// SHOULD BE SERVER SIDE STATE
-export const useNewIDStore = create<NewIDStore>((set) => ({
-    value: 0,
-    updateNewID: async () => {
-        await fetch("http://localhost:8080/api/v1/new-id/get-new-id", fetchOptions)
-        .then((response) => response.json())
-        .then((data: number) => {
-            set({value: data});
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-    },
-
-    incrementNewID: async () => {
-        await fetch("http://localhost:8080/api/v1/new-id/get-and-increment-new-id", fetchOptions)
-        .then((response) => response.json())
-        .then((data: number) => {
-            set({value: data});
-        })
-        .catch((error) => {
-            console.error(error);
-        }); 
-    }
-}));
-
 
 let defaultTodoListData: TodoListType = {
     listID: 0,
@@ -70,7 +38,7 @@ type TodoListDataStore = {
 export const TodoListDataStore = create<TodoListDataStore>((set) => ({
     value: [defaultTodoListData],
     setTodoListData: (newTodoListData) => {
-        set({value: newTodoListData});
+        set({value: [...newTodoListData]});
     },
     addTodolist: (newListID) => {
         set((state) => ({value: [...state.value, {listID: newListID, name: "", list: []}]}));

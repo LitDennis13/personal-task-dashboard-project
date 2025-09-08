@@ -52,12 +52,12 @@ public class Todo {
         this.hasNote = hasNote;
     }
 
-    public Boolean getComplete() {
+    public Boolean getIsComplete() {
         return isComplete;
     }
 
-    public void setComplete(Boolean complete) {
-        isComplete = complete;
+    public void setIsComplete(Boolean isComplete) {
+        this.isComplete = isComplete;
     }
 
     @Override

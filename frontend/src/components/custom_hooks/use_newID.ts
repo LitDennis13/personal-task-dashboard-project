@@ -18,10 +18,7 @@ export function useNewID(): [number, UseMutateAsyncFunction<void, Error, void, u
 
     useEffect(() => {
         queryClient.invalidateQueries({queryKey: ["newID"]});
-        console.log("works");
     }, [incrementSucess]);
 
     return [(newID as number), incrementNewID];
 }
-
-

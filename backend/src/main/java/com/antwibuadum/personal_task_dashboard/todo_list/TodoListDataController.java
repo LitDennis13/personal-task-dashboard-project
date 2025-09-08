@@ -5,27 +5,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("api/v1/todo-list-data")
 @CrossOrigin(origins = "http://localhost:5173")
 public class TodoListDataController {
-    List<Todo> emptyList = List.of(
-            new Todo(56, "Test Todo One", "", false, false)
-    );
+    ArrayList<Todo> emptyList = new ArrayList<>();
 
-    List<TodoList> temporaryTodoListData = List.of(
-            new TodoList(0, "My Day", emptyList)
-    );
-
+    ArrayList<TodoList> temporaryTodoListData = new ArrayList<>();
+    {
+        temporaryTodoListData.add(new TodoList(0, "My Day", emptyList));
+    }
 
     @GetMapping
-    @RequestMapping("/getTodoListData")
-    public List<TodoList> getTodoLists() {
+    @RequestMapping("/get-todo-list-data")
+    public ArrayList<TodoList> getTodoLists() {
         System.out.println("Got Todo List Data");
         return temporaryTodoListData;
     }
-
-
 }

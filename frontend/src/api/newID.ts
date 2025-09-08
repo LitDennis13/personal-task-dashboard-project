@@ -1,13 +1,7 @@
-const fetchOptions: RequestInit = {
-    method: "GET",
-    mode: 'cors',
-    headers: {
-        'Access-Control-Allow-Origin':'*'
-    }
-};
+import { fetchOptionsGet, fetchOptionsPOST } from "./fetchOptions";
 
 async function fetchNewID() {
-    const returnValue = await fetch("http://localhost:8080/api/v1/new-id/get-new-id", fetchOptions)
+    const returnValue = await fetch("http://localhost:8080/api/v1/new-id/get-new-id", fetchOptionsGet)
     .then((response) => response.json())
     .then((data: number) => {
         return data;
@@ -20,8 +14,7 @@ async function fetchNewID() {
 }
 
 async function sendIncrementNewID() {
-    await fetch("http://localhost:8080/api/v1/new-id/get-and-increment-new-id", fetchOptions)
-    .then((response) => response.json())
+    await fetch("http://localhost:8080/api/v1/new-id/get-and-increment-new-id", fetchOptionsPOST)
     .catch((error) => {
         console.error(error);
     }); 

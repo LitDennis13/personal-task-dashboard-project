@@ -1,10 +1,7 @@
 package com.antwibuadum.personal_task_dashboard.new_id;
 
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/new-id")
@@ -19,11 +16,10 @@ public class NewIDController {
         return NewID;
     }
 
-    @GetMapping
+    @PostMapping
     @RequestMapping("/get-and-increment-new-id")
-    public Integer IncrementID() {
+    public void IncrementID() {
         NewID++;
         System.out.println("New ID is " + NewID);
-        return NewID;
     }
 }

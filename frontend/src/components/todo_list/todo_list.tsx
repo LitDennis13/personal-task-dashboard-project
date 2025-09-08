@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { emptyOrWhiteSpace } from "../App/App";
 import type { TodoListType, TodoType } from "../../types";
 import { TodoListDataStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
-import { useNewID } from "../custom_hooks/use_newid";
+import { useNewID } from "../custom_hooks/use_newID";
 
 import styles from "./todo_list.module.css";
 
@@ -13,6 +13,7 @@ import CircleCheckIcon from "../../assets/images/check_circle.svg";
 import UpArrow from "../../assets/images/up_arrow.svg";
 import DownArrow from "../../assets/images/down_arrow.svg";
 import TaskCompleteSoundEffect from "../../assets/audio/task_complete_sound.mp3";
+import { useTodoListData } from "../custom_hooks/use_todoListData";
 
 function playTaskCompleteSoundEffect() {
     new Audio(TaskCompleteSoundEffect).play();
@@ -48,8 +49,10 @@ function TodoList() {
     const DELETE_LIST_BUTTON = "DeleteListButton";
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
+    const [serverTodoListData, loadingTodoListData] = useTodoListData();
 
     const todoListData = TodoListDataStore((state) => state.value);
+    const setTodoListData = TodoListDataStore((state) => state.setTodoListData);
     const addTodolist = TodoListDataStore((state) => state.addTodolist);
     const setTodoListName = TodoListDataStore((state) => state.setTodoListName);
     const deleteTodoList = TodoListDataStore((state) => state.deleteTodoList);
@@ -96,7 +99,7 @@ function TodoList() {
     It also has an option to check the current todo's name is empty and if so updating 
     that todo's name to be "Untitled Todo" */
     function closeTodoEditArea(checkEmptyTodo: boolean = true) {
-        if (checkEmptyTodo) {
+        if (checkEmptyTodo && selectedTodoID !== -1) {
             let todo: TodoType = newTodoDefaultState;
             let todoIndex: number = -1;
             for (let i = 0; i < selectedTodoList.list.length; i++) {
@@ -450,6 +453,16 @@ function TodoList() {
             }
         }
     }
+
+    useEffect(() => {
+        if (!loadingTodoListData) {
+            setTodoListData(serverTodoListData);
+            setSelectedTodoList(serverTodoListData[0]);
+            console.log("Update local todo list data");
+            
+        }
+    }, [loadingTodoListData]);
+
 
     /* This useEffect runs when a new todo list is created and it
     sets the state of "selectedTodoList" to the new todo list created
