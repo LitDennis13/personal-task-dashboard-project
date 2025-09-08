@@ -115,15 +115,15 @@ export const TodoListDataStore = create<TodoListDataStore>((set) => ({
 }));
 
 
-type SelectedTodoListStore = {
-    value: TodoListType;
-    setSelectedTodoList: (newTodoList: TodoListType) => void;
+type SelectedTodoListIDStore = {
+    value: number;
+    setSelectedTodoListID: (newTodoListID: number) => void;
 };
 
-export const useSelectedTodoListStore = create<SelectedTodoListStore>((set) => ({
-    value: defaultTodoListData,
-    setSelectedTodoList: (newTodoList) => {
-        set({value: newTodoList});
+export const useSelectedTodoListStore = create<SelectedTodoListIDStore>((set) => ({
+    value: 0,
+    setSelectedTodoListID: (newTodoListID) => {
+        set({value: newTodoListID});
     }
 }));
 
