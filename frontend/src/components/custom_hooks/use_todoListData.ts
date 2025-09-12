@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient, type UseMutateAsyncFunction } from "@tanstack/react-query";
 
-import { fetchTodoListData } from "../../api/todoListData";
+import { fetchTodoListData, sendAddTodoList, sendSetTodoListName, sendDeleteTodoList, sendSwitchListIDs, sendAddTodo,
+    sendSetTodoName, sendSetTodoNote, sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPosition } from "../../api/todoListData";
 
 import type { TodoListType, TodoType } from "../../types";
 
 
-export function useTodoListData(): [TodoListType[], boolean] {
+export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void, Error, number, unknown>, UseMutateAsyncFunction<void, Error, number, unknown>, UseMutateAsyncFunction<void, Error, number, unknown>, UseMutateAsyncFunction<void, Error, number, unknown>, UseMutateAsyncFunction<void, Error, number, unknown>, boolean] {
     const queryClient = useQueryClient();
 
     const { data: todoListData, isLoading: loadingTodoListData } = useQuery({
@@ -14,18 +15,35 @@ export function useTodoListData(): [TodoListType[], boolean] {
         queryFn: () => fetchTodoListData(),
     });
 
-    // const { mutateAsync: updateLoadedTodoList, isSuccess: updateLoadedTodoListSucess } = useMutation({
-    //     mutationFn: sendUpdatedLoadedTodoList,
-    // });
+    const { mutateAsync: addTodoList, isSuccess: addTodoListSuccess } = useMutation({
+        mutationFn: sendAddTodoList,
+    });
 
+    const { mutateAsync: setTodoListName, isSuccess: setTodoListNameSuccess } = useMutation({
+        mutationFn: sendSetTodoListName,
+    });
+
+    const { mutateAsync: deleteTodoList, isSuccess: deleteTodoListSuccess } = useMutation({
+        mutationFn: sendDeleteTodoList,
+    });
+
+    const { mutateAsync: switchListIDs, isSuccess: switchListIDsSuccess } = useMutation({
+        mutationFn: sendDeleteTodoList,
+    });
+
+    const { mutateAsync: addTodo, isSuccess: switchAddTodo } = useMutation({
+        mutationFn: sendAddTodo,
+    });
     
 
-    // useEffect(() => {
-    //     if (updateLoadedTodoListSucess) {
-    //         queryClient.invalidateQueries({queryKey: ["todoListData"]});
-    //     }
+    useEffect(() => {
+        let condition = addTodoListSuccess || setTodoListNameSuccess || deleteTodoListSuccess 
+        || switchListIDsSuccess || switchAddTodo;
+        if (condition) {
+            queryClient.invalidateQueries({queryKey: ["todoListData"]});
+        }
 
-    // }, [updateLoadedTodoListSucess]);
+    }, [addTodoListSuccess, setTodoListNameSuccess, switchListIDsSuccess, switchAddTodo]);
 
-    return [(todoListData as TodoListType[]), loadingTodoListData];
+    return [(todoListData as TodoListType[]), addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, loadingTodoListData];
 }

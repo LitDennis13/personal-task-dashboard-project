@@ -1,4 +1,4 @@
-import type { TodoListType } from "../types";
+import type { TodoListType, TodoType } from "../types";
 import { fetchOptionsGet, fetchOptionsPOST, fetchOptionsPUT } from "./fetchOptions";
 
 async function fetchTodoListData() {
@@ -54,6 +54,72 @@ async function sendSwitchListIDs(listIDOne: number, listIDTwo: number) {
     });
 }
 
-// sendSwitchListIDs(59, 60);
+async function sendAddTodo(listID: number, newTodo: TodoType) {
+    await fetch("http://localhost:8080/api/v1/todo-list-data/add-todo", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify({listID, newTodo})
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
 
-export { fetchTodoListData }
+async function sendSetTodoName(listID: number, todoID: number, newTodoName: string) {
+    await fetch("http://localhost:8080/api/v1/todo-list-data/set-todo-name", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify({listID, todoID, newTodoName})
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+async function sendSetTodoNote(listID: number, todoID: number, newTodoNote: string) {
+    await fetch("http://localhost:8080/api/v1/todo-list-data/set-todo-note", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify({listID, todoID, newTodoNote})
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+async function sendSetTodoCompletionStatus(listID: number, todoID: number, status: boolean) {
+    await fetch("http://localhost:8080/api/v1/todo-list-data/set-todo-completion-status", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify({listID, todoID, status})
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+async function sendDeleteTodo(listID: number, todoID: number) {
+    await fetch("http://localhost:8080/api/v1/todo-list-data/delete-todo", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify({listID, todoID})
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+async function sendUpdateTodoPosition(listID: number, oldTodoID: number, newTodoID: number) {
+    await fetch("http://localhost:8080/api/v1/todo-list-data/update-todo-position", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify({listID, oldTodoID, newTodoID})
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+
+
+
+
+
+
+export { fetchTodoListData, sendAddTodoList, sendSetTodoListName, sendDeleteTodoList,
+    sendSwitchListIDs, sendAddTodo, sendSetTodoName, sendSetTodoNote,
+    sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPosition }
