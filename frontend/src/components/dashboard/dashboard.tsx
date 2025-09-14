@@ -3,7 +3,7 @@ import { Navigate, useOutletContext } from "react-router-dom";
 
 import { min } from "../App/App";
 import type { TodoType } from "../../types";
-import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
+import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
 import { playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { getTodoListIndex, updateCompletionStatus } from "../todo_list/todo_list";
 
@@ -20,7 +20,7 @@ function Dashboard() {
 
     const [timerStarted, timerStartStop, getTimerString, isTimerDone] = useOutletContext<any>().dashboardRequirements;
     
-    const selectedTodoListID = useSelectedTodoListStore((state) => state.value);
+    const selectedTodoListID = useSelectedTodoListIDStore((state) => state.value);
 
     const todoListData = TodoListDataStore((state) => state.value);
 

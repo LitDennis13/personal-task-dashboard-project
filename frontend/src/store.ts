@@ -4,20 +4,56 @@ import { emptyOrWhiteSpace } from "./components/App/App";
 
 import type { TodoListType, TodoType, NoteType } from "./types";
 
-const fetchOptions: RequestInit = {
-    method: "GET",
-    mode: 'cors',
-    headers: {
-        'Access-Control-Allow-Origin':'*'
-    }
-};
-
 
 let defaultTodoListData: TodoListType = {
     listID: 0,
     name: "My Day",
     list: [],
 };
+
+
+type SelectedTodoListData = {
+    value: TodoListType;
+    updateSelectedTodoListData: (updatedData: TodoListType) => void;
+    setTodoName: (todoIndex: number, newName: string) => void;
+    setTodoNote: (todoIndex: number, newNote: string) => void;
+    updateTodoPosition: (oldID: number, oldIndex: number, newID: number, newIndex: number) => void;
+}
+
+export const SelectedTodoListDataStore = create<SelectedTodoListData>((set) => ({
+    value: defaultTodoListData,
+    updateSelectedTodoListData: (updatedData) => {
+        set({value: {...updatedData}});
+    },
+    setTodoName: (todoIndex, newName) => {
+        set((state) => {
+            state.value.list[todoIndex].name = newName;
+            return {value: {...state.value}};
+        });
+    },
+    setTodoNote: (todoIndex, newNote) => {
+        set((state) => {
+            let hasNote = false;
+            if (!emptyOrWhiteSpace(newNote)) hasNote = true;
+
+
+            state.value.list[todoIndex].note = newNote;
+            state.value.list[todoIndex].hasNote = hasNote;
+            return {value: {...state.value}};
+        });
+    },
+    updateTodoPosition: (oldID, oldIndex, newID, newIndex) => {
+        set((state) => {
+            state.value.list[oldIndex].todoID = newID;
+            state.value.list[newIndex].todoID = oldID;
+
+            state.value.list.sort((x, y) => x.todoID - y.todoID);
+
+            return {value: {...state.value}};
+        });
+    }
+}));
+
 
 type TodoListDataStore = {
     value: TodoListType[];
@@ -120,7 +156,7 @@ type SelectedTodoListIDStore = {
     setSelectedTodoListID: (newTodoListID: number) => void;
 };
 
-export const useSelectedTodoListStore = create<SelectedTodoListIDStore>((set) => ({
+export const useSelectedTodoListIDStore = create<SelectedTodoListIDStore>((set) => ({
     value: 0,
     setSelectedTodoListID: (newTodoListID) => {
         set({value: newTodoListID});

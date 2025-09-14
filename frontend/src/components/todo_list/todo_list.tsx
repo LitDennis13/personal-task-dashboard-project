@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { emptyOrWhiteSpace } from "../App/App";
 import type { TodoListType, TodoType } from "../../types";
-import { TodoListDataStore, useSelectedTodoIDStore, useSelectedTodoListStore } from "../../store";
+import { SelectedTodoListDataStore, TodoListDataStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
 import { useNewID } from "../custom_hooks/use_newID";
 
 import styles from "./todo_list.module.css";
@@ -57,6 +57,12 @@ function TodoList() {
 
     const [todoListData, addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPosition, loadingTodoListData] = useTodoListData();
 
+    const selectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.value);
+    const updateSelectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.updateSelectedTodoListData);
+    const setTodoNameLocal = SelectedTodoListDataStore((state) => state.setTodoName);
+    const setTodoNoteLocal = SelectedTodoListDataStore((state) => state.setTodoNote);
+    const updateTodoPositionLocal = SelectedTodoListDataStore((state) => state.updateTodoPosition);
+
     // const todoListData = TodoListDataStore((state) => state.value);
     // const setTodoListData = TodoListDataStore((state) => state.setTodoListData);
     // const addTodolist = TodoListDataStore((state) => state.addTodolist);
@@ -73,8 +79,8 @@ function TodoList() {
 
     const [newID, incrementNewID] = useNewID();
 
-    const selectedTodoListID = useSelectedTodoListStore((state) => state.value);
-    const setSelectedTodoListID = useSelectedTodoListStore((state) => state.setSelectedTodoListID);
+    const selectedTodoListID = useSelectedTodoListIDStore((state) => state.value);
+    const setSelectedTodoListID = useSelectedTodoListIDStore((state) => state.setSelectedTodoListID);
 
     const selectedTodoID = useSelectedTodoIDStore((state) => state.value);
     const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
@@ -106,20 +112,21 @@ function TodoList() {
     that todo's name to be "Untitled Todo" */
     async function closeTodoEditArea(checkEmptyTodo: boolean = true) {
         if (checkEmptyTodo && selectedTodoID !== -1) {
-
             const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListID);
             let todoName = "";
+            let todoIndex = -1;
+            
             for (let i = 0; i < todoListData[selectedTodoListIndex].list.length; i++) {
                 if (todoListData[selectedTodoListIndex].list[i].todoID === selectedTodoID) {
                     todoName = todoListData[selectedTodoListIndex].list[i].name;
+                    todoIndex = i;
 
                 }
             }
 
             if (emptyOrWhiteSpace(todoName)) {     
-                await setTodoName({listID: selectedTodoID,todoID: selectedTodoID, newTodoName: "Untitled Todo"});
-                console.log("run");          
-
+                // await setTodoName({listID: selectedTodoID,todoID: selectedTodoID, newTodoName: "Untitled Todo"});
+                setTodoNameLocal(todoIndex, "Untitled Todo");
             }
         }
         setSelectedTodoID(-1);
@@ -297,7 +304,7 @@ function TodoList() {
 
             for (let i = 0; i < todoListData.length; i++) {
                 if (todoListData[i].listID === todoListData[selectedTodoListIndex].listID) {
-                    // updateTodoPosition(i, oldID, oldIndex, newID, newIndex);
+                    updateTodoPositionLocal(oldID, oldIndex, newID, newIndex);
                     break;
                 }
             }
@@ -326,7 +333,7 @@ function TodoList() {
         let notCompleteTodos: any[] = [];
         let completeTodos: any[] = [];
 
-        todoListData[selectedTodoListIndex].list.map((todo: TodoType, index: number) => {
+        selectedTodoListDataLocal.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
             let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard + " " + (todo.todoID === selectedTodoID ? styles.todoCardSelected : styles.todoCardNotSelected)} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)} onDrop={() => onTodoDrop()}>
@@ -378,33 +385,17 @@ function TodoList() {
         setNewTodo({...newTodoDefaultState});
     }
 
-    async function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoID: number) {
+    async function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoID: number, todoIndex: number) {
         let name = event.target.value;
 
-
-        await setTodoName({listID: selectedTodoListID, todoID, newTodoName: name});
-
-
-        // for (let i = 0; i < todoListData.length; i++) {
-        //     if (todoListData[i].listID === selectedTodoListID) {
-        //         setTodoName(i, todoIndex, name);
-        //         break;
-        //     }
-        // }
+        console.log("runs");
+        setTodoNameLocal(todoIndex, name);
     }
 
-    async function onTodoNoteChange(event: React.ChangeEvent<HTMLTextAreaElement>, todoID: number) {
+    async function onTodoNoteChange(event: React.ChangeEvent<HTMLTextAreaElement>, todoID: number, todoIndex: number) {
         let note = event.target.value;
         
-        await setTodoNote({listID: selectedTodoListID, todoID, newTodoNote: note});
-
-
-        // for (let i = 0; i < todoListData.length; i++) {
-        //     if (todoListData[i].listID === selectedTodoListID) {
-        //         setTodoNote(i, todoIndex, note);
-        //         break;
-        //     }
-        // }
+        setTodoNoteLocal(todoIndex, note);
     }
 
     function onTodoDeleteClick() {
@@ -429,10 +420,12 @@ function TodoList() {
         const selectedTodoList = todoListData[getTodoListIndex(todoListData, selectedTodoListID)];
         let todo: TodoType = newTodoDefaultState;
         let todoID: number = -1;
+        let todoIndex: number = -1;
         for (let i = 0; i < selectedTodoList.list.length; i++) {
             if (selectedTodoList.list[i].todoID === selectedTodoID) {
                 todo = selectedTodoList.list[i];
                 todoID = selectedTodoList.list[i].todoID;
+                todoIndex = i;
             }
         }
         
@@ -446,9 +439,9 @@ function TodoList() {
                     </button>
                 </div>
 
-                <input type="text" placeholder="Untitled Todo" value={todo.name} onChange={(event) => onTodoNameChange(event, todoID)} className={styles.editTodoName}/>
+                <input type="text" placeholder="Untitled Todo" value={todo.name} onChange={(event) => onTodoNameChange(event, todoID, todoIndex)} className={styles.editTodoName}/>
                 
-                <textarea placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoID))} className={styles.editTodoNote}></textarea>
+                <textarea placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoID, todoIndex))} className={styles.editTodoNote}></textarea>
 
                 <button id={DELETE_TODO_BUTTON} className={styles.deleteTodoButton} 
                     onClick={deleteTodoPressed ? () => onConfirmTodoDeleteClick(todoID) : () => onTodoDeleteClick()}>
@@ -487,10 +480,22 @@ function TodoList() {
         if (!loadingTodoListData) {
             // setTodoListData(serverTodoListData);
             setSelectedTodoListID(0);
+            
             console.log("Update local todo list data");
             
         }
     }, [loadingTodoListData]);
+
+    useEffect(() => {
+        if (!loadingTodoListData){
+            for (const list of todoListData) {
+                if (list.listID === selectedTodoListID) {
+                    updateSelectedTodoListDataLocal(list);
+                }
+            }
+        }
+        
+    }, [loadingTodoListData, selectedTodoListID]);
 
 
     /* This useEffect runs when a new todo list is created and it
