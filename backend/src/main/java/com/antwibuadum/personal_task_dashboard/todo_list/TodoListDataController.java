@@ -111,6 +111,7 @@ public class TodoListDataController {
     @PutMapping
     @RequestMapping("/set-todo-name")
     public void setTodoName(@RequestBody SetTodoNameData data) {
+        System.out.println(data.newTodoName);
         for (int i = 0; i < temporaryTodoListData.size(); i++) {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
@@ -137,6 +138,12 @@ public class TodoListDataController {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
                     if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.todoID) {
+                        if (Objects.equals(data.newTodoNote, "")) {
+                            temporaryTodoListData.get(i).getList().get(j).setHasNote(false);
+                        }
+                        else {
+                            temporaryTodoListData.get(i).getList().get(j).setHasNote(true);
+                        }
                         temporaryTodoListData.get(i).getList().get(j).setNote(data.newTodoNote);
                         break;
                     }

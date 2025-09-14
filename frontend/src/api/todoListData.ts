@@ -144,7 +144,7 @@ async function sendSetTodoNote(data: SetTodoNoteData) {
 type SetTodoCompletionStatusData = {
     listID: number;
     todoID: number;
-    status: string;
+    status: boolean;
 };
 async function sendSetTodoCompletionStatus(data: SetTodoCompletionStatusData) {
     const listID = data.listID;
