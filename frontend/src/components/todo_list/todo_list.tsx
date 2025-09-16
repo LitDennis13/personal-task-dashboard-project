@@ -477,25 +477,16 @@ function TodoList() {
     }
 
     useEffect(() => {
-        if (!loadingTodoListData) {
-            // setTodoListData(serverTodoListData);
-            setSelectedTodoListID(0);
-            
-            console.log("Update local todo list data");
-            
-        }
-    }, [loadingTodoListData]);
-
-    useEffect(() => {
         if (!loadingTodoListData){
             for (const list of todoListData) {
                 if (list.listID === selectedTodoListID) {
                     updateSelectedTodoListDataLocal(list);
+                    console.log("update");
                 }
             }
         }
         
-    }, [loadingTodoListData, selectedTodoListID]);
+    }, [loadingTodoListData, selectedTodoListID, todoListData]);
 
 
     /* This useEffect runs when a new todo list is created and it

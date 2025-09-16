@@ -10,7 +10,7 @@ async function fetchTodoListData() {
     .catch((error) => {
         console.error(error);
     });
-
+    console.log("got data");
     return returnValue;
 }
 
