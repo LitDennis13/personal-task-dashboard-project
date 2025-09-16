@@ -481,7 +481,7 @@ function TodoList() {
             for (const list of todoListData) {
                 if (list.listID === selectedTodoListID) {
                     updateSelectedTodoListDataLocal(list);
-                    console.log("update");
+                    // console.log("update");
                 }
             }
         }
@@ -501,7 +501,7 @@ function TodoList() {
             setFocusOnTodoListName(true);
         }
         
-    }, [newListMade]);
+    }, [todoListData]);
 
     /* This useEffect runs when the state of "focusOnTodoListName" is changed
     and if "focusOnTodoListName" is true then the page will focus on the
