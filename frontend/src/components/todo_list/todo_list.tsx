@@ -56,7 +56,7 @@ function TodoList() {
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
     const [todoListData, addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPosition, loadingTodoListData] = useTodoListData();
-
+    
     const selectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.value);
     const updateSelectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.updateSelectedTodoListData);
     const setTodoNameLocal = SelectedTodoListDataStore((state) => state.setTodoName);
@@ -512,6 +512,8 @@ function TodoList() {
             setFocusOnTodoListName(false);
         }
     }, [focusOnTodoListName]);
+
+    console.log(todoListData);
 
     return !loadingTodoListData ? <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>

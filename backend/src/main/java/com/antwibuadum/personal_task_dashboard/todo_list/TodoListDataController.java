@@ -44,6 +44,7 @@ public class TodoListDataController {
         for (TodoList temporaryTodoListDatum : temporaryTodoListData) {
             if (Objects.equals(temporaryTodoListDatum.getListID(), data.listID)) {
                 temporaryTodoListDatum.setName(data.newName);
+                System.out.println("Changing Todo List Name");
                 break;
             }
         }
@@ -117,6 +118,7 @@ public class TodoListDataController {
                 for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
                     if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.todoID) {
                         temporaryTodoListData.get(i).getList().get(j).setName(data.newTodoName);
+                        System.out.println("Changing Todo Name");
                         break;
                     }
                 }
