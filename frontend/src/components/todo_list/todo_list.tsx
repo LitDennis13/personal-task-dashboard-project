@@ -56,9 +56,10 @@ function TodoList() {
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
     const [todoListData, addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPosition, loadingTodoListData] = useTodoListData();
-    
+
     const selectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.value);
     const updateSelectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.updateSelectedTodoListData);
+    const setTodoListNameLocal = SelectedTodoListDataStore((state) => state.setTodoListName);
     const setTodoNameLocal = SelectedTodoListDataStore((state) => state.setTodoName);
     const setTodoNoteLocal = SelectedTodoListDataStore((state) => state.setTodoNote);
     const updateTodoPositionLocal = SelectedTodoListDataStore((state) => state.updateTodoPosition);
@@ -165,40 +166,40 @@ function TodoList() {
         setNewListMade(true);
     }
 
-    async function updateTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
+    function updateLocalTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
         let name = event.target.value;
 
         for (let i = 0; i < todoListData.length; i++) {
             if (todoListData[i].listID === selectedTodoListID) {
-                await setTodoListName({listID: todoListData[i].listID, newName: name});
+                // await setTodoListName({listID: todoListData[i].listID, newName: name});
+                setTodoListNameLocal(name);
                 break;
             }
         }
     }
 
-    function loadTodoListNameField() {
-        let currentlySelectedList: TodoListType = {listID: -1, name: "", list: []};
-        for (const list of todoListData) {
-            if (list.listID === selectedTodoListID) {
-                currentlySelectedList = list;
-            }
-        }
+    async function updateServerTodoListName() {
+        
 
-        if (currentlySelectedList.listID === 0) {
-            return <input type="text" value={currentlySelectedList.name} readOnly/>;
+        if (emptyOrWhiteSpace(selectedTodoListDataLocal.name)) {
+            await setTodoListName({listID: selectedTodoListDataLocal.listID, newName: "Untitled List"});
         }
         else {
-            return <input ref={todoListNameDisplay} type="text" value={currentlySelectedList.name} placeholder="Untitled List" onChange={(event) => updateTodoListName(event)} onBlur={() => fixEmptyTodoListNames()} />;
+            await setTodoListName({listID: selectedTodoListDataLocal.listID, newName: selectedTodoListDataLocal.name});
+        }
+
+    }
+
+    function loadTodoListNameField() {
+        if (selectedTodoListDataLocal.listID === 0) {
+            return <input type="text" value={selectedTodoListDataLocal.name} readOnly/>;
+        }
+        else {
+            return <input ref={todoListNameDisplay} type="text" value={selectedTodoListDataLocal.name} placeholder="Untitled List" onChange={(event) => updateLocalTodoListName(event)} onBlur={() => updateServerTodoListName()} />;
         }
     }
 
-    async function fixEmptyTodoListNames() {
-        for (let i = 0; i < todoListData.length; i++) {
-            if (todoListData[i].listID === selectedTodoListID && emptyOrWhiteSpace(todoListData[i].name)) {
-                await setTodoListName({listID: todoListData[i].listID, newName: "Untitled List"});
-            }
-        }
-    }
+    
 
     function deleteListButtonOnClick() {
         setDeleteListPressed(true);
@@ -513,7 +514,6 @@ function TodoList() {
         }
     }, [focusOnTodoListName]);
 
-    console.log(todoListData);
 
     return !loadingTodoListData ? <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>

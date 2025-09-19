@@ -14,6 +14,7 @@ let defaultTodoListData: TodoListType = {
 
 type SelectedTodoListData = {
     value: TodoListType;
+    setTodoListName: (newName: string) => void;
     updateSelectedTodoListData: (updatedData: TodoListType) => void;
     setTodoName: (todoIndex: number, newName: string) => void;
     setTodoNote: (todoIndex: number, newNote: string) => void;
@@ -24,6 +25,13 @@ export const SelectedTodoListDataStore = create<SelectedTodoListData>((set) => (
     value: defaultTodoListData,
     updateSelectedTodoListData: (updatedData) => {
         set({value: {...updatedData}});
+    },
+    setTodoListName: (newName) => {
+        set((state) => {
+            state.value.name = newName;
+
+            return {value: {...state.value}};
+        });
     },
     setTodoName: (todoIndex, newName) => {
         set((state) => {
