@@ -366,30 +366,51 @@ function TodoList() {
         if (!emptyOrWhiteSpace(newTodo.name)) {
             newTodo.todoID = newID;
             await addTodo({listID: selectedTodoListID, newTodo});
-                        
-            // for (let i = 0; i < todoListData.length; i++) {
-            //     if (todoListData[i].listID === selectedTodoListID) {
-            //         // addTodo(i, newTodo);
-            //         break;
-            //     }
-            // }
         }
 
         await incrementNewID();
         setNewTodo({...newTodoDefaultState});
     }
 
-    async function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoID: number, todoIndex: number) {
+    function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {
         let name = event.target.value;
 
         console.log("runs");
         setTodoNameLocal(todoIndex, name);
     }
 
-    async function onTodoNoteChange(event: React.ChangeEvent<HTMLTextAreaElement>, todoID: number, todoIndex: number) {
+    async function updateTodoName() {
+        if (selectedTodoID === -1) return;
+        let todoIndex = -1;
+
+        for (let i = 0; i < selectedTodoListDataLocal.list.length; i++) {
+            if (selectedTodoListDataLocal.list[i].todoID === selectedTodoID) {
+                todoIndex = i;
+                break;
+            }
+        }
+
+        await setTodoName({listID: selectedTodoListDataLocal.listID, todoID: selectedTodoListDataLocal.list[todoIndex].todoID, newTodoName: selectedTodoListDataLocal.list[todoIndex].name});
+    }
+
+    function onTodoNoteChange(event: React.ChangeEvent<HTMLTextAreaElement>, todoIndex: number) {
         let note = event.target.value;
         
         setTodoNoteLocal(todoIndex, note);
+    }
+
+    async function updateTodoNote() {
+        if (selectedTodoID === -1) return;
+        let todoIndex = -1;
+
+        for (let i = 0; i < selectedTodoListDataLocal.list.length; i++) {
+            if (selectedTodoListDataLocal.list[i].todoID === selectedTodoID) {
+                todoIndex = i;
+                break;
+            }
+        }
+
+        await setTodoNote({listID: selectedTodoListDataLocal.listID, todoID: selectedTodoListDataLocal.list[todoIndex].todoID, newTodoNote: selectedTodoListDataLocal.list[todoIndex].note});
     }
 
     function onTodoDeleteClick() {
@@ -397,13 +418,6 @@ function TodoList() {
     }
 
     async function onConfirmTodoDeleteClick(todoID: number) {
-        // for (let i = 0; i < todoListData.length; i++) {
-        //     if (todoListData[i].listID === selectedTodoListID) {
-        //         deleteTodo(i, todoIndex);
-        //         break;
-        //     }
-        // }
-
         await deleteTodo({listID: selectedTodoListID, todoID});
 
         closeTodoEditArea(false);
@@ -433,9 +447,9 @@ function TodoList() {
                     </button>
                 </div>
 
-                <input type="text" placeholder="Untitled Todo" value={todo.name} onChange={(event) => onTodoNameChange(event, todoID, todoIndex)} className={styles.editTodoName}/>
+                <input type="text" placeholder="Untitled Todo" value={todo.name} onChange={(event) => onTodoNameChange(event, todoIndex)} className={styles.editTodoName}/>
                 
-                <textarea placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoID, todoIndex))} className={styles.editTodoNote}></textarea>
+                <textarea placeholder="Note" value={todo.note} onChange={((event) => onTodoNoteChange(event, todoIndex))} className={styles.editTodoNote}></textarea>
 
                 <button id={DELETE_TODO_BUTTON} className={styles.deleteTodoButton} 
                     onClick={deleteTodoPressed ? () => onConfirmTodoDeleteClick(todoID) : () => onTodoDeleteClick()}>
@@ -458,6 +472,9 @@ function TodoList() {
                 && (event.target as Element).id !== EDIT_TODO_AREA) {
 
                 closeTodoEditArea(true);
+                updateTodoName();
+                updateTodoNote();
+                
             }
 
             if (event.target.id !== DELETE_LIST_BUTTON) {
@@ -467,6 +484,7 @@ function TodoList() {
             if (event.target.id !== DELETE_TODO_BUTTON) {
                 setDeleteTodoPressed(false);
             }
+
         }
     }
 
