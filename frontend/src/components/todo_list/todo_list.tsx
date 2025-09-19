@@ -148,7 +148,8 @@ function TodoList() {
             else id = "";
             
             displayName = element.name;
-            if (element.name === "") displayName = "Untitled List";
+            if (element.listID === selectedTodoListDataLocal.listID) displayName = selectedTodoListDataLocal.name;
+            if (displayName === "") displayName = "Untitled List";
 
             options[index] = <button id={id} key={index} onClick={() => sideBarOptionOnClick(element.listID)}>{displayName}</button>;
         });
@@ -169,18 +170,10 @@ function TodoList() {
     function updateLocalTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
         let name = event.target.value;
 
-        for (let i = 0; i < todoListData.length; i++) {
-            if (todoListData[i].listID === selectedTodoListID) {
-                // await setTodoListName({listID: todoListData[i].listID, newName: name});
-                setTodoListNameLocal(name);
-                break;
-            }
-        }
+        setTodoListNameLocal(name);
     }
 
     async function updateServerTodoListName() {
-        
-
         if (emptyOrWhiteSpace(selectedTodoListDataLocal.name)) {
             await setTodoListName({listID: selectedTodoListDataLocal.listID, newName: "Untitled List"});
         }
