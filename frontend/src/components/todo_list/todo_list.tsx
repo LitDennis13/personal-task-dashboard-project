@@ -55,28 +55,14 @@ function TodoList() {
     const DELETE_LIST_BUTTON = "DeleteListButton";
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
-    const [todoListData, addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPosition, loadingTodoListData] = useTodoListData();
+    const [todoListData, addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPositions, loadingTodoListData] = useTodoListData();
 
     const selectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.value);
     const updateSelectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.updateSelectedTodoListData);
     const setTodoListNameLocal = SelectedTodoListDataStore((state) => state.setTodoListName);
     const setTodoNameLocal = SelectedTodoListDataStore((state) => state.setTodoName);
     const setTodoNoteLocal = SelectedTodoListDataStore((state) => state.setTodoNote);
-    const updateTodoPositionLocal = SelectedTodoListDataStore((state) => state.updateTodoPosition);
-
-    // const todoListData = TodoListDataStore((state) => state.value);
-    // const setTodoListData = TodoListDataStore((state) => state.setTodoListData);
-    // const addTodolist = TodoListDataStore((state) => state.addTodolist);
-    // const setTodoListName = TodoListDataStore((state) => state.setTodoListName);
-    // const deleteTodoList = TodoListDataStore((state) => state.deleteTodoList);
-    // const switchListIDs = TodoListDataStore((state) => state.switchListIDs);
-    // const addTodo = TodoListDataStore((state) => state.addTodo);
-    // const setTodoName = TodoListDataStore((state) => state.setTodoName);
-    // const setTodoNote = TodoListDataStore((state) => state.setTodoNote);
-    // const setTodoCompletionStatus = TodoListDataStore((state) => state.setTodoCompletionStatus);
-    // const deleteTodo = TodoListDataStore((state) => state.deleteTodo);
-    // const updateTodoPosition = TodoListDataStore((state) => state.updateTodoPosition);
-    
+    const updateTodoPositionLocal = SelectedTodoListDataStore((state) => state.updateTodoPosition);    
 
     const [newID, incrementNewID] = useNewID();
 
@@ -107,6 +93,9 @@ function TodoList() {
 
     const [draggingTodo, setDraggingTodo] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
     const [recentTodoDragOver, setRecentTodoDragOver] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
+
+
+    const [todoPositionChangeLog, setTodoPositionChangeLog] = useState<number[][]>([]);
 
     /* This function closes the todo editor by setting the "selectedTodoID" state to -1.
     It also has an option to check the current todo's name is empty and if so updating 
@@ -190,21 +179,13 @@ function TodoList() {
         else {
             return <input ref={todoListNameDisplay} type="text" value={selectedTodoListDataLocal.name} placeholder="Untitled List" onChange={(event) => updateLocalTodoListName(event)} onBlur={() => updateServerTodoListName()} />;
         }
-    }
-
-    
+    }    
 
     function deleteListButtonOnClick() {
         setDeleteListPressed(true);
     }
 
     async function confirmDeleteListButtonOnClick() {
-        // for (let i = 0; i < todoListData.length; i++) {
-        //     if (todoListData[i].listID === selectedTodoListID) {
-        //         deleteTodoList(i);
-        //         break;
-        //     }
-        // }
         await deleteTodoList({listID: selectedTodoListID});
 
         setSelectedTodoListID(0);
@@ -217,6 +198,7 @@ function TodoList() {
 
             if (todoListData[index].listID === selectedTodoListID && todoListData[indexBefore].listID !== 0) {
                 await switchListIDs({listIDOne: todoListData[indexBefore].listID, listIDTwo: selectedTodoListID});
+                setSelectedTodoListID(todoListData[indexBefore].listID);
                 break;
             }
         }
@@ -228,6 +210,7 @@ function TodoList() {
 
             if (todoListData[index].listID === selectedTodoListID && indexAfter < todoListData.length) {
                 await switchListIDs({listIDOne: selectedTodoListID, listIDTwo: todoListData[indexAfter].listID});
+                setSelectedTodoListID(todoListData[indexAfter].listID);
                 break;
             }
         }
@@ -296,18 +279,16 @@ function TodoList() {
                 } 
             }
 
-            for (let i = 0; i < todoListData.length; i++) {
-                if (todoListData[i].listID === todoListData[selectedTodoListIndex].listID) {
-                    updateTodoPositionLocal(oldID, oldIndex, newID, newIndex);
-                    break;
-                }
-            }
+            setTodoPositionChangeLog([...todoPositionChangeLog, [oldID, newID]]);
+            updateTodoPositionLocal(oldID, oldIndex, newID, newIndex);
+            
             setRecentTodoDragOver(currentTodoDragOver);
         }
     }
 
-    function onTodoDrop() {
-        console.log("Dropped");
+    async function onTodoDrop() {
+        await updateTodoPositions({listID: selectedTodoListDataLocal.listID, changeLog: todoPositionChangeLog});
+        setTodoPositionChangeLog([]);
     }
 
     function todoOnClickFunction(event: React.MouseEvent<HTMLDivElement, MouseEvent>, todoID: number) {
@@ -375,7 +356,6 @@ function TodoList() {
     function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {
         let name = event.target.value;
 
-        console.log("runs");
         setTodoNameLocal(todoIndex, name);
     }
 
@@ -493,7 +473,6 @@ function TodoList() {
             for (const list of todoListData) {
                 if (list.listID === selectedTodoListID) {
                     updateSelectedTodoListDataLocal(list);
-                    // console.log("update");
                 }
             }
         }
@@ -511,6 +490,7 @@ function TodoList() {
             setSelectedTodoListID(todoListData[todoListData.length - 1].listID);
             setNewListMade(false);
             setFocusOnTodoListName(true);
+
         }
         
     }, [todoListData]);
@@ -519,11 +499,11 @@ function TodoList() {
     and if "focusOnTodoListName" is true then the page will focus on the
     input element for the todo list title */
     useEffect(() => {
-        if (todoListNameDisplay.current !== null && focusOnTodoListName === true) {
+       if (todoListNameDisplay.current !== null && focusOnTodoListName === true) {
             (todoListNameDisplay.current as HTMLInputElement).focus();
             setFocusOnTodoListName(false);
         }
-    }, [focusOnTodoListName]);
+    }, [focusOnTodoListName, {...todoListNameDisplay}]);
 
 
     return !loadingTodoListData ? <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>

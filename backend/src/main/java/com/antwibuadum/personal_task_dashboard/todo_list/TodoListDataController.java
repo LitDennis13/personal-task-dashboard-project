@@ -17,7 +17,6 @@ public class TodoListDataController {
     @GetMapping
     @RequestMapping("/get-todo-list-data")
     public ArrayList<TodoList> getTodoLists() {
-//        System.out.println("Got Todo List Data");
         return temporaryTodoListData;
     }
 
@@ -26,11 +25,6 @@ public class TodoListDataController {
     @RequestMapping("/add-todo-list")
     public void addTodoList(@RequestBody Integer listID) {
         temporaryTodoListData.add(new TodoList(listID, "", new ArrayList<Todo>()));
-
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            System.out.println(temporaryTodoListData.get(i).getName());
-        }
-        System.out.println("Added New Todo List");
     }
 
 
@@ -44,7 +38,6 @@ public class TodoListDataController {
         for (TodoList temporaryTodoListDatum : temporaryTodoListData) {
             if (Objects.equals(temporaryTodoListDatum.getListID(), data.listID)) {
                 temporaryTodoListDatum.setName(data.newName);
-                System.out.println("Changing Todo List Name");
                 break;
             }
         }
@@ -112,13 +105,11 @@ public class TodoListDataController {
     @PutMapping
     @RequestMapping("/set-todo-name")
     public void setTodoName(@RequestBody SetTodoNameData data) {
-        System.out.println(data.newTodoName);
         for (int i = 0; i < temporaryTodoListData.size(); i++) {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
                     if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.todoID) {
                         temporaryTodoListData.get(i).getList().get(j).setName(data.newTodoName);
-                        System.out.println("Changing Todo Name");
                         break;
                     }
                 }
@@ -199,36 +190,45 @@ public class TodoListDataController {
     }
 
 
-    public static class UpdateTodoPositionData {
+    public static class UpdateTodoPositionsData {
         public int listID;
-        public int oldTodoID;
-        public int newTodoID;
+        public Integer[][] changeLog;
     }
     @PutMapping
-    @RequestMapping("/update-todo-position")
-    public void updateTodoPosition(@RequestBody UpdateTodoPositionData data) {
+    @RequestMapping("/update-todo-positions")
+    public void updateTodoPosition(@RequestBody UpdateTodoPositionsData data) {
         int listIndex = -1;
         int oldTodoIndex = -1;
         int newTodoIndex = -1;
         for (int i = 0; i < temporaryTodoListData.size(); i++) {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 listIndex = i;
-                for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
-                    if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.oldTodoID) {
-                        oldTodoIndex = j;
-                    }
-                    else if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.newTodoID) {
-                        newTodoIndex = j;
-                    }
-                }
                 break;
             }
         }
 
-        temporaryTodoListData.get(listIndex).getList().get(oldTodoIndex).setTodoID(data.newTodoID);
-        temporaryTodoListData.get(listIndex).getList().get(newTodoIndex).setTodoID(data.oldTodoID);
+        for (int i = 0; i < data.changeLog.length; i++) {
+            if (!Objects.equals(data.changeLog[i][0], data.changeLog[i][1])) {
+                int oldTodoId = data.changeLog[i][0];
+                int newTodoId = data.changeLog[i][1];
 
-        temporaryTodoListData.get(listIndex).getList().sort((x,y) -> x.getTodoID() - y.getTodoID());
+                for (int j = 0; j < temporaryTodoListData.get(listIndex).getList().size(); j++) {
+                    if (Objects.equals(temporaryTodoListData.get(listIndex).getList().get(j).getTodoID(), oldTodoId)) {
+                        oldTodoIndex = j;
+                    }
+                    if (Objects.equals(temporaryTodoListData.get(listIndex).getList().get(j).getTodoID(), newTodoId)) {
+                        newTodoIndex = j;
+                    }
+                }
+
+                temporaryTodoListData.get(listIndex).getList().get(oldTodoIndex).setTodoID(newTodoId);
+                temporaryTodoListData.get(listIndex).getList().get(newTodoIndex).setTodoID(oldTodoId);
+
+                temporaryTodoListData.get(listIndex).getList().sort((x,y) -> x.getTodoID() - y.getTodoID());
+            }
+        }
+
+
     }
 }
 

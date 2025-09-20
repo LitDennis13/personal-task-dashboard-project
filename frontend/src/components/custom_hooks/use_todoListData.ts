@@ -2,15 +2,15 @@ import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient, type UseMutateAsyncFunction } from "@tanstack/react-query";
 
 import { fetchTodoListData, sendAddTodoList, sendSetTodoListName, sendDeleteTodoList, sendSwitchListIDs, sendAddTodo,
-    sendSetTodoName, sendSetTodoNote, sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPosition, } from "../../api/todoListData";
+    sendSetTodoName, sendSetTodoNote, sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPositions, } from "../../api/todoListData";
 
 import type { AddTodoListData, SetTodoListNameData, DeleteTodoListData, SwitchListsIDsData, AddTodoData,
-     SetTodoNameData, SetTodoNoteData, SetTodoCompletionStatusData, DeleteTodoData, UpdateTodoPositionData } from "../../api/todoListData";
+     SetTodoNameData, SetTodoNoteData, SetTodoCompletionStatusData, DeleteTodoData, UpdateTodoPositionsData } from "../../api/todoListData";
 
 import type { TodoListType, TodoType } from "../../types";
 
 
-export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void, Error, AddTodoListData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoListNameData, unknown>, UseMutateAsyncFunction<void, Error, DeleteTodoListData, unknown>, UseMutateAsyncFunction<void, Error, SwitchListsIDsData, unknown>, UseMutateAsyncFunction<void, Error, AddTodoData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoNameData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoNoteData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoCompletionStatusData, unknown>, UseMutateAsyncFunction<void, Error, DeleteTodoData, unknown>, UseMutateAsyncFunction<void, Error, UpdateTodoPositionData, unknown>, boolean] {
+export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void, Error, AddTodoListData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoListNameData, unknown>, UseMutateAsyncFunction<void, Error, DeleteTodoListData, unknown>, UseMutateAsyncFunction<void, Error, SwitchListsIDsData, unknown>, UseMutateAsyncFunction<void, Error, AddTodoData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoNameData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoNoteData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoCompletionStatusData, unknown>, UseMutateAsyncFunction<void, Error, DeleteTodoData, unknown>, UseMutateAsyncFunction<void, Error, UpdateTodoPositionsData, unknown>, boolean] {
     const queryClient = useQueryClient();
 
     const { data: todoListData, isLoading: loadingTodoListData } = useQuery({
@@ -54,21 +54,21 @@ export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void,
         mutationFn: sendDeleteTodo,
     });
 
-    const { mutateAsync: updateTodoPosition, isSuccess: updateTodoPositionSuccess } = useMutation({
-        mutationFn: sendUpdateTodoPosition,
+    const { mutateAsync: updateTodoPositions, isSuccess: updateTodoPositionsSuccess } = useMutation({
+        mutationFn: sendUpdateTodoPositions,
     });
     
 
     useEffect(() => {
         let condition = addTodoListSuccess || setTodoListNameSuccess || deleteTodoListSuccess 
         || switchListIDsSuccess || addTodoSuccess || setTodoNameSuccess || setTodoNoteSuccess
-        || setTodoCompletionStatusSuccess || deleteTodoSuccess || updateTodoPositionSuccess;
+        || setTodoCompletionStatusSuccess || deleteTodoSuccess || updateTodoPositionsSuccess;
         if (condition) {
             queryClient.invalidateQueries({queryKey: ["todoListData"]});
         }
 
     }, [addTodoListSuccess, setTodoListNameSuccess, deleteTodoListSuccess, switchListIDsSuccess, addTodoSuccess, setTodoNameSuccess,
-         setTodoNoteSuccess, setTodoCompletionStatusSuccess, deleteTodoSuccess, updateTodoPositionSuccess]);
+         setTodoNoteSuccess, setTodoCompletionStatusSuccess, deleteTodoSuccess, updateTodoPositionsSuccess]);
 
-    return [(todoListData as TodoListType[]), addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPosition, loadingTodoListData];
+    return [(todoListData as TodoListType[]), addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPositions, loadingTodoListData];
 }

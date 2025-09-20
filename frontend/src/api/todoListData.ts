@@ -1,5 +1,5 @@
 import type { TodoListType, TodoType } from "../types";
-import { fetchOptionsGet, fetchOptionsPOST, fetchOptionsPUT } from "./fetchOptions";
+import { fetchOptionsGet, fetchOptionsPUT } from "./fetchOptions";
 
 async function fetchTodoListData() {
     const returnValue = await fetch("http://localhost:8080/api/v1/todo-list-data/get-todo-list-data", fetchOptionsGet)
@@ -179,19 +179,18 @@ async function sendDeleteTodo(data: DeleteTodoData) {
 }
 
 
-type UpdateTodoPositionData = {
-    listID: number;
-    oldTodoID: number;
-    newTodoID: number;
-};
-async function sendUpdateTodoPosition(data: UpdateTodoPositionData) {
-    const listID = data.listID;
-    const oldTodoID = data.oldTodoID;
-    const newTodoID = data.newTodoID;
 
-    await fetch("http://localhost:8080/api/v1/todo-list-data/update-todo-position", {
+type UpdateTodoPositionsData = {
+    listID: number;
+    changeLog: number[][];
+};
+async function sendUpdateTodoPositions(data: UpdateTodoPositionsData) {
+    const listID = data.listID;
+    const changeLog = data.changeLog;    
+
+    await fetch("http://localhost:8080/api/v1/todo-list-data/update-todo-positions", {
         ...fetchOptionsPUT,
-        body: JSON.stringify({listID, oldTodoID, newTodoID})
+        body: JSON.stringify({listID, changeLog: changeLog})
     })
     .catch((error) => {
         console.error(error);
@@ -199,14 +198,9 @@ async function sendUpdateTodoPosition(data: UpdateTodoPositionData) {
 }
 
 
-
-
-
-
-
 export { fetchTodoListData, sendAddTodoList, sendSetTodoListName, sendDeleteTodoList,
     sendSwitchListIDs, sendAddTodo, sendSetTodoName, sendSetTodoNote,
-    sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPosition };
+    sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPositions };
 
 export type { AddTodoListData, SetTodoListNameData, DeleteTodoListData, SwitchListsIDsData, AddTodoData,
-     SetTodoNameData, SetTodoNoteData, SetTodoCompletionStatusData, DeleteTodoData, UpdateTodoPositionData };
+     SetTodoNameData, SetTodoNoteData, SetTodoCompletionStatusData, DeleteTodoData, UpdateTodoPositionsData };
