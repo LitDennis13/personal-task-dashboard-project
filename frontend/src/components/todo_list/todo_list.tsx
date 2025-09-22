@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { emptyOrWhiteSpace } from "../App/App";
 import type { TodoListType, TodoType } from "../../types";
-import { SelectedTodoListDataStore, TodoListDataStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
+import { SelectedTodoListDataStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
 import { useNewID } from "../custom_hooks/use_newID";
 
 import styles from "./todo_list.module.css";
@@ -55,16 +55,19 @@ function TodoList() {
     const DELETE_LIST_BUTTON = "DeleteListButton";
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
-    const [todoListData, addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPositions, loadingTodoListData] = useTodoListData();
+    const [newID, incrementNewID] = useNewID();
+
+    const [todoListData, addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName,
+        setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPositions, loadingTodoListData] = useTodoListData();
 
     const selectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.value);
     const updateSelectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.updateSelectedTodoListData);
     const setTodoListNameLocal = SelectedTodoListDataStore((state) => state.setTodoListName);
     const setTodoNameLocal = SelectedTodoListDataStore((state) => state.setTodoName);
     const setTodoNoteLocal = SelectedTodoListDataStore((state) => state.setTodoNote);
-    const updateTodoPositionLocal = SelectedTodoListDataStore((state) => state.updateTodoPosition);    
-
-    const [newID, incrementNewID] = useNewID();
+    const updateTodoPositionLocal = SelectedTodoListDataStore((state) => state.updateTodoPosition);
+    
+    const [todoPositionChangeLog, setTodoPositionChangeLog] = useState<number[][]>([]);
 
     const selectedTodoListID = useSelectedTodoListIDStore((state) => state.value);
     const setSelectedTodoListID = useSelectedTodoListIDStore((state) => state.setSelectedTodoListID);
@@ -94,15 +97,9 @@ function TodoList() {
     const [draggingTodo, setDraggingTodo] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
     const [recentTodoDragOver, setRecentTodoDragOver] = useState<TodoType>({...newTodoDefaultState, todoID: -1});
 
-
-    const [todoPositionChangeLog, setTodoPositionChangeLog] = useState<number[][]>([]);
-
-    /* This function closes the todo editor by setting the "selectedTodoID" state to -1.
-    It also has an option to check the current todo's name is empty and if so updating 
-    that todo's name to be "Untitled Todo" */
-    async function closeTodoEditArea(checkEmptyTodo: boolean = true) {
+    function closeTodoEditArea(checkEmptyTodo: boolean = true) {
         if (checkEmptyTodo && selectedTodoID !== -1) {
-            const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListID);
+            const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListDataLocal.listID);
             let todoName = "";
             let todoIndex = -1;
             
@@ -115,7 +112,6 @@ function TodoList() {
             }
 
             if (emptyOrWhiteSpace(todoName)) {     
-                // await setTodoName({listID: selectedTodoID,todoID: selectedTodoID, newTodoName: "Untitled Todo"});
                 setTodoNameLocal(todoIndex, "Untitled Todo");
             }
         }
@@ -133,7 +129,7 @@ function TodoList() {
         let displayName: string;
         
         todoListData.map((element: TodoListType, index: number) => {
-            if (element.listID === selectedTodoListID) id = styles.selected;
+            if (element.listID === selectedTodoListDataLocal.listID) id = styles.selected;
             else id = "";
             
             displayName = element.name;
@@ -186,7 +182,7 @@ function TodoList() {
     }
 
     async function confirmDeleteListButtonOnClick() {
-        await deleteTodoList({listID: selectedTodoListID});
+        await deleteTodoList({listID: selectedTodoListDataLocal.listID});
 
         setSelectedTodoListID(0);
         setDeleteListPressed(false);
@@ -196,8 +192,8 @@ function TodoList() {
         for (let index = 1; index < todoListData.length; index++) {
             let indexBefore = index - 1;
 
-            if (todoListData[index].listID === selectedTodoListID && todoListData[indexBefore].listID !== 0) {
-                await switchListIDs({listIDOne: todoListData[indexBefore].listID, listIDTwo: selectedTodoListID});
+            if (todoListData[index].listID === selectedTodoListDataLocal.listID && todoListData[indexBefore].listID !== 0) {
+                await switchListIDs({listIDOne: todoListData[indexBefore].listID, listIDTwo: selectedTodoListDataLocal.listID});
                 setSelectedTodoListID(todoListData[indexBefore].listID);
                 break;
             }
@@ -208,8 +204,8 @@ function TodoList() {
         for (let index = 0; index < todoListData.length; index++) {
             let indexAfter = index + 1;
 
-            if (todoListData[index].listID === selectedTodoListID && indexAfter < todoListData.length) {
-                await switchListIDs({listIDOne: selectedTodoListID, listIDTwo: todoListData[indexAfter].listID});
+            if (todoListData[index].listID === selectedTodoListDataLocal.listID && indexAfter < todoListData.length) {
+                await switchListIDs({listIDOne: selectedTodoListDataLocal.listID, listIDTwo: todoListData[indexAfter].listID});
                 setSelectedTodoListID(todoListData[indexAfter].listID);
                 break;
             }
@@ -217,13 +213,13 @@ function TodoList() {
     }
 
     function loadTodoListManagement() {
-        if (selectedTodoListID != 0 && selectedTodoID === -1) {
+        if (selectedTodoListDataLocal.listID != 0 && selectedTodoID === -1) {
             let deleteButton: any;
             let loadMoveListUp = true;
             let loadMoveListDown = true;
 
-            if (todoListData[1].listID === selectedTodoListID) loadMoveListUp = false;
-            if (todoListData[todoListData.length - 1].listID === selectedTodoListID) loadMoveListDown = false;
+            if (todoListData[1].listID === selectedTodoListDataLocal.listID) loadMoveListUp = false;
+            if (todoListData[todoListData.length - 1].listID === selectedTodoListDataLocal.listID) loadMoveListDown = false;
 
             let deleteButtonStyles = styles.deleteListButton + " " + (loadMoveListUp || loadMoveListDown ? styles.deleteListButtonWithListMoves : styles.deleteListButtonOnly);
 
@@ -249,19 +245,14 @@ function TodoList() {
         else return "";
     }
 
-    /* This function sets the "draggingTodo" state to the todo that the user has started dragging
-    and it sets the "recentTodoDragOver" state to the todo that the user is dragging as well
-    to signal that the most recent todo that was dragged over was itself */
     function onTodoDragStart(todo: TodoType) {
         setDraggingTodo(todo);
         setRecentTodoDragOver(todo);
         closeTodoEditArea();
     }
 
-    /* This function swaps the todo id's of the todo being dragged and the todo being dragged over and then the todo data gets
-    sorted by id to change the position of the todos */
     function onTodoDragOver(event: React.DragEvent<HTMLDivElement>, currentTodoDragOver: TodoType) {
-        const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListID);
+        const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListDataLocal.listID);
         event.preventDefault();
 
         if (recentTodoDragOver.todoID !== currentTodoDragOver.todoID) {
@@ -304,7 +295,7 @@ function TodoList() {
     }
 
     function loadTodosFromList() {
-        const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListID);
+        const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListDataLocal.listID);
         let notCompleteTodos: any[] = [];
         let completeTodos: any[] = [];
 
@@ -346,7 +337,7 @@ function TodoList() {
 
         if (!emptyOrWhiteSpace(newTodo.name)) {
             newTodo.todoID = newID;
-            await addTodo({listID: selectedTodoListID, newTodo});
+            await addTodo({listID: selectedTodoListDataLocal.listID, newTodo});
         }
 
         await incrementNewID();
@@ -398,14 +389,14 @@ function TodoList() {
     }
 
     async function onConfirmTodoDeleteClick(todoID: number) {
-        await deleteTodo({listID: selectedTodoListID, todoID});
+        await deleteTodo({listID: selectedTodoListDataLocal.listID, todoID});
 
         closeTodoEditArea(false);
         setDeleteTodoPressed(false);
     }
 
     function loadEditTodoArea() {
-        const selectedTodoList = todoListData[getTodoListIndex(todoListData, selectedTodoListID)];
+        const selectedTodoList = todoListData[getTodoListIndex(todoListData, selectedTodoListDataLocal.listID)];
         let todo: TodoType = newTodoDefaultState;
         let todoID: number = -1;
         let todoIndex: number = -1;
@@ -422,7 +413,7 @@ function TodoList() {
         if (selectedTodoID !== -1) {
             return <div id={EDIT_TODO_AREA} className={styles.editTodoArea}>
                 <div className={styles.editTodoCompletionStatus}>
-                    <button onClick={() => updateCompletionStatus(todoListData, getTodoListIndex(todoListData, selectedTodoListID), setTodoCompletionStatus, todo.todoID)}>
+                    <button onClick={() => updateCompletionStatus(todoListData, getTodoListIndex(todoListData, selectedTodoListDataLocal.listID), setTodoCompletionStatus, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -454,7 +445,6 @@ function TodoList() {
                 closeTodoEditArea(true);
                 updateTodoName();
                 updateTodoNote();
-                
             }
 
             if (event.target.id !== DELETE_LIST_BUTTON) {
@@ -479,25 +469,14 @@ function TodoList() {
         
     }, [loadingTodoListData, selectedTodoListID, todoListData]);
 
-
-    /* This useEffect runs when a new todo list is created and it
-    sets the state of "selectedTodoList" to the new todo list created
-    and sets the state of "focusOnTodoListName" to true so that the
-    useEffect below will make the page focus on the input element
-    that contains the title for the new todo list */
     useEffect(() => {
         if (newListMade) {
             setSelectedTodoListID(todoListData[todoListData.length - 1].listID);
             setNewListMade(false);
             setFocusOnTodoListName(true);
-
         }
-        
     }, [todoListData]);
 
-    /* This useEffect runs when the state of "focusOnTodoListName" is changed
-    and if "focusOnTodoListName" is true then the page will focus on the
-    input element for the todo list title */
     useEffect(() => {
        if (todoListNameDisplay.current !== null && focusOnTodoListName === true) {
             (todoListNameDisplay.current as HTMLInputElement).focus();
@@ -520,7 +499,7 @@ function TodoList() {
 
             {loadTodoListManagement()}
 
-            {(todoListData[getTodoListIndex(todoListData, selectedTodoListID)].list.length >= 1)
+            {(todoListData[getTodoListIndex(todoListData, selectedTodoListDataLocal.listID)].list.length >= 1)
             ? 
                 <div className={styles.todoListDisplay + " " + styles.withTodos}>
                     {loadTodosFromList()}
@@ -538,7 +517,7 @@ function TodoList() {
 
             {loadEditTodoArea()}
         </div>
-    </div>: "" 
+    </div>: "";
 }
 
 export default TodoList;
