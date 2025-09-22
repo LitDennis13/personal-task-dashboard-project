@@ -10,7 +10,7 @@ import type { AddTodoListData, SetTodoListNameData, DeleteTodoListData, SwitchLi
 import type { TodoListType, TodoType } from "../../types";
 
 
-export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void, Error, AddTodoListData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoListNameData, unknown>, UseMutateAsyncFunction<void, Error, DeleteTodoListData, unknown>, UseMutateAsyncFunction<void, Error, SwitchListsIDsData, unknown>, UseMutateAsyncFunction<void, Error, AddTodoData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoNameData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoNoteData, unknown>, UseMutateAsyncFunction<void, Error, SetTodoCompletionStatusData, unknown>, UseMutateAsyncFunction<void, Error, DeleteTodoData, unknown>, UseMutateAsyncFunction<void, Error, UpdateTodoPositionsData, unknown>, boolean] {
+export function useTodoListData() {
     const queryClient = useQueryClient();
 
     const { data: todoListData, isLoading: loadingTodoListData } = useQuery({
@@ -70,5 +70,19 @@ export function useTodoListData(): [TodoListType[], UseMutateAsyncFunction<void,
     }, [addTodoListSuccess, setTodoListNameSuccess, deleteTodoListSuccess, switchListIDsSuccess, addTodoSuccess, setTodoNameSuccess,
          setTodoNoteSuccess, setTodoCompletionStatusSuccess, deleteTodoSuccess, updateTodoPositionsSuccess]);
 
-    return [(todoListData as TodoListType[]), addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName, setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPositions, loadingTodoListData];
+    
+    return {
+        data: (todoListData as TodoListType[]),
+        addTodoList,
+        setTodoListName,
+        deleteTodoList,
+        switchListIDs,
+        addTodo,
+        setTodoName,
+        setTodoNote,
+        setTodoCompletionStatus,
+        deleteTodo,
+        updateTodoPositions,
+        loadingTodoListData,
+    };
 }

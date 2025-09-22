@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useOutletContext } from "react-router-dom";
 
 import { min } from "../App/App";
 import type { TodoType } from "../../types";
-import { TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
+import { SelectedTodoListDataStore, TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
 import { playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { getTodoListIndex, updateCompletionStatus } from "../todo_list/todo_list";
 
@@ -14,17 +14,16 @@ import NotesStyles from "../notes/notes.module.css";
 import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
 import CircleCheckIcon from "../../assets/images/check_circle.svg";
+import { useTodoListData } from "../custom_hooks/use_todoListData";
 
 function Dashboard() {
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
 
     const [timerStarted, timerStartStop, getTimerString, isTimerDone] = useOutletContext<any>().dashboardRequirements;
+
+    const todoListData = useTodoListData();
     
-    const selectedTodoListID = useSelectedTodoListIDStore((state) => state.value);
-
-    const todoListData = TodoListDataStore((state) => state.value);
-
-    const setTodoCompletionStatus = TodoListDataStore((state) => state.setTodoCompletionStatus);
+    const selectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.value);
 
     const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
 
@@ -63,16 +62,16 @@ function Dashboard() {
     }
 
     function loadTodosFromList() {
-        const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListID);
+        const selectedTodoListIndex = getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID);
         let notCompleteTodos: any[] = [];
         let completeTodos: any[] = [];
 
-        todoListData[selectedTodoListIndex].list.map((todo: TodoType, index: number) => {
+        selectedTodoListDataLocal.data.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
             let todoEntry = <div key={index} className={TodoListStyles.todoCard + " " + TodoListStyles.todoCardNotSelected} onClick={(event) => todoOnClickFunction(event, todo.todoID)}>
                 <div className={TodoListStyles.checkCompletedArea}>
-                    <button onClick={() => updateCompletionStatus(todoListData, selectedTodoListIndex, setTodoCompletionStatus, todo.todoID)}>
+                    <button onClick={() => updateCompletionStatus(todoListData.data, selectedTodoListIndex, todoListData.setTodoCompletionStatus, todo.todoID)}>
                         <img id={TODO_COMPLETE_BUTTON_IMAGE_ID} src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -141,23 +140,33 @@ function Dashboard() {
         return "";
     }
 
-    return <div className={styles.mainStyle}>
+    useEffect(() => {
+            if (!todoListData.loadingTodoListData){
+                for (const list of todoListData.data) {
+                    if (list.listID === selectedTodoListDataLocal.data.listID) {
+                        selectedTodoListDataLocal.updateSelectedTodoListData(list);
+                    }
+                }
+            }
+        }, [todoListData.loadingTodoListData, todoListData.data]);
+
+    return !todoListData.loadingTodoListData ? <div className={styles.mainStyle}>
         <div className={styles.pomodoroSpace + " " + (timerStarted ? styles.timerGoing : styles.timerNotGoing)} onClick={() => pomodoroSpaceOnClick()}>
             <p className={styles.timerTitle}>{loadTimerTitle()}</p>
             <p className={styles.timeRemaining}>{getTimerString()}</p>
         </div>
 
-        {(todoListData[getTodoListIndex(todoListData, selectedTodoListID)].list.length >= 1) 
-        ? 
+        {(todoListData.data[getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID)].list.length >= 1) 
+        ?
             <div className={styles.todoSpace + " " + styles.todoSpaceWithTodos}>
-                <input className={styles.todoListName} value={todoListData[getTodoListIndex(todoListData, selectedTodoListID)].name} readOnly/>
+                <input className={styles.todoListName} value={todoListData.data[getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID)].name} readOnly/>
                 <div className={styles.todoListArea}>
                     {loadTodosFromList()}
                 </div>
             </div> 
         : 
             <div className={styles.todoSpace + " " + styles.todoSpaceWithOutTodos}>
-                <p className={styles.noTodosMessage}> The selected todo List <span>{todoListData[getTodoListIndex(todoListData, selectedTodoListID)].name}</span> has no todos</p>
+                <p className={styles.noTodosMessage}> The selected todo List <span>{todoListData.data[getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID)].name}</span> has no todos</p>
             </div>
         }
 
@@ -173,7 +182,7 @@ function Dashboard() {
         }
 
         {triggerRedirect()}
-    </div>
+    </div> : "";
 }
 
 export default Dashboard;

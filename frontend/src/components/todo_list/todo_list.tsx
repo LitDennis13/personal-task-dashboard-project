@@ -57,15 +57,9 @@ function TodoList() {
 
     const [newID, incrementNewID] = useNewID();
 
-    const [todoListData, addTodoList, setTodoListName, deleteTodoList, switchListIDs, addTodo, setTodoName,
-        setTodoNote, setTodoCompletionStatus, deleteTodo, updateTodoPositions, loadingTodoListData] = useTodoListData();
+    const todoListData = useTodoListData();
 
     const selectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.value);
-    const updateSelectedTodoListDataLocal = SelectedTodoListDataStore((state) => state.updateSelectedTodoListData);
-    const setTodoListNameLocal = SelectedTodoListDataStore((state) => state.setTodoListName);
-    const setTodoNameLocal = SelectedTodoListDataStore((state) => state.setTodoName);
-    const setTodoNoteLocal = SelectedTodoListDataStore((state) => state.setTodoNote);
-    const updateTodoPositionLocal = SelectedTodoListDataStore((state) => state.updateTodoPosition);
     
     const [todoPositionChangeLog, setTodoPositionChangeLog] = useState<number[][]>([]);
 
@@ -99,20 +93,20 @@ function TodoList() {
 
     function closeTodoEditArea(checkEmptyTodo: boolean = true) {
         if (checkEmptyTodo && selectedTodoID !== -1) {
-            const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListDataLocal.listID);
+            const selectedTodoListIndex = getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID);
             let todoName = "";
             let todoIndex = -1;
             
-            for (let i = 0; i < todoListData[selectedTodoListIndex].list.length; i++) {
-                if (todoListData[selectedTodoListIndex].list[i].todoID === selectedTodoID) {
-                    todoName = todoListData[selectedTodoListIndex].list[i].name;
+            for (let i = 0; i < todoListData.data[selectedTodoListIndex].list.length; i++) {
+                if (todoListData.data[selectedTodoListIndex].list[i].todoID === selectedTodoID) {
+                    todoName = todoListData.data[selectedTodoListIndex].list[i].name;
                     todoIndex = i;
 
                 }
             }
 
             if (emptyOrWhiteSpace(todoName)) {     
-                setTodoNameLocal(todoIndex, "Untitled Todo");
+                selectedTodoListDataLocal.setTodoName(todoIndex, "Untitled Todo");
             }
         }
         setSelectedTodoID(-1);
@@ -128,12 +122,12 @@ function TodoList() {
         let id: string;
         let displayName: string;
         
-        todoListData.map((element: TodoListType, index: number) => {
-            if (element.listID === selectedTodoListDataLocal.listID) id = styles.selected;
+        todoListData.data.map((element: TodoListType, index: number) => {
+            if (element.listID === selectedTodoListDataLocal.data.listID) id = styles.selected;
             else id = "";
             
             displayName = element.name;
-            if (element.listID === selectedTodoListDataLocal.listID) displayName = selectedTodoListDataLocal.name;
+            if (element.listID === selectedTodoListDataLocal.data.listID) displayName = selectedTodoListDataLocal.data.name;
             if (displayName === "") displayName = "Untitled List";
 
             options[index] = <button id={id} key={index} onClick={() => sideBarOptionOnClick(element.listID)}>{displayName}</button>;
@@ -147,7 +141,7 @@ function TodoList() {
     }
 
     async function onNewListClick() {
-        await addTodoList({listID: newID});
+        await todoListData.addTodoList({listID: newID});
         await incrementNewID();
         setNewListMade(true);
     }
@@ -155,25 +149,25 @@ function TodoList() {
     function updateLocalTodoListName(event: React.ChangeEvent<HTMLInputElement>) {
         let name = event.target.value;
 
-        setTodoListNameLocal(name);
+        selectedTodoListDataLocal.setTodoListName(name);
     }
 
     async function updateServerTodoListName() {
-        if (emptyOrWhiteSpace(selectedTodoListDataLocal.name)) {
-            await setTodoListName({listID: selectedTodoListDataLocal.listID, newName: "Untitled List"});
+        if (emptyOrWhiteSpace(selectedTodoListDataLocal.data.name)) {
+            await todoListData.setTodoListName({listID: selectedTodoListDataLocal.data.listID, newName: "Untitled List"});
         }
         else {
-            await setTodoListName({listID: selectedTodoListDataLocal.listID, newName: selectedTodoListDataLocal.name});
+            await todoListData.setTodoListName({listID: selectedTodoListDataLocal.data.listID, newName: selectedTodoListDataLocal.data.name});
         }
 
     }
 
     function loadTodoListNameField() {
-        if (selectedTodoListDataLocal.listID === 0) {
-            return <input type="text" value={selectedTodoListDataLocal.name} readOnly/>;
+        if (selectedTodoListDataLocal.data.listID === 0) {
+            return <input type="text" value={selectedTodoListDataLocal.data.name} readOnly/>;
         }
         else {
-            return <input ref={todoListNameDisplay} type="text" value={selectedTodoListDataLocal.name} placeholder="Untitled List" onChange={(event) => updateLocalTodoListName(event)} onBlur={() => updateServerTodoListName()} />;
+            return <input ref={todoListNameDisplay} type="text" value={selectedTodoListDataLocal.data.name} placeholder="Untitled List" onChange={(event) => updateLocalTodoListName(event)} onBlur={() => updateServerTodoListName()} />;
         }
     }    
 
@@ -182,44 +176,44 @@ function TodoList() {
     }
 
     async function confirmDeleteListButtonOnClick() {
-        await deleteTodoList({listID: selectedTodoListDataLocal.listID});
+        await todoListData.deleteTodoList({listID: selectedTodoListDataLocal.data.listID});
 
         setSelectedTodoListID(0);
         setDeleteListPressed(false);
     }
 
     async function moveListUpOnClick() {
-        for (let index = 1; index < todoListData.length; index++) {
+        for (let index = 1; index < todoListData.data.length; index++) {
             let indexBefore = index - 1;
 
-            if (todoListData[index].listID === selectedTodoListDataLocal.listID && todoListData[indexBefore].listID !== 0) {
-                await switchListIDs({listIDOne: todoListData[indexBefore].listID, listIDTwo: selectedTodoListDataLocal.listID});
-                setSelectedTodoListID(todoListData[indexBefore].listID);
+            if (todoListData.data[index].listID === selectedTodoListDataLocal.data.listID && todoListData.data[indexBefore].listID !== 0) {
+                await todoListData.switchListIDs({listIDOne: todoListData.data[indexBefore].listID, listIDTwo: selectedTodoListDataLocal.data.listID});
+                setSelectedTodoListID(todoListData.data[indexBefore].listID);
                 break;
             }
         }
     }
 
     async function moveListDownOnClick() {
-        for (let index = 0; index < todoListData.length; index++) {
+        for (let index = 0; index < todoListData.data.length; index++) {
             let indexAfter = index + 1;
 
-            if (todoListData[index].listID === selectedTodoListDataLocal.listID && indexAfter < todoListData.length) {
-                await switchListIDs({listIDOne: selectedTodoListDataLocal.listID, listIDTwo: todoListData[indexAfter].listID});
-                setSelectedTodoListID(todoListData[indexAfter].listID);
+            if (todoListData.data[index].listID === selectedTodoListDataLocal.data.listID && indexAfter < todoListData.data.length) {
+                await todoListData.switchListIDs({listIDOne: selectedTodoListDataLocal.data.listID, listIDTwo: todoListData.data[indexAfter].listID});
+                setSelectedTodoListID(todoListData.data[indexAfter].listID);
                 break;
             }
         }
     }
 
     function loadTodoListManagement() {
-        if (selectedTodoListDataLocal.listID != 0 && selectedTodoID === -1) {
+        if (selectedTodoListDataLocal.data.listID != 0 && selectedTodoID === -1) {
             let deleteButton: any;
             let loadMoveListUp = true;
             let loadMoveListDown = true;
 
-            if (todoListData[1].listID === selectedTodoListDataLocal.listID) loadMoveListUp = false;
-            if (todoListData[todoListData.length - 1].listID === selectedTodoListDataLocal.listID) loadMoveListDown = false;
+            if (todoListData.data[1].listID === selectedTodoListDataLocal.data.listID) loadMoveListUp = false;
+            if (todoListData.data[todoListData.data.length - 1].listID === selectedTodoListDataLocal.data.listID) loadMoveListDown = false;
 
             let deleteButtonStyles = styles.deleteListButton + " " + (loadMoveListUp || loadMoveListDown ? styles.deleteListButtonWithListMoves : styles.deleteListButtonOnly);
 
@@ -252,7 +246,7 @@ function TodoList() {
     }
 
     function onTodoDragOver(event: React.DragEvent<HTMLDivElement>, currentTodoDragOver: TodoType) {
-        const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListDataLocal.listID);
+        const selectedTodoListIndex = getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID);
         event.preventDefault();
 
         if (recentTodoDragOver.todoID !== currentTodoDragOver.todoID) {
@@ -261,24 +255,24 @@ function TodoList() {
             let oldID = currentTodoDragOver.todoID;
             let newID = draggingTodo.todoID;
 
-            for (let i = 0; i < todoListData[selectedTodoListIndex].list.length; i++) {
-                if (todoListData[selectedTodoListIndex].list[i].todoID === oldID) {
+            for (let i = 0; i < todoListData.data[selectedTodoListIndex].list.length; i++) {
+                if (todoListData.data[selectedTodoListIndex].list[i].todoID === oldID) {
                     oldIndex = i;
                 }
-                if (todoListData[selectedTodoListIndex].list[i].todoID === newID) {
+                if (todoListData.data[selectedTodoListIndex].list[i].todoID === newID) {
                     newIndex = i;
                 } 
             }
 
             setTodoPositionChangeLog([...todoPositionChangeLog, [oldID, newID]]);
-            updateTodoPositionLocal(oldID, oldIndex, newID, newIndex);
+            selectedTodoListDataLocal.updateTodoPosition(oldID, oldIndex, newID, newIndex);
             
             setRecentTodoDragOver(currentTodoDragOver);
         }
     }
 
     async function onTodoDrop() {
-        await updateTodoPositions({listID: selectedTodoListDataLocal.listID, changeLog: todoPositionChangeLog});
+        await todoListData.updateTodoPositions({listID: selectedTodoListDataLocal.data.listID, changeLog: todoPositionChangeLog});
         setTodoPositionChangeLog([]);
     }
 
@@ -292,19 +286,21 @@ function TodoList() {
         else {
             setSelectedTodoID(todoID);
         }
+        updateTodoName();
+        updateTodoNote();
     }
 
     function loadTodosFromList() {
-        const selectedTodoListIndex = getTodoListIndex(todoListData, selectedTodoListDataLocal.listID);
+        const selectedTodoListIndex = getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID);
         let notCompleteTodos: any[] = [];
         let completeTodos: any[] = [];
 
-        selectedTodoListDataLocal.list.map((todo: TodoType, index: number) => {
+        selectedTodoListDataLocal.data.list.map((todo: TodoType, index: number) => {
             let IconImage = todo.isComplete ? CircleCheckIcon : CircleIcon;
 
             let todoEntry = <div id={TODO_CARD_ID} key={index} className={styles.todoCard + " " + (todo.todoID === selectedTodoID ? styles.todoCardSelected : styles.todoCardNotSelected)} draggable={todo.isComplete ? "false" : "true"} onClick={(event) => todoOnClickFunction(event, todo.todoID)} onDragStart={() => onTodoDragStart(todo)} onDragOver={(event) => onTodoDragOver(event, todo)} onDrop={() => onTodoDrop()}>
                 <div className={styles.checkCompletedArea}>
-                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(todoListData, selectedTodoListIndex, setTodoCompletionStatus, todo.todoID)}>
+                    <button id={TODO_CHECK_BUTTON} onClick={() => updateCompletionStatus(todoListData.data, selectedTodoListIndex, todoListData.setTodoCompletionStatus, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -337,7 +333,7 @@ function TodoList() {
 
         if (!emptyOrWhiteSpace(newTodo.name)) {
             newTodo.todoID = newID;
-            await addTodo({listID: selectedTodoListDataLocal.listID, newTodo});
+            await todoListData.addTodo({listID: selectedTodoListDataLocal.data.listID, newTodo});
         }
 
         await incrementNewID();
@@ -347,41 +343,41 @@ function TodoList() {
     function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {
         let name = event.target.value;
 
-        setTodoNameLocal(todoIndex, name);
+        selectedTodoListDataLocal.setTodoName(todoIndex, name);
     }
 
     async function updateTodoName() {
         if (selectedTodoID === -1) return;
         let todoIndex = -1;
 
-        for (let i = 0; i < selectedTodoListDataLocal.list.length; i++) {
-            if (selectedTodoListDataLocal.list[i].todoID === selectedTodoID) {
+        for (let i = 0; i < selectedTodoListDataLocal.data.list.length; i++) {
+            if (selectedTodoListDataLocal.data.list[i].todoID === selectedTodoID) {
                 todoIndex = i;
                 break;
             }
         }
 
-        await setTodoName({listID: selectedTodoListDataLocal.listID, todoID: selectedTodoListDataLocal.list[todoIndex].todoID, newTodoName: selectedTodoListDataLocal.list[todoIndex].name});
+        await todoListData.setTodoName({listID: selectedTodoListDataLocal.data.listID, todoID: selectedTodoListDataLocal.data.list[todoIndex].todoID, newTodoName: selectedTodoListDataLocal.data.list[todoIndex].name});
     }
 
     function onTodoNoteChange(event: React.ChangeEvent<HTMLTextAreaElement>, todoIndex: number) {
         let note = event.target.value;
         
-        setTodoNoteLocal(todoIndex, note);
+        selectedTodoListDataLocal.setTodoNote(todoIndex, note);
     }
 
     async function updateTodoNote() {
         if (selectedTodoID === -1) return;
         let todoIndex = -1;
 
-        for (let i = 0; i < selectedTodoListDataLocal.list.length; i++) {
-            if (selectedTodoListDataLocal.list[i].todoID === selectedTodoID) {
+        for (let i = 0; i < selectedTodoListDataLocal.data.list.length; i++) {
+            if (selectedTodoListDataLocal.data.list[i].todoID === selectedTodoID) {
                 todoIndex = i;
                 break;
             }
         }
 
-        await setTodoNote({listID: selectedTodoListDataLocal.listID, todoID: selectedTodoListDataLocal.list[todoIndex].todoID, newTodoNote: selectedTodoListDataLocal.list[todoIndex].note});
+        await todoListData.setTodoNote({listID: selectedTodoListDataLocal.data.listID, todoID: selectedTodoListDataLocal.data.list[todoIndex].todoID, newTodoNote: selectedTodoListDataLocal.data.list[todoIndex].note});
     }
 
     function onTodoDeleteClick() {
@@ -389,14 +385,14 @@ function TodoList() {
     }
 
     async function onConfirmTodoDeleteClick(todoID: number) {
-        await deleteTodo({listID: selectedTodoListDataLocal.listID, todoID});
+        await todoListData.deleteTodo({listID: selectedTodoListDataLocal.data.listID, todoID});
 
         closeTodoEditArea(false);
         setDeleteTodoPressed(false);
     }
 
     function loadEditTodoArea() {
-        const selectedTodoList = todoListData[getTodoListIndex(todoListData, selectedTodoListDataLocal.listID)];
+        const selectedTodoList = todoListData.data[getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID)];
         let todo: TodoType = newTodoDefaultState;
         let todoID: number = -1;
         let todoIndex: number = -1;
@@ -413,7 +409,7 @@ function TodoList() {
         if (selectedTodoID !== -1) {
             return <div id={EDIT_TODO_AREA} className={styles.editTodoArea}>
                 <div className={styles.editTodoCompletionStatus}>
-                    <button onClick={() => updateCompletionStatus(todoListData, getTodoListIndex(todoListData, selectedTodoListDataLocal.listID), setTodoCompletionStatus, todo.todoID)}>
+                    <button onClick={() => updateCompletionStatus(todoListData.data, getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID), todoListData.setTodoCompletionStatus, todo.todoID)}>
                         <img src={IconImage} alt="Completed/Not Completed icon" />
                     </button>
                 </div>
@@ -459,23 +455,22 @@ function TodoList() {
     }
 
     useEffect(() => {
-        if (!loadingTodoListData){
-            for (const list of todoListData) {
+        if (!todoListData.loadingTodoListData){
+            for (const list of todoListData.data) {
                 if (list.listID === selectedTodoListID) {
-                    updateSelectedTodoListDataLocal(list);
+                    selectedTodoListDataLocal.updateSelectedTodoListData(list);
                 }
             }
         }
-        
-    }, [loadingTodoListData, selectedTodoListID, todoListData]);
+    }, [todoListData.loadingTodoListData, selectedTodoListID, todoListData.data]);
 
     useEffect(() => {
         if (newListMade) {
-            setSelectedTodoListID(todoListData[todoListData.length - 1].listID);
+            setSelectedTodoListID(todoListData.data[todoListData.data.length - 1].listID);
             setNewListMade(false);
             setFocusOnTodoListName(true);
         }
-    }, [todoListData]);
+    }, [todoListData.data]);
 
     useEffect(() => {
        if (todoListNameDisplay.current !== null && focusOnTodoListName === true) {
@@ -485,7 +480,7 @@ function TodoList() {
     }, [focusOnTodoListName, {...todoListNameDisplay}]);
 
 
-    return !loadingTodoListData ? <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
+    return !todoListData.loadingTodoListData ? <div className={styles.mainStyle}  onMouseDown={(event) => onMainPageClick(event)}>
         <div className={styles.sideBar}>
             <div className={styles.listTodoLists}>
                 {loadSideBarOptions()}
@@ -499,7 +494,7 @@ function TodoList() {
 
             {loadTodoListManagement()}
 
-            {(todoListData[getTodoListIndex(todoListData, selectedTodoListDataLocal.listID)].list.length >= 1)
+            {(todoListData.data[getTodoListIndex(todoListData.data, selectedTodoListDataLocal.data.listID)].list.length >= 1)
             ? 
                 <div className={styles.todoListDisplay + " " + styles.withTodos}>
                     {loadTodosFromList()}

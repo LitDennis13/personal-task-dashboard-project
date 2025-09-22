@@ -11,55 +11,62 @@ let defaultTodoListData: TodoListType = {
     list: [],
 };
 
-
 type SelectedTodoListData = {
-    value: TodoListType;
-    setTodoListName: (newName: string) => void;
-    updateSelectedTodoListData: (updatedData: TodoListType) => void;
-    setTodoName: (todoIndex: number, newName: string) => void;
-    setTodoNote: (todoIndex: number, newNote: string) => void;
-    updateTodoPosition: (oldID: number, oldIndex: number, newID: number, newIndex: number) => void;
-}
+    value: {
+        data: TodoListType;
+        setTodoListName: (newName: string) => void;
+        updateSelectedTodoListData: (updatedData: TodoListType) => void;
+        setTodoName: (todoIndex: number, newName: string) => void;
+        setTodoNote: (todoIndex: number, newNote: string) => void;
+        updateTodoPosition: (oldID: number, oldIndex: number, newID: number, newIndex: number) => void;
+    };
+};
 
 export const SelectedTodoListDataStore = create<SelectedTodoListData>((set) => ({
-    value: defaultTodoListData,
-    updateSelectedTodoListData: (updatedData) => {
-        set({value: {...updatedData}});
-    },
-    setTodoListName: (newName) => {
-        set((state) => {
-            state.value.name = newName;
+    value: {
+        data: defaultTodoListData,
+        updateSelectedTodoListData: (updatedData) => {
+            set((state) => {
+                state.value.data = updatedData;
 
-            return {value: {...state.value}};
-        });
-    },
-    setTodoName: (todoIndex, newName) => {
-        set((state) => {
-            state.value.list[todoIndex].name = newName;
-            return {value: {...state.value}};
-        });
-    },
-    setTodoNote: (todoIndex, newNote) => {
-        set((state) => {
-            let hasNote = false;
-            if (!emptyOrWhiteSpace(newNote)) hasNote = true;
+                return {value: {...state.value}};
+            });
+        },
+        setTodoListName: (newName) => {
+            set((state) => {
+                state.value.data.name = newName;
+
+                return {value: {...state.value}};
+            });
+        },
+        setTodoName: (todoIndex, newName) => {
+            set((state) => {
+                state.value.data.list[todoIndex].name = newName;
+                return {value: {...state.value}};
+            });
+        },
+        setTodoNote: (todoIndex, newNote) => {
+            set((state) => {
+                let hasNote = false;
+                if (!emptyOrWhiteSpace(newNote)) hasNote = true;
 
 
-            state.value.list[todoIndex].note = newNote;
-            state.value.list[todoIndex].hasNote = hasNote;
-            return {value: {...state.value}};
-        });
-    },
-    updateTodoPosition: (oldID, oldIndex, newID, newIndex) => {
-        set((state) => {
-            state.value.list[oldIndex].todoID = newID;
-            state.value.list[newIndex].todoID = oldID;
+                state.value.data.list[todoIndex].note = newNote;
+                state.value.data.list[todoIndex].hasNote = hasNote;
+                return {value: {...state.value}};
+            });
+        },
+        updateTodoPosition: (oldID, oldIndex, newID, newIndex) => {
+            set((state) => {
+                state.value.data.list[oldIndex].todoID = newID;
+                state.value.data.list[newIndex].todoID = oldID;
 
-            state.value.list.sort((x, y) => x.todoID - y.todoID);
+                state.value.data.list.sort((x, y) => x.todoID - y.todoID);
 
-            return {value: {...state.value}};
-        });
-    }
+                return {value: {...state.value}};
+            });
+        }
+}
 }));
 
 
