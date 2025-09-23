@@ -30,6 +30,25 @@ async function sendSetNote(data: SetNoteData) {
     });
 }
 
-sendSetNote({noteID: 6546, newNote: "stuff"});
+async function sendAddNote(newNoteID: number) {
+    await fetch("http://localhost:8080/api/v1/note-data/add-note", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify(newNoteID),
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
 
-export { fetchNoteData, sendSetNote };
+async function sendDeleteNote(noteID: number) {
+    await fetch("http://localhost:8080/api/v1/note-data/delete-note", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify(noteID),
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+
+export { fetchNoteData, sendSetNote, sendAddNote, sendDeleteNote };

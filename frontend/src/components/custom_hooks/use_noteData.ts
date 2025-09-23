@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useMutation, useQuery, useQueryClient, type UseMutateAsyncFunction } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { fetchNoteData, sendSetNote } from "../../api/noteData";
+import { fetchNoteData, sendAddNote, sendDeleteNote, sendSetNote } from "../../api/noteData";
 
 import type { NoteType } from "../../types";
 
@@ -17,20 +17,30 @@ export function useNoteData() {
     const { mutateAsync: setNote, isSuccess: setNoteSuccess } = useMutation({
         mutationFn: sendSetNote,
     });
+
+    const { mutateAsync: addNote, isSuccess: addNoteSuccess } = useMutation({
+        mutationFn: sendAddNote,
+    });
+
+    const { mutateAsync: deleteNote, isSuccess: deleteNoteSuccess } = useMutation({
+        mutationFn: sendDeleteNote,
+    });
     
 
     useEffect(() => {
-        let condition = setNoteSuccess;
+        let condition = setNoteSuccess || addNoteSuccess || deleteNoteSuccess;
         if (condition) {
             queryClient.invalidateQueries({queryKey: ["noteData"]});
         }
 
-    }, [setNoteSuccess]);
+    }, [setNoteSuccess, addNoteSuccess, deleteNoteSuccess]);
 
     
     return {
         data: (noteData as NoteType[]),
         setNote,
+        addNote,
+        deleteNote,
         loadingNoteData
     };
 }

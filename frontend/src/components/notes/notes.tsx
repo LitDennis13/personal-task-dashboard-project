@@ -9,40 +9,6 @@ import NoteEditorCloseSoundEffect from "../../assets/audio/note_editor_close_sou
 import { useNewID } from "../custom_hooks/use_newID";
 import { useNoteData } from "../custom_hooks/use_noteData";
 
-function leftRightWhiteSpaceRemoval(str: string) {
-    let addToStringOne = false;
-    let addToStringTwo = false;
-
-    let stringOne = "";
-    let stringTwo = "";
-    let returnString = "";
-
-    for (let i = 0; i < str.length; i++) {
-        if (addToStringOne) {
-            stringOne += str[i];
-        }
-        else if (str[i] !== " " && str[i] !== "\n") {
-            addToStringOne = true;
-            stringOne += str[i];
-        }
-    }
-
-    for (let i = stringOne.length - 1; i >= 0 ; i--) {
-        if (addToStringTwo) {
-            stringTwo += stringOne[i];
-        }
-        else if (stringOne[i] !== " " && stringOne[i] !== "\n") {
-            addToStringTwo = true;
-            stringTwo += stringOne[i];
-        }
-    }
-
-    for (let i = stringTwo.length - 1; i >= 0; i--) {
-        returnString += stringTwo[i];
-    }
-
-    return returnString;
-}
 
 function playNoteEditorCloseSoundEffect() {
     new Audio(NoteEditorCloseSoundEffect).play();
@@ -58,10 +24,11 @@ function Notes() {
 
     const selectedNoteID = useSelectedNoteIDStore((state) => state.value);
 
+    const [noteSpaceValue, setNoteSpaceValue] = useState("");
+
     const notesData = useNoteData();
 
     const localNotesData = useLocalNotesDataStore((state) => state.value);
-
 
 
     const mainPage = useRef<HTMLDivElement>(null);
@@ -75,9 +42,6 @@ function Notes() {
     const [noteIDBeingDragged, setNoteIDBeingDragged] = useState(-1);
     const [recentlyDraggedOverNoteID, setRecentlyDraggedOverNoteID] = useState(-1);
 
-    /* This function checks if the scroll bar is loaded by checking whether the height of the scroll bar is
-    greater than the height of the div on the page. If the scroll bar is greater then the "scrollBarPadding"
-    state is set to true, otherwise it is false */
     function checkAndHandleScrollBarLoaded() {
         if (mainPage !== null && mainPage.current instanceof HTMLDivElement) {
             if (mainPage.current.scrollHeight > mainPage.current.clientHeight) {
@@ -93,19 +57,21 @@ function Notes() {
         if (editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
             editNoteDialog.current.showModal();
             selectedNoteID.setSelectedNoteID(noteID);
+
+            for (const note of localNotesData.data) {
+                if (note.noteID === noteID) {
+                    setNoteSpaceValue(note.note);
+                }
+            }
         }
     }
 
-    /* This function sets the "noteIDBeingDragged" state to the note id that the user has started dragging
-    and it sets the "recentlyDraggedOverNoteID" state to the note id that the user is dragging as well
-    to signal that the most recent note that was dragged over was itself */
     function onNoteDragStart(draggingNoteID: number) {
         setNoteIDBeingDragged(draggingNoteID);
         setRecentlyDraggedOverNoteID(draggingNoteID);
     }
 
-    /* This function swaps the note id's of the note being dragged and the note being dragged over and then the note data gets
-    sorted by id to change the position of the notes */
+
     function onNoteDragOver(event: React.DragEvent<HTMLButtonElement>, noteIDBeingDraggedOver: number) {
         event.preventDefault();
         
@@ -113,31 +79,32 @@ function Notes() {
             let noteBeingDraggedIndex = -1;
             let noteBeingDraggedOverIndex = -1;
 
-            for (let i = 0; i < notesData.data.length; i++) {
-                if (notesData.data[i].noteID === noteIDBeingDragged) {
+            for (let i = 0; i < localNotesData.data.length; i++) {
+                if (localNotesData.data[i].noteID === noteIDBeingDragged) {
                     noteBeingDraggedIndex = i;
                 }
-                if (notesData.data[i].noteID === noteIDBeingDraggedOver) {
+                if (localNotesData.data[i].noteID === noteIDBeingDraggedOver) {
                     noteBeingDraggedOverIndex = i;
                 }
             }
 
-            updateNotePosition(noteIDBeingDraggedOver, noteBeingDraggedOverIndex, noteIDBeingDragged, noteBeingDraggedIndex);
+            // updateNotePosition(noteIDBeingDraggedOver, noteBeingDraggedOverIndex, noteIDBeingDragged, noteBeingDraggedIndex);
             setRecentlyDraggedOverNoteID(noteIDBeingDraggedOver);
             setNoteIDBeingDragged(noteIDBeingDraggedOver);
         }
     }
 
-    /* This function loads the notes onto the screen. The title for the note are the characters that come before the
-    first new line character and all subsequent characters are part of the note body */
     function loadNotes() {
         let returnData: any[] = [];
 
-        for (let i = 0; i < notesData.data.length; i++) {
+        for (let i = 0; i < localNotesData.data.length; i++) {
             let foundNewLine = false;
             let title = "";
             let note = "";
-            for (const c of notesData.data[i].note) {
+
+            const rawNoteData = (localNotesData.data[i].noteID === selectedNoteID.data) ? noteSpaceValue : localNotesData.data[i].note;
+
+            for (const c of rawNoteData) {
                 if (c === "\n" && !foundNewLine) {
                     foundNewLine = true;
                 }
@@ -149,8 +116,8 @@ function Notes() {
                 }
             }
 
-            let noteEntry = <button key={i} className={styles.noteEntry + " " + styles.notePageNoteEntry} onClick={() => showNoteEditor(i)}
-                draggable="true" onDragStart={() => onNoteDragStart(notesData.data[i].noteID)} onDragOver={(event) => onNoteDragOver(event, notesData.data[i].noteID)}>
+            let noteEntry = <button key={i} className={styles.noteEntry + " " + styles.notePageNoteEntry} onClick={() => showNoteEditor(localNotesData.data[i].noteID)}
+                draggable="true" onDragStart={() => onNoteDragStart(localNotesData.data[i].noteID)} onDragOver={(event) => onNoteDragOver(event, localNotesData.data[i].noteID)}>
                 
                 <textarea className={styles.title} value={title === "" ? "Untitled Note" : title} readOnly></textarea>
                 <textarea className={styles.note} value={note} readOnly></textarea>
@@ -163,8 +130,8 @@ function Notes() {
     async function addNoteButtonOnClick() {
         checkAndHandleScrollBarLoaded();
 
-        if (typeof newID === "number") addNewNote(newID);
-        showNoteEditor(notesData.data.length);
+        await notesData.addNote(newID);
+        showNoteEditor(newID);
         
         await incrementNewID();
     }
@@ -176,26 +143,12 @@ function Notes() {
         </button>;
     }
 
-    function noteEditorValue() {
-        if (selectedNoteID === -1) {
-            return "";
-        }
-        else {
-            return notesData.data[selectedNoteID].note;
-        }
-    }
-    
-    function noteEditorOnChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-        updateNote(selectedNoteID, event.target.value);
-    }
-
-    /* This function closes the note editor by closing the modal and setting the "selectedNoteID" state
-    to -1 to indicate there is no note selected */
     function closeNoteEditor() {
         if (editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
             editNoteDialog.current.close();
             playNoteEditorCloseSoundEffect();
-            setSelectedNoteID(-1);
+            selectedNoteID.setSelectedNoteID(-1);
+            setNoteSpaceValue("");
             setPressedNoteDelete(false);
         }
     }
@@ -204,11 +157,11 @@ function Notes() {
         setPressedNoteDelete(true);
     }
 
-    function onConfirmDeleteNote() {
+    async function onConfirmDeleteNote() {
+        console.log(selectedNoteID.data);
+        await notesData.deleteNote(selectedNoteID.data);
         closeNoteEditor();
-        deleteNote(selectedNoteID);
         setPressedNoteDelete(false);
-        setSelectedNoteID(-1);
     }
 
     function loadDeleteButton() {
@@ -220,15 +173,10 @@ function Notes() {
         }
     }
 
-    /* This function runs every time a click happens when the note editing modal is open and it checks if the click
-    happened outside of the modal. If the click happens outside the modal then the "closeNoteEditor" function runs.
-    This function also checks if anything but the delete button was pressed, if the delete button was not pressed it
-    resets the delete button back to delete */
     function onDialogClick(event: React.MouseEvent<HTMLDialogElement, MouseEvent>) {
         if ((event.target as Element).id !== EDIT_NOTE_AREA_ID && (event.target as Element).id !== EDIT_NOTE_AREA_DIV_ID && (event.target as Element).id !== DELETE_NOTE_BUTTON_ID && editNoteDialog !== null && editNoteDialog.current instanceof HTMLDialogElement) {
             
-            
-            updateNote(selectedNoteID, );
+            notesData.setNote({noteID: selectedNoteID.data, newNote: noteSpaceValue});
             closeNoteEditor();
         }
 
@@ -237,17 +185,19 @@ function Notes() {
         }
     }
 
-    /* This effect runs everytime a change is made to "notesData" and runs the "checkAndHandleScrollBarLoaded"
-    function to see whether the scroll bar has loaded or not */
+    useEffect(() => {
+        if (!notesData.loadingNoteData){
+            localNotesData.setNotesData(notesData.data);
+        }
+    }, [notesData.loadingNoteData, notesData.data]);
+
     useEffect(() => {
         checkAndHandleScrollBarLoaded();
     }, [notesData.data]);
 
-    /* This effect runs only one time when the page loads and checks if the "selectedNoteID" state
-    has a value other then -1. If so the notes editor opens when the page loads, otherwise nothing happens */
     useEffect(() => {
-        if (selectedNoteID !== -1) {
-            showNoteEditor(selectedNoteID);
+        if (selectedNoteID.data !== -1) {
+            showNoteEditor(selectedNoteID.data);
         }
     }, []);
     
@@ -257,7 +207,7 @@ function Notes() {
 
         <dialog ref={editNoteDialog} className={styles.editNoteDialog} onMouseDown={(event) => onDialogClick(event)}>
             <div id={EDIT_NOTE_AREA_DIV_ID}>
-                <textarea id={EDIT_NOTE_AREA_ID} ref={editNoteArea} value={noteEditorValue()} placeholder="Untitled Note" onChange={(event) => noteEditorOnChange(event)}></textarea>
+                <textarea id={EDIT_NOTE_AREA_ID} ref={editNoteArea} value={noteSpaceValue} placeholder="Untitled Note" onChange={(event) => setNoteSpaceValue(event.target.value)}></textarea>
                 {loadDeleteButton()}
             </div>
         </dialog>

@@ -197,7 +197,6 @@ type LocalNotesDataStore = {
     value: {
         data: NoteType[];
         setNotesData: (newNotesData: NoteType[]) => void;
-        updateNote: (noteID: number, newNote: string) => void;
         updateNotePosition: (oldID: number, oldIndex: number, newID: number, newIndex: number) => void;
     }
     
@@ -209,12 +208,6 @@ export const useLocalNotesDataStore = create<LocalNotesDataStore>((set) => ({
         setNotesData: (newNotesData) => {
                 set((state) => {
                     state.value.data = newNotesData;
-                    return {value: {...state.value}};
-                });
-            },
-            updateNote: (noteID, newNote) => {
-                set((state) => {
-                    state.value.data[noteID].note = newNote;
                     return {value: {...state.value}};
                 });
             },
