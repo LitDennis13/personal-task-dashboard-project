@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("api/v1/todo-list-data")
-@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.POST,RequestMethod.PUT,RequestMethod.GET,})
+@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.PUT,RequestMethod.GET})
 public class TodoListDataController {
     ArrayList<TodoList> temporaryTodoListData = new ArrayList<>();
     {

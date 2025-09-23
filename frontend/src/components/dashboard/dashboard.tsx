@@ -3,7 +3,7 @@ import { Navigate, useOutletContext } from "react-router-dom";
 
 import { min } from "../App/App";
 import type { TodoType } from "../../types";
-import { SelectedTodoListDataStore, TodoListDataStore, useNotesDataStore, useSelectedNoteIndexStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
+import { SelectedTodoListDataStore, TodoListDataStore, useSelectedNoteIDStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
 import { playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { getTodoListIndex, updateCompletionStatus } from "../todo_list/todo_list";
 

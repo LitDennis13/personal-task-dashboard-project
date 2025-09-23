@@ -1,13 +1,10 @@
 import { useEffect } from "react";
-import { useMutation, useQuery, useQueryClient, type UseMutateAsyncFunction } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { fetchTodoListData, sendAddTodoList, sendSetTodoListName, sendDeleteTodoList, sendSwitchListIDs, sendAddTodo,
     sendSetTodoName, sendSetTodoNote, sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPositions, } from "../../api/todoListData";
 
-import type { AddTodoListData, SetTodoListNameData, DeleteTodoListData, SwitchListsIDsData, AddTodoData,
-     SetTodoNameData, SetTodoNoteData, SetTodoCompletionStatusData, DeleteTodoData, UpdateTodoPositionsData } from "../../api/todoListData";
-
-import type { TodoListType, TodoType } from "../../types";
+import type { TodoListType } from "../../types";
 
 
 export function useTodoListData() {
