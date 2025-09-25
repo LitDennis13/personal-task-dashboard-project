@@ -5,8 +5,6 @@ import NavigationBar from "../navigation_bar/navigation_bar";
 import useTimer from "../custom_hooks/use_timer";
 
 import styles from "./App.module.css";
-import { useTodoListData } from "../custom_hooks/use_todoListData";
-import { SelectedTodoListDataStore } from "../../store";
 
 const APP_NAME = "Personal Task Dashboard";
 
@@ -44,7 +42,6 @@ function App() {
         }
     }, [location]);
 
-    
     
     return <div id={changeBackgroundColor ? styles.changeBackgroundColor : ""}className={styles.mainStyle}>
         <div className={styles.navigationBarLocation}>

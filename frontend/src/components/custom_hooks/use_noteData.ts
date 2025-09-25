@@ -30,7 +30,7 @@ export function useNoteData() {
         mutationFn: sendUpdateNotePositions,
     });
     
-
+    
     useEffect(() => {
         let condition = setNoteSuccess || addNoteSuccess || deleteNoteSuccess || updateNotePositionsSuccess;
         if (condition) {

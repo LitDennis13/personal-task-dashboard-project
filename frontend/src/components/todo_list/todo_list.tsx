@@ -55,7 +55,7 @@ function TodoList() {
     const DELETE_LIST_BUTTON = "DeleteListButton";
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
 
-    const [newID, incrementNewID] = useNewID();
+    const newID = useNewID();
 
     const todoListData = useTodoListData();
 
@@ -141,8 +141,8 @@ function TodoList() {
     }
 
     async function onNewListClick() {
-        await todoListData.addTodoList({listID: newID});
-        await incrementNewID();
+        await todoListData.addTodoList({listID: newID.data});
+        await newID.incrementNewID();
         setNewListMade(true);
     }
 
@@ -332,11 +332,11 @@ function TodoList() {
         event.preventDefault();
 
         if (!emptyOrWhiteSpace(newTodo.name)) {
-            newTodo.todoID = newID;
+            newTodo.todoID = newID.data;
             await todoListData.addTodo({listID: selectedTodoListDataLocal.data.listID, newTodo});
         }
 
-        await incrementNewID();
+        await newID.incrementNewID();
         setNewTodo({...newTodoDefaultState});
     }
 

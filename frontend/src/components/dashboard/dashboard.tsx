@@ -3,7 +3,7 @@ import { Navigate, useOutletContext } from "react-router-dom";
 
 import { min } from "../App/App";
 import type { TodoType } from "../../types";
-import { SelectedTodoListDataStore, TodoListDataStore, useSelectedNoteIDStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
+import { SelectedTodoListDataStore, useSelectedNoteIDStore, useSelectedTodoIDStore } from "../../store";
 import { playClickSoundEffect } from "../pomodoro_timer/pomodoro_timer";
 import { getTodoListIndex, updateCompletionStatus } from "../todo_list/todo_list";
 
@@ -15,6 +15,7 @@ import NoteIcon from "../../assets/images/notes.svg";
 import CircleIcon from "../../assets/images/circle.svg";
 import CircleCheckIcon from "../../assets/images/check_circle.svg";
 import { useTodoListData } from "../custom_hooks/use_todoListData";
+import { useNoteData } from "../custom_hooks/use_noteData";
 
 function Dashboard() {
     const TODO_COMPLETE_BUTTON_IMAGE_ID = "TodoCompleteButtonImage";
@@ -27,9 +28,9 @@ function Dashboard() {
 
     const setSelectedTodoID = useSelectedTodoIDStore((state) => state.setSelectedTodoID);
 
-    const notesData = useNotesDataStore((state) => state.value);
+    const notesData = useNoteData();
 
-    const setSelectedNoteIndex = useSelectedNoteIndexStore((state) => state.setSelectedTodoID);
+    const selectedNoteID = useSelectedNoteIDStore((state) => state.value);
 
     let [redirect, setRedirect] = useState(0);
 
@@ -94,19 +95,19 @@ function Dashboard() {
         </>
     }
 
-    function noteOnClick(noteIndex: number) {
-        setSelectedNoteIndex(noteIndex);
+    function noteOnClick(noteID: number) {
+        selectedNoteID.setSelectedNoteID(noteID);
         setRedirect(3);
     }
 
     function loadNotes() {
         let returnData: any[] = [];
 
-        for (let i = 0; i < min(notesData.length, 4); i++) {
+        for (let i = 0; i < min(notesData.data.length, 4); i++) {
             let foundNewLine = false;
             let title = "";
             let note = "";
-            for (const c of notesData[i].note) {
+            for (const c of notesData.data[i].note) {
                 if (c === "\n" && !foundNewLine) {
                     foundNewLine = true;
                 }
@@ -118,7 +119,7 @@ function Dashboard() {
                 }
             }
 
-            let noteEntry = <button key={i} className={NotesStyles.noteEntry + " " + NotesStyles.dashBoardNoteEntry} onClick={() => noteOnClick(i)}>
+            let noteEntry = <button key={i} className={NotesStyles.noteEntry + " " + NotesStyles.dashBoardNoteEntry} onClick={() => noteOnClick(notesData.data[i].noteID)}>
                 <textarea className={NotesStyles.title} value={title === "" ? "Untitled Note" : title} readOnly></textarea>
                 <textarea className={NotesStyles.note} value={note} readOnly></textarea>
             </button>;
@@ -150,7 +151,7 @@ function Dashboard() {
             }
         }, [todoListData.loadingTodoListData, todoListData.data]);
 
-    return !todoListData.loadingTodoListData ? <div className={styles.mainStyle}>
+    return !todoListData.loadingTodoListData && !notesData.loadingNoteData ? <div className={styles.mainStyle}>
         <div className={styles.pomodoroSpace + " " + (timerStarted ? styles.timerGoing : styles.timerNotGoing)} onClick={() => pomodoroSpaceOnClick()}>
             <p className={styles.timerTitle}>{loadTimerTitle()}</p>
             <p className={styles.timeRemaining}>{getTimerString()}</p>
@@ -170,7 +171,7 @@ function Dashboard() {
             </div>
         }
 
-        {(notesData.length >= 1)
+        {(notesData.data.length >= 1)
         ?
             <div className={styles.noteSpace + " " + styles.hasNotes}>
                 {loadNotes()}

@@ -19,8 +19,7 @@ function Notes() {
     const EDIT_NOTE_AREA_ID = "EditNoteArea";
     const DELETE_NOTE_BUTTON_ID = "DeleteNoteButton";
 
-    const [newID, incrementNewID] = useNewID();
-    
+    const newID = useNewID();
 
     const selectedNoteID = useSelectedNoteIDStore((state) => state.value);
 
@@ -32,7 +31,6 @@ function Notes() {
 
     const [notePositionChangeLog, setNotePositionChangeLog] = useState<number[][]>([]);
     
-
     const mainPage = useRef<HTMLDivElement>(null);
     const [scrollBarPadding, setScrollBarPadding] = useState(false);
 
@@ -99,10 +97,8 @@ function Notes() {
     }
 
     async function onNoteDrop() {
-        console.log(notePositionChangeLog);
         await notesData.updateNotePositions(notePositionChangeLog);
         setNotePositionChangeLog([]);
-        console.log("Note Dropped");
     }
 
     function loadNotes() {
@@ -141,10 +137,10 @@ function Notes() {
     async function addNoteButtonOnClick() {
         checkAndHandleScrollBarLoaded();
 
-        await notesData.addNote(newID);
-        showNoteEditor(newID);
+        await notesData.addNote(newID.data);
+        showNoteEditor(newID.data);
         
-        await incrementNewID();
+        await newID.incrementNewID();
     }
 
     function loadAddNoteButton() {
@@ -169,7 +165,6 @@ function Notes() {
     }
 
     async function onConfirmDeleteNote() {
-        console.log(selectedNoteID.data);
         await notesData.deleteNote(selectedNoteID.data);
         closeNoteEditor();
         setPressedNoteDelete(false);
