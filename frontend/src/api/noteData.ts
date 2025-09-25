@@ -50,5 +50,15 @@ async function sendDeleteNote(noteID: number) {
     });
 }
 
+async function sendUpdateNotePositions(changeLog: number[][]) {
+    await fetch("http://localhost:8080/api/v1/note-data/update-note-positions", {
+        ...fetchOptionsPUT,
+        body: JSON.stringify(changeLog),
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
 
-export { fetchNoteData, sendSetNote, sendAddNote, sendDeleteNote };
+
+export { fetchNoteData, sendSetNote, sendAddNote, sendDeleteNote, sendUpdateNotePositions };

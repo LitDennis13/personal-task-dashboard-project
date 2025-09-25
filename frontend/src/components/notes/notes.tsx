@@ -30,6 +30,8 @@ function Notes() {
 
     const localNotesData = useLocalNotesDataStore((state) => state.value);
 
+    const [notePositionChangeLog, setNotePositionChangeLog] = useState<number[][]>([]);
+    
 
     const mainPage = useRef<HTMLDivElement>(null);
     const [scrollBarPadding, setScrollBarPadding] = useState(false);
@@ -88,10 +90,19 @@ function Notes() {
                 }
             }
 
-            // updateNotePosition(noteIDBeingDraggedOver, noteBeingDraggedOverIndex, noteIDBeingDragged, noteBeingDraggedIndex);
+            setNotePositionChangeLog([...notePositionChangeLog, [noteIDBeingDraggedOver, noteIDBeingDragged]]);
+
+            localNotesData.updateNotePosition(noteIDBeingDraggedOver, noteBeingDraggedOverIndex, noteIDBeingDragged, noteBeingDraggedIndex);
             setRecentlyDraggedOverNoteID(noteIDBeingDraggedOver);
             setNoteIDBeingDragged(noteIDBeingDraggedOver);
         }
+    }
+
+    async function onNoteDrop() {
+        console.log(notePositionChangeLog);
+        await notesData.updateNotePositions(notePositionChangeLog);
+        setNotePositionChangeLog([]);
+        console.log("Note Dropped");
     }
 
     function loadNotes() {
@@ -117,7 +128,7 @@ function Notes() {
             }
 
             let noteEntry = <button key={i} className={styles.noteEntry + " " + styles.notePageNoteEntry} onClick={() => showNoteEditor(localNotesData.data[i].noteID)}
-                draggable="true" onDragStart={() => onNoteDragStart(localNotesData.data[i].noteID)} onDragOver={(event) => onNoteDragOver(event, localNotesData.data[i].noteID)}>
+                draggable="true" onDragStart={() => onNoteDragStart(localNotesData.data[i].noteID)} onDragOver={(event) => onNoteDragOver(event, localNotesData.data[i].noteID)} onDrop={() => onNoteDrop()}>
                 
                 <textarea className={styles.title} value={title === "" ? "Untitled Note" : title} readOnly></textarea>
                 <textarea className={styles.note} value={note} readOnly></textarea>
