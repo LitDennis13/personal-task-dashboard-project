@@ -1,7 +1,6 @@
 package com.antwibuadum.personal_task_dashboard.notes;
 
 
-import com.antwibuadum.personal_task_dashboard.todo_list.TodoListDataController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -78,7 +77,6 @@ public class NoteDataController {
     @PutMapping
     @RequestMapping("/delete-note")
     public void deleteNote(@RequestBody int noteID) {
-        System.out.println("Delete + " + noteID);
         for (int i = 0; i < temporaryNoteData.size(); i++) {
             if (temporaryNoteData.get(i).noteID == noteID) {
                 temporaryNoteData.remove(i);
