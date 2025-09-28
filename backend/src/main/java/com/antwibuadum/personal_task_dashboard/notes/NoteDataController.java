@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("api/v1/note-data")
-@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.PUT,RequestMethod.GET})
+@CrossOrigin(origins = "*", methods = {RequestMethod.PUT,RequestMethod.GET})
 public class NoteDataController {
     ArrayList<Note> temporaryNoteData = new ArrayList<>();
 

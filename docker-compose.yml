@@ -1,0 +1,43 @@
+services:
+  frontend:
+    build:
+      dockerfile: frontend.Dockerfile
+      context: ./frontend/
+    environment:
+      PORT: 80
+    ports:
+      - "80:80"
+    develop:
+      watch:
+      - action: sync
+        path: ./
+        ignore:
+          node_modules/
+        target: ./
+            
+      - action: rebuild
+        path: ../frontend.Dockerfile
+        target: ./
+
+      - action: rebuild
+        path: ./package.json
+        target: ./
+
+
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backend:
+    build:
+      dockerfile: backend.Dockerfile
+      context: ./backend/
+    ports:
+     - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+    # depends_on:
+    #   - database
