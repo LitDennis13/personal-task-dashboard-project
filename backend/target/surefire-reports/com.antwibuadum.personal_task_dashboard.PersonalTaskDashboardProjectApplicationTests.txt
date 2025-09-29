@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.antwibuadum.personal_task_dashboard.PersonalTaskDashboardProjectApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.217 s -- in com.antwibuadum.personal_task_dashboard.PersonalTaskDashboardProjectApplicationTests
