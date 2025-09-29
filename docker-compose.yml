@@ -10,17 +10,17 @@ services:
     develop:
       watch:
       - action: sync
-        path: ./src/
+        path: ./frontend/
         ignore:
-          node_modules/
+          ./frontend/node_modules/
         target: ./
             
       - action: rebuild
-        path: ../frontend.Dockerfile
+        path: ./frontend/frontend.Dockerfile
         target: ./
 
       - action: rebuild
-        path: ./package.json
+        path: ./frontend/package.json
         target: ./
 
 
@@ -44,9 +44,9 @@ services:
     develop:
       watch:
       - action: rebuild
-        path: ./target/
-        target: ./
+        path: ./backend/target/
+        target: ./target/
             
       - action: rebuild
-        path: ./backend.Dockerfile
+        path: ./backend/backend.Dockerfile
         target: ./
