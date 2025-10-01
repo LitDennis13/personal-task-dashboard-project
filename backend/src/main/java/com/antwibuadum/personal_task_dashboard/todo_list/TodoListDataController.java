@@ -17,7 +17,6 @@ public class TodoListDataController {
     @GetMapping
     @RequestMapping("/get-todo-list-data")
     public ArrayList<TodoList> getTodoLists() {
-        System.out.println("Got Todo Data");
         return temporaryTodoListData;
     }
 

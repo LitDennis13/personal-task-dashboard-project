@@ -10,7 +10,7 @@ services:
     develop:
       watch:
       - action: sync
-        path: ./frontend/
+        path: ./
         ignore:
           ./frontend/node_modules/
         target: ./
@@ -22,8 +22,6 @@ services:
       - action: rebuild
         path: ./frontend/package.json
         target: ./
-
-
     depends_on:
       backend:
         condition: service_healthy
