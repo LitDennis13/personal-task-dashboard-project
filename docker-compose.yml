@@ -37,8 +37,6 @@ services:
       interval: 5s
       timeout: 2s
       retries: 5
-    # depends_on:
-    #   - database
     develop:
       watch:
       - action: rebuild
@@ -48,3 +46,5 @@ services:
       - action: rebuild
         path: ./backend/backend.Dockerfile
         target: ./
+    # depends_on:
+    #   - database

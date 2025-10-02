@@ -227,8 +227,6 @@ public class TodoListDataController {
                 temporaryTodoListData.get(listIndex).getList().sort((x,y) -> x.getTodoID() - y.getTodoID());
             }
         }
-
-
     }
 }
 
