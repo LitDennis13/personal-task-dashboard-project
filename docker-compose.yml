@@ -1,30 +1,30 @@
 services:
-  # frontend:
-  #   build:
-  #     dockerfile: frontend.Dockerfile
-  #     context: ./frontend/
-  #   environment:
-  #     PORT: 80
-  #   ports:
-  #     - "80:80"
-  #   develop:
-  #     watch:
-  #     - action: sync
-  #       path: ./
-  #       ignore:
-  #         ./frontend/node_modules/
-  #       target: ./
+  frontend:
+    build:
+      dockerfile: frontend.Dockerfile
+      context: ./frontend/
+    environment:
+      PORT: 80
+    ports:
+      - "80:80"
+    develop:
+      watch:
+      - action: sync
+        path: ./
+        ignore:
+          ./frontend/node_modules/
+        target: ./
             
-  #     - action: rebuild
-  #       path: ./frontend/frontend.Dockerfile
-  #       target: ./
+      - action: rebuild
+        path: ./frontend/frontend.Dockerfile
+        target: ./
 
-  #     - action: rebuild
-  #       path: ./frontend/package.json
-  #       target: ./
-  #   depends_on:
-  #     backend:
-  #       condition: service_healthy
+      - action: rebuild
+        path: ./frontend/package.json
+        target: ./
+    # depends_on:
+    #   backend:
+    #     condition: service_healthy
 
   # backend:
   #   build:
@@ -46,17 +46,4 @@ services:
   #     - action: rebuild
   #       path: ./backend/backend.Dockerfile
   #       target: ./
-    # depends_on:
-    #   - database
-  database:
-    image: mysql:latest
-    container_name: database
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=personal-task-dashboard-project-database
-    volumes:
-      # - /Users/victoria.kruczek/Desktop/Projekty/pinkFlamingos/db:/var/lib/mysq
-      - /Users/antwibuadum/Documents/Programming/Projects/personal-task-dashboard-project/database/database
 

@@ -1,0 +1,11 @@
+services:
+  database:
+    container_name: "personal-task-board-project-database"
+    image: "mysql:latest"
+    environment:
+      - "MYSQL_DATABASE=personal-task-dashboard-database"
+      - "MYSQL_PASSWORD=password"
+      - "MYSQL_ROOT_PASSWORD=password"
+      - "MYSQL_USER=myuser"
+    ports:
+      - "3306:3306"

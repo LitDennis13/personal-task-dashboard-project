@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/new-id")
 @CrossOrigin(origins = "*")
 public class NewIDController {
-    private Integer NewID = 1;
+    private NewID newID = new NewID(1);
 
     @GetMapping
     @RequestMapping("/get-new-id")
     public Integer getNewID() {
-        return NewID;
+        return newID.getNewID();
     }
 
     @PostMapping
     @RequestMapping("/get-and-increment-new-id")
     public void IncrementID() {
-        NewID++;
+        newID.setNewID(newID.getNewID() + 1);
     }
 }
