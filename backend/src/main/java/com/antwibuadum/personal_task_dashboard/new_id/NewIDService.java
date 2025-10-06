@@ -4,4 +4,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NewIDService {
+    private NewIDRepository newIDRepository;
 }
