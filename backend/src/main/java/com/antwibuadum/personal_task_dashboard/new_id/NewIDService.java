@@ -6,7 +6,7 @@ import java.util.Optional;
 
 @Service
 public class NewIDService {
-    private NewIDRepository newIDRepository;
+    private final NewIDRepository newIDRepository;
 
     public NewIDService(NewIDRepository newIDRepository) {
         this.newIDRepository = newIDRepository;

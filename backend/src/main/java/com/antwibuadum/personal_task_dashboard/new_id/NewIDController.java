@@ -7,12 +7,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/new-id")
 @CrossOrigin(origins = "*")
 public class NewIDController {
-    private NewID newID = new NewID(1);
+    private final NewID newID = new NewID(1);
+
+    private final NewIDService newIDService;
+
+    public NewIDController(NewIDService newIDService) {
+        this.newIDService = newIDService;
+    }
 
     @GetMapping
     @RequestMapping("/get-new-id")
-    public Integer getNewID() {
-        return newID.getNewID();
+    public NewID getNewID() {
+        return newIDService.getCurrentNewID();
     }
 
     @PostMapping
