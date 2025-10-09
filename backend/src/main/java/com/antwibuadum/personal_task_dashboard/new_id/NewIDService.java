@@ -8,17 +8,30 @@ import java.util.Optional;
 public class NewIDService {
     private final NewIDRepository newIDRepository;
 
+    private NewID newIDValue;
+
     public NewIDService(NewIDRepository newIDRepository) {
         this.newIDRepository = newIDRepository;
+
+        Optional<NewID> value = this.newIDRepository.findById(0);
+        if (!value.isPresent()) {
+            NewID newID = new NewID(100);
+            this.newIDRepository.save(newID);
+            value = this.newIDRepository.findById(0);
+        }
+
+        newIDValue = value.get();
     }
 
-    public NewID getCurrentNewID() {
-        Optional<NewID> value = newIDRepository.findById(0);
+    public NewID getNewID() {
+        return newIDValue;
+    }
+
+    public void incrementID() {
+        Optional<NewID> value = this.newIDRepository.findById(0);
         if (value.isPresent()) {
-            return value.get();
-        }
-        else {
-            return new NewID(-1);
+            value.get().setNewID(value.get().getNewID() + 1);
+            this.newIDRepository.save(value.get());
         }
     }
 }

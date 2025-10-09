@@ -18,12 +18,12 @@ public class NewIDController {
     @GetMapping
     @RequestMapping("/get-new-id")
     public NewID getNewID() {
-        return newIDService.getCurrentNewID();
+        return newIDService.getNewID();
     }
 
     @PostMapping
     @RequestMapping("/get-and-increment-new-id")
-    public void IncrementID() {
-        newID.setNewID(newID.getNewID() + 1);
+    public void incrementID() {
+        newIDService.incrementID();
     }
 }
