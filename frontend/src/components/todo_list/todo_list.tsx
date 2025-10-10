@@ -338,7 +338,6 @@ function TodoList() {
 
         await newID.incrementNewID();
         setNewTodo({...newTodoDefaultState});
-        console.log(newID.data);
     }
 
     function onTodoNameChange(event: React.ChangeEvent<HTMLInputElement>, todoIndex: number) {

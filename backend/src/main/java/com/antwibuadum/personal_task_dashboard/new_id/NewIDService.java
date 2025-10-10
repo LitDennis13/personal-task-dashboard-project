@@ -7,23 +7,24 @@ import java.util.Optional;
 @Service
 public class NewIDService {
     private final NewIDRepository newIDRepository;
-
-    private NewID newIDValue;
+    
 
     public NewIDService(NewIDRepository newIDRepository) {
         this.newIDRepository = newIDRepository;
 
+        
+    }
+
+    public Integer getNewID() {
+        Integer newIDValue = -1;
         Optional<NewID> value = this.newIDRepository.findById(0);
         if (!value.isPresent()) {
-            NewID newID = new NewID(100);
+            NewID newID = new NewID(1);
             this.newIDRepository.save(newID);
             value = this.newIDRepository.findById(0);
         }
 
-        newIDValue = value.get();
-    }
-
-    public NewID getNewID() {
+        if (value.isPresent()) newIDValue = value.get().getNewID();
         return newIDValue;
     }
 

@@ -17,7 +17,8 @@ public class NewIDController {
 
     @GetMapping
     @RequestMapping("/get-new-id")
-    public NewID getNewID() {
+    public Integer getNewID() {
+
         return newIDService.getNewID();
     }
 

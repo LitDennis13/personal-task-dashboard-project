@@ -13,6 +13,7 @@ async function fetchNoteData() {
     return returnValue;
 }
 
+
 type SetNoteData = {
     noteID: number;
     newNote: string;
