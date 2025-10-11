@@ -190,10 +190,6 @@ function Notes() {
     }
 
     useEffect(() => {
-        console.log(newID.data);
-    }, [newID]);
-
-    useEffect(() => {
         if (!notesData.loadingNoteData){
             localNotesData.setNotesData(notesData.data);
         }

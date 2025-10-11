@@ -9,6 +9,8 @@ async function fetchNewID() {
     .catch((error) => {
         console.error(error);
     });
+
+    console.log("Fetch new ID");
     
     return returnValue;
 }

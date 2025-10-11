@@ -36,8 +36,11 @@ export function useNoteData() {
         if (condition) {
             queryClient.invalidateQueries({queryKey: ["noteData"]});
         }
-
     }, [setNoteSuccess, addNoteSuccess, deleteNoteSuccess, updateNotePositionsSuccess]);
+
+    useEffect(() => {
+        queryClient.invalidateQueries({queryKey: ["newID"]});
+    }, [addNoteSuccess]);
 
     
     return {
