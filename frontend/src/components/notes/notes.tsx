@@ -138,9 +138,7 @@ function Notes() {
         checkAndHandleScrollBarLoaded();
 
         await notesData.addNote(newID.data);
-        showNoteEditor(newID.data);
-        
-        await newID.incrementNewID();
+        showNoteEditor(newID.data);        
     }
 
     function loadAddNoteButton() {
@@ -190,6 +188,10 @@ function Notes() {
             setPressedNoteDelete(false);
         }
     }
+
+    useEffect(() => {
+        console.log(newID.data);
+    }, [newID]);
 
     useEffect(() => {
         if (!notesData.loadingNoteData){

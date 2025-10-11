@@ -17,7 +17,7 @@ async function sendIncrementNewID() {
     await fetch("http://localhost:8080/api/v1/new-id/get-and-increment-new-id", fetchOptionsPOST)
     .catch((error) => {
         console.error(error);
-    }); 
+    });
 }
 
 export { fetchNewID, sendIncrementNewID };

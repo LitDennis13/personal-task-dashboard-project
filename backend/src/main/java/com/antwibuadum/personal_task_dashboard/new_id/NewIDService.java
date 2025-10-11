@@ -11,12 +11,9 @@ public class NewIDService {
 
     public NewIDService(NewIDRepository newIDRepository) {
         this.newIDRepository = newIDRepository;
-
-        
     }
 
     public Integer getNewID() {
-        Integer newIDValue = -1;
         Optional<NewID> value = this.newIDRepository.findById(0);
         if (!value.isPresent()) {
             NewID newID = new NewID(1);
@@ -24,8 +21,8 @@ public class NewIDService {
             value = this.newIDRepository.findById(0);
         }
 
-        if (value.isPresent()) newIDValue = value.get().getNewID();
-        return newIDValue;
+        if (value.isPresent()) return value.get().getNewID();
+        else return -1;
     }
 
     public void incrementID() {
