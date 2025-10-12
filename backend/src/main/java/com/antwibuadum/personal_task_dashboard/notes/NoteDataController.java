@@ -39,39 +39,12 @@ public class NoteDataController {
     @PutMapping
     @RequestMapping("/delete-note")
     public void deleteNote(@RequestBody int noteID) {
-//        for (int i = 0; i < temporaryNoteData.size(); i++) {
-//            if (temporaryNoteData.get(i).noteID == noteID) {
-//                temporaryNoteData.remove(i);
-//                break;
-//            }
-//        }
+        this.noteService.deleteNote(noteID);
     }
 
     @PutMapping
     @RequestMapping("/update-note-positions")
     public void updateTodoPosition(@RequestBody Integer[][] changeLog) {
-//        int oldNoteIndex = -1;
-//        int newNoteIndex = -1;
-//
-//        for (int i = 0; i < changeLog.length; i++) {
-//            if (!Objects.equals(changeLog[i][0], changeLog[i][1])) {
-//                int oldNoteId = changeLog[i][0];
-//                int newNoteId = changeLog[i][1];
-//
-//                for (int j = 0; j < temporaryNoteData.size(); j++) {
-//                    if (Objects.equals(temporaryNoteData.get(j).getNoteID(), oldNoteId)) {
-//                        oldNoteIndex = j;
-//                    }
-//                    if (Objects.equals(temporaryNoteData.get(j).getNoteID(), newNoteId)) {
-//                        newNoteIndex = j;
-//                    }
-//                }
-//
-//                temporaryNoteData.get(oldNoteIndex).setNoteID(newNoteId);
-//                temporaryNoteData.get(newNoteIndex).setNoteID(oldNoteId);
-//
-//                temporaryNoteData.sort((x,y) -> x.getNoteID() - y.getNoteID());
-//            }
-//        }
+        this.noteService.updateNotePosition(changeLog);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -72,5 +73,45 @@ public class NoteService {
         Note newNote = new Note(this.newIDService.getNewID(), "");
         this.newIDService.incrementID();
         this.noteRepository.save(newNote);
+    }
+
+    public void deleteNote(int noteID) {
+        this.noteRepository.deleteById(noteID);
+    }
+
+    public void updateNotePosition(Integer[][] changeLog) {
+        for (int i = 0; i < changeLog.length; i++) {
+            if (!Objects.equals(changeLog[i][0], changeLog[i][1])) {
+                int oldNoteId = changeLog[i][0];
+                int newNoteId = changeLog[i][1];
+
+                Optional<Note> oldNote = this.noteRepository.findById(oldNoteId);
+                Optional<Note> newNote = this.noteRepository.findById(newNoteId);
+
+                if (oldNote.isPresent() && newNote.isPresent()) {
+                    this.noteRepository.deleteById(oldNoteId);
+                    this.noteRepository.deleteById(newNoteId);
+
+                    oldNote.get().setNoteID(newNoteId);
+                    newNote.get().setNoteID(oldNoteId);
+
+                    this.noteRepository.save(oldNote.get());
+                    this.noteRepository.save(newNote.get());
+                }
+
+
+//                for (int j = 0; j < allNoteData.size(); j++) {
+//                    if (Objects.equals(allNoteData.get(j).getNoteID(), oldNoteId)) {
+//                        oldNoteIndex = j;
+//                    }
+//                    if (Objects.equals(allNoteData.get(j).getNoteID(), newNoteId)) {
+//                        newNoteIndex = j;
+//                    }
+//                }
+//
+//                temporaryNoteData.get(oldNoteIndex).setNoteID(newNoteId);
+//                temporaryNoteData.get(newNoteIndex).setNoteID(oldNoteId);
+            }
+        }
     }
 }
