@@ -1,9 +1,14 @@
 package com.antwibuadum.personal_task_dashboard.todo_list;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
+@Entity
 public class TodoList {
+    @Id
     private Integer listID;
     private String name;
     private ArrayList<Todo> list;
