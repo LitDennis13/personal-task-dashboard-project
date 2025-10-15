@@ -10,8 +10,8 @@ import java.util.Objects;
 @Entity
 public class Note {
     @Id
-    Integer noteID;
-    String note;
+    private Integer noteID;
+    private String note;
 
     public Note() {
     }

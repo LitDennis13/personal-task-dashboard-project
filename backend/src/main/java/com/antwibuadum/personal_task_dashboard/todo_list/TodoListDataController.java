@@ -11,7 +11,15 @@ import java.util.Objects;
 public class TodoListDataController {
     ArrayList<TodoList> temporaryTodoListData = new ArrayList<>();
     {
-        temporaryTodoListData.add(new TodoList(0, "My Day", new ArrayList<Todo>()));
+        temporaryTodoListData.add(new TodoList(0, "My Day", new ArrayList<Todo>(), 0));
+    }
+
+    TodoListRepository todoListRepository;
+    TodoRepository todoRepository;
+
+    public TodoListDataController(TodoRepository todoRepository, TodoListRepository todoListRepository) {
+        this.todoRepository = todoRepository;
+        this.todoListRepository = todoListRepository;
     }
 
     @GetMapping
@@ -24,7 +32,7 @@ public class TodoListDataController {
     @PutMapping
     @RequestMapping("/add-todo-list")
     public void addTodoList(@RequestBody Integer listID) {
-        temporaryTodoListData.add(new TodoList(listID, "", new ArrayList<Todo>()));
+        temporaryTodoListData.add(new TodoList(listID, "", new ArrayList<Todo>(), 0));
     }
 
 

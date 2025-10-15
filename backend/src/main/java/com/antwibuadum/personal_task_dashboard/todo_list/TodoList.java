@@ -12,15 +12,17 @@ public class TodoList {
     private Integer listID;
     private String name;
     private ArrayList<Todo> list;
+    private Integer listIdentifier;
 
     public TodoList() {
 
     }
 
-    public TodoList(Integer listID, String name, ArrayList<Todo> list) {
+    public TodoList(Integer listID, String name, ArrayList<Todo> list, Integer listIdentifier) {
         this.listID = listID;
         this.name = name;
         this.list = list;
+        this.listIdentifier = listIdentifier;
     }
 
     public Integer getListID() {
@@ -47,15 +49,23 @@ public class TodoList {
         this.name = name;
     }
 
+    public Integer getListIdentifier() {
+        return listIdentifier;
+    }
+
+    public void setListIdentifier(Integer listIdentifier) {
+        this.listIdentifier = listIdentifier;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         TodoList todoList = (TodoList) o;
-        return Objects.equals(listID, todoList.listID) && Objects.equals(name, todoList.name) && Objects.equals(list, todoList.list);
+        return Objects.equals(listID, todoList.listID) && Objects.equals(name, todoList.name) && Objects.equals(list, todoList.list) && Objects.equals(listIdentifier, todoList.listIdentifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(listID, name, list);
+        return Objects.hash(listID, name, list, listIdentifier);
     }
 }
