@@ -3,6 +3,7 @@ package com.antwibuadum.personal_task_dashboard.todo_list;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -10,22 +11,19 @@ import java.util.Objects;
 @CrossOrigin(origins = "*", methods = {RequestMethod.PUT,RequestMethod.GET})
 public class TodoListDataController {
     ArrayList<TodoList> temporaryTodoListData = new ArrayList<>();
-    {
-        temporaryTodoListData.add(new TodoList(0, "My Day", new ArrayList<Todo>(), 0));
-    }
 
-    TodoListRepository todoListRepository;
-    TodoRepository todoRepository;
+    TodoListService todoListService;
+    TodoService todoService;
 
-    public TodoListDataController(TodoRepository todoRepository, TodoListRepository todoListRepository) {
-        this.todoRepository = todoRepository;
-        this.todoListRepository = todoListRepository;
+    public TodoListDataController(TodoListService todoListService, TodoService todoService) {
+        this.todoListService = todoListService;
+        this.todoService = todoService;
     }
 
     @GetMapping
     @RequestMapping("/get-todo-list-data")
-    public ArrayList<TodoList> getTodoLists() {
-        return temporaryTodoListData;
+    public List<TodoList> getTodoLists() {
+        return this.todoListService.getTodoLists();
     }
 
 
