@@ -3,6 +3,7 @@ package com.antwibuadum.personal_task_dashboard.todo_list;
 import com.antwibuadum.personal_task_dashboard.new_id.NewIDService;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +19,28 @@ public class TodoListService {
         this.newIDService = newIDService;
 
         TodoList defaultList = new TodoList(0, "My Day", new ArrayList<Todo>(), 0);
+        Todo defaultTodo = new Todo(0, "Example Todo", "", false, false, 0);
         this.todoListRepository.save(defaultList);
+        this.todoRepository.save(defaultTodo);
     }
 
     public List<TodoList> getTodoLists() {
-        return this.todoListRepository.findAll();
+        List<TodoList> todoListInfoData = this.todoListRepository.findAll();
+        List<TodoList> allTodoData = new ArrayList<TodoList>();
+        for (int i = 0; i < todoListInfoData.size(); i++) {
+            TodoList currentList = todoListInfoData.get(i);
+
+            List<Todo> todoListTodos = this.todoRepository.findByAssociatedListIdentifier(currentList.getListIdentifier());
+
+
+            allTodoData.add(new TodoList(currentList.getListID(), currentList.getName(), new ArrayList<Todo>(todoListTodos), currentList.getListIdentifier()));
+
+            System.out.println(todoListTodos.getFirst().getName());
+        }
+
+
+
+        return allTodoData;
     }
 
 
