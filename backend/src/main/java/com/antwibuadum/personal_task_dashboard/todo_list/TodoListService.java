@@ -35,7 +35,6 @@ public class TodoListService {
 
             allTodoData.add(new TodoList(currentList.getListID(), currentList.getName(), new ArrayList<Todo>(todoListTodos), currentList.getListIdentifier()));
 
-            System.out.println(todoListTodos.getFirst().getName());
         }
 
 
