@@ -36,11 +36,10 @@ public class TodoListService {
             allTodoData.add(new TodoList(currentList.getListID(), currentList.getName(), new ArrayList<Todo>(todoListTodos), currentList.getListIdentifier()));
 
         }
-
-
-
         return allTodoData;
     }
+
+
 
 
 }
