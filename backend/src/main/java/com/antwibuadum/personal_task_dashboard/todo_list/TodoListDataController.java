@@ -34,13 +34,10 @@ public class TodoListDataController {
     }
 
 
-    public static class TodoListNameUpdateData {
-        public int listID;
-        public  String newName;
-    }
+
     @PutMapping
     @RequestMapping("/set-todo-list-name")
-    public void setTodoListName(@RequestBody TodoListNameUpdateData data) {
+    public void setTodoListName(@RequestBody TodoListRequestBodyTypes.TodoListNameUpdateData data) {
         for (TodoList temporaryTodoListDatum : temporaryTodoListData) {
             if (Objects.equals(temporaryTodoListDatum.getListID(), data.listID)) {
                 temporaryTodoListDatum.setName(data.newName);
@@ -61,13 +58,10 @@ public class TodoListDataController {
         }
     }
 
-    public static class SwitchTodoListIDsData {
-        public int listIDOne;
-        public int listIDTwo;
-    }
+
     @PutMapping
     @RequestMapping("/switch-todo-list-ids")
-    public void switchListIDs(@RequestBody SwitchTodoListIDsData data) {
+    public void switchListIDs(@RequestBody TodoListRequestBodyTypes.SwitchTodoListIDsData data) {
         int listOneIndex = -1;
         int listTwoIndex = -1;
 
@@ -87,13 +81,10 @@ public class TodoListDataController {
     }
 
 
-    public static class AddTodoData {
-        public int listID;
-        public Todo newTodo;
-    }
+
     @PutMapping
     @RequestMapping("/add-todo")
-    public void addTodo(@RequestBody AddTodoData data) {
+    public void addTodo(@RequestBody TodoListRequestBodyTypes.AddTodoData data) {
         for (int i = 0; i < temporaryTodoListData.size(); i++) {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 temporaryTodoListData.get(i).getList().add(data.newTodo);
@@ -103,14 +94,10 @@ public class TodoListDataController {
     }
 
 
-    public static class SetTodoNameData {
-        public int listID;
-        public int todoID;
-        public String newTodoName;
-    }
+
     @PutMapping
     @RequestMapping("/set-todo-name")
-    public void setTodoName(@RequestBody SetTodoNameData data) {
+    public void setTodoName(@RequestBody TodoListRequestBodyTypes.SetTodoNameData data) {
         for (int i = 0; i < temporaryTodoListData.size(); i++) {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
@@ -125,14 +112,10 @@ public class TodoListDataController {
     }
 
 
-    public static class SetTodoNoteData {
-        public int listID;
-        public int todoID;
-        public String newTodoNote;
-    }
+
     @PutMapping
     @RequestMapping("/set-todo-note")
-    public void setTodoNote(@RequestBody SetTodoNoteData data) {
+    public void setTodoNote(@RequestBody TodoListRequestBodyTypes.SetTodoNoteData data) {
         for (int i = 0; i < temporaryTodoListData.size(); i++) {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
@@ -153,14 +136,10 @@ public class TodoListDataController {
     }
 
 
-    public static class SetTodoCompletionStatusData {
-        public int listID;
-        public int todoID;
-        public boolean status;
-    }
+
     @PutMapping
     @RequestMapping("/set-todo-completion-status")
-    public void setTodoCompletionStatus(@RequestBody SetTodoCompletionStatusData data) {
+    public void setTodoCompletionStatus(@RequestBody TodoListRequestBodyTypes.SetTodoCompletionStatusData data) {
         for (int i = 0; i < temporaryTodoListData.size(); i++) {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
@@ -175,13 +154,10 @@ public class TodoListDataController {
     }
 
 
-    public static class DeleteTodoData {
-        public int listID;
-        public int todoID;
-    }
+
     @PutMapping
     @RequestMapping("/delete-todo")
-    public void deleteTodo(@RequestBody DeleteTodoData data) {
+    public void deleteTodo(@RequestBody TodoListRequestBodyTypes.DeleteTodoData data) {
         for (int i = 0; i < temporaryTodoListData.size(); i++) {
             if (temporaryTodoListData.get(i).getListID() == data.listID) {
                 for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
@@ -196,13 +172,10 @@ public class TodoListDataController {
     }
 
 
-    public static class UpdateTodoPositionsData {
-        public int listID;
-        public Integer[][] changeLog;
-    }
+
     @PutMapping
     @RequestMapping("/update-todo-positions")
-    public void updateTodoPosition(@RequestBody UpdateTodoPositionsData data) {
+    public void updateTodoPosition(@RequestBody TodoListRequestBodyTypes.UpdateTodoPositionsData data) {
         int listIndex = -1;
         int oldTodoIndex = -1;
         int newTodoIndex = -1;
