@@ -38,46 +38,21 @@ public class TodoListDataController {
     @PutMapping
     @RequestMapping("/set-todo-list-name")
     public void setTodoListName(@RequestBody TodoListRequestBodyTypes.TodoListNameUpdateData data) {
-        for (TodoList temporaryTodoListDatum : temporaryTodoListData) {
-            if (Objects.equals(temporaryTodoListDatum.getListID(), data.listID)) {
-                temporaryTodoListDatum.setName(data.newName);
-                break;
-            }
-        }
+        this.todoListService.setTodoListName(data);
     }
 
 
     @PutMapping
     @RequestMapping("/delete-todo-list")
     public void deleteTodoList(@RequestBody int listID) {
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            if (Objects.equals(temporaryTodoListData.get(i).getListID(), listID)) {
-                temporaryTodoListData.remove(i);
-                break;
-            }
-        }
+        this.todoListService.deleteTodoList(listID);
     }
 
 
     @PutMapping
     @RequestMapping("/switch-todo-list-ids")
     public void switchListIDs(@RequestBody TodoListRequestBodyTypes.SwitchTodoListIDsData data) {
-        int listOneIndex = -1;
-        int listTwoIndex = -1;
-
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            if (Objects.equals(temporaryTodoListData.get(i).getListID(), data.listIDOne)) {
-                listOneIndex = i;
-            }
-            else if (Objects.equals(temporaryTodoListData.get(i).getListID(), data.listIDTwo)) {
-                listTwoIndex = i;
-            }
-        }
-
-        temporaryTodoListData.get(listOneIndex).setListID(data.listIDTwo);
-        temporaryTodoListData.get(listTwoIndex).setListID(data.listIDOne);
-
-        temporaryTodoListData.sort((x,y) -> x.getListID() - y.getListID());
+        this.todoListService.switchListIDs(data);
     }
 
 

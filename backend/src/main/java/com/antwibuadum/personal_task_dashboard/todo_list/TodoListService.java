@@ -2,10 +2,13 @@ package com.antwibuadum.personal_task_dashboard.todo_list;
 
 import com.antwibuadum.personal_task_dashboard.new_id.NewIDService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TodoListService {
@@ -18,10 +21,12 @@ public class TodoListService {
         this.todoRepository = todoRepository;
         this.newIDService = newIDService;
 
-        TodoList defaultList = new TodoList(0, "My Day", new ArrayList<Todo>(), 0);
-        Todo defaultTodo = new Todo(0, "Example Todo", "", false, false, 0);
-        this.todoListRepository.save(defaultList);
-        this.todoRepository.save(defaultTodo);
+        if (this.todoListRepository.findById(0).isEmpty()) {
+            TodoList defaultList = new TodoList(0, "My Day", new ArrayList<Todo>(), 0);
+            Todo defaultTodo = new Todo(0, "Example Todo", "", false, false, 0);
+            this.todoListRepository.save(defaultList);
+            this.todoRepository.save(defaultTodo);
+        }
     }
 
     public List<TodoList> getTodoLists() {
@@ -30,14 +35,53 @@ public class TodoListService {
         for (int i = 0; i < todoListInfoData.size(); i++) {
             TodoList currentList = todoListInfoData.get(i);
 
-            List<Todo> todoListTodos = this.todoRepository.findByAssociatedListIdentifier(currentList.getListIdentifier());
+            Optional<List<Todo>> todoListTodos = this.todoRepository.findByAssociatedListIdentifier(currentList.getListIdentifier());
 
+            if (todoListTodos.isPresent()) {
+                allTodoData.add(new TodoList(currentList.getListID(), currentList.getName(), new ArrayList<Todo>(todoListTodos.get()), currentList.getListIdentifier()));
+            }
 
-            allTodoData.add(new TodoList(currentList.getListID(), currentList.getName(), new ArrayList<Todo>(todoListTodos), currentList.getListIdentifier()));
 
         }
         return allTodoData;
     }
+
+    public void addTodoList(Integer listID) {
+        TodoList newTodoList = new TodoList(listID, "", new ArrayList<Todo>(), listID);
+        this.todoListRepository.save(newTodoList);
+    }
+
+    public void setTodoListName(TodoListRequestBodyTypes.TodoListNameUpdateData data) {
+        Optional<TodoList> valueToUpdate = this.todoListRepository.findById(data.listID);
+
+        if (valueToUpdate.isPresent()) {
+            valueToUpdate.get().setName(data.newName);
+
+            this.todoListRepository.save(valueToUpdate.get());
+        }
+    }
+
+    public void deleteTodoList(int listID) {
+        this.todoListRepository.deleteById(listID);
+    }
+
+    public void switchListIDs(TodoListRequestBodyTypes.SwitchTodoListIDsData data) {
+        Optional<TodoList> listOne = this.todoListRepository.findById(data.listIDOne);
+        Optional<TodoList> listTwo = this.todoListRepository.findById(data.listIDTwo);
+
+        if (listOne.isPresent() && listTwo.isPresent()) {
+            this.todoListRepository.deleteById(data.listIDOne);
+            this.todoListRepository.deleteById(data.listIDTwo);
+
+            listOne.get().setListID(data.listIDTwo);
+            listOne.get().setListID(data.listIDOne);
+
+            this.todoListRepository.save(listOne.get());
+            this.todoListRepository.save(listTwo.get());
+        }
+    }
+
+
 
 
 
