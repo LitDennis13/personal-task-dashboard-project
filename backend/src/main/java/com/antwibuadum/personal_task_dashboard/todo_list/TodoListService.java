@@ -1,5 +1,6 @@
 package com.antwibuadum.personal_task_dashboard.todo_list;
 
+import com.antwibuadum.personal_task_dashboard.new_id.NewID;
 import com.antwibuadum.personal_task_dashboard.new_id.NewIDService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,8 +47,10 @@ public class TodoListService {
         return allTodoData;
     }
 
-    public void addTodoList(Integer listID) {
-        TodoList newTodoList = new TodoList(listID, "", new ArrayList<Todo>(), listID);
+    public void addTodoList() {
+        Integer newIDValue = this.newIDService.getNewID();
+        TodoList newTodoList = new TodoList(newIDValue, "", new ArrayList<Todo>(), newIDValue);
+        this.newIDService.incrementID();
         this.todoListRepository.save(newTodoList);
     }
 
@@ -74,7 +77,7 @@ public class TodoListService {
             this.todoListRepository.deleteById(data.listIDTwo);
 
             listOne.get().setListID(data.listIDTwo);
-            listOne.get().setListID(data.listIDOne);
+            listTwo.get().setListID(data.listIDOne);
 
             this.todoListRepository.save(listOne.get());
             this.todoListRepository.save(listTwo.get());

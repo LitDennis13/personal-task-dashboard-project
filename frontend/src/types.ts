@@ -4,12 +4,14 @@ interface TodoType {
     note: string;
     hasNote: boolean;
     isComplete: boolean;
+    associatedListIdentifier: number;
 };
 
 interface TodoListType {
     listID: number;
     name: string;
     list: TodoType[];
+    listIdentifier: number;
 };
 
 interface NoteType {

@@ -29,8 +29,8 @@ public class TodoListDataController {
 
     @PutMapping
     @RequestMapping("/add-todo-list")
-    public void addTodoList(@RequestBody Integer listID) {
-        temporaryTodoListData.add(new TodoList(listID, "", new ArrayList<Todo>(), 0));
+    public void addTodoList(Integer listID) {
+        this.todoListService.addTodoList();
     }
 
 
