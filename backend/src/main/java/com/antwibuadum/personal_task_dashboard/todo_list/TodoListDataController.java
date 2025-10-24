@@ -59,13 +59,8 @@ public class TodoListDataController {
 
     @PutMapping
     @RequestMapping("/add-todo")
-    public void addTodo(@RequestBody TodoListRequestBodyTypes.AddTodoData data) {
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            if (temporaryTodoListData.get(i).getListID() == data.listID) {
-                temporaryTodoListData.get(i).getList().add(data.newTodo);
-                break;
-            }
-        }
+    public void addTodo(@RequestBody Todo newTodo) {
+        this.todoService.addTodo(newTodo);
     }
 
 
@@ -73,17 +68,7 @@ public class TodoListDataController {
     @PutMapping
     @RequestMapping("/set-todo-name")
     public void setTodoName(@RequestBody TodoListRequestBodyTypes.SetTodoNameData data) {
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            if (temporaryTodoListData.get(i).getListID() == data.listID) {
-                for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
-                    if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.todoID) {
-                        temporaryTodoListData.get(i).getList().get(j).setName(data.newTodoName);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
+        this.todoService.setTodoName(data);
     }
 
 
@@ -91,23 +76,7 @@ public class TodoListDataController {
     @PutMapping
     @RequestMapping("/set-todo-note")
     public void setTodoNote(@RequestBody TodoListRequestBodyTypes.SetTodoNoteData data) {
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            if (temporaryTodoListData.get(i).getListID() == data.listID) {
-                for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
-                    if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.todoID) {
-                        if (Objects.equals(data.newTodoNote, "")) {
-                            temporaryTodoListData.get(i).getList().get(j).setHasNote(false);
-                        }
-                        else {
-                            temporaryTodoListData.get(i).getList().get(j).setHasNote(true);
-                        }
-                        temporaryTodoListData.get(i).getList().get(j).setNote(data.newTodoNote);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
+        this.todoService.setTodoNote(data);
     }
 
 
@@ -115,72 +84,23 @@ public class TodoListDataController {
     @PutMapping
     @RequestMapping("/set-todo-completion-status")
     public void setTodoCompletionStatus(@RequestBody TodoListRequestBodyTypes.SetTodoCompletionStatusData data) {
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            if (temporaryTodoListData.get(i).getListID() == data.listID) {
-                for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
-                    if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.todoID) {
-                        temporaryTodoListData.get(i).getList().get(j).setIsComplete(data.status);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
+        this.todoService.setTodoCompletionStatus(data);
     }
 
 
 
     @PutMapping
     @RequestMapping("/delete-todo")
-    public void deleteTodo(@RequestBody TodoListRequestBodyTypes.DeleteTodoData data) {
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            if (temporaryTodoListData.get(i).getListID() == data.listID) {
-                for (int j = 0; j < temporaryTodoListData.get(i).getList().size(); j++) {
-                    if (temporaryTodoListData.get(i).getList().get(j).getTodoID() == data.todoID) {
-                        temporaryTodoListData.get(i).getList().remove(j);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
+    public void deleteTodo(@RequestBody Integer todoID) {
+        this.todoService.deleteTodo(todoID);
     }
 
 
 
     @PutMapping
     @RequestMapping("/update-todo-positions")
-    public void updateTodoPosition(@RequestBody TodoListRequestBodyTypes.UpdateTodoPositionsData data) {
-        int listIndex = -1;
-        int oldTodoIndex = -1;
-        int newTodoIndex = -1;
-        for (int i = 0; i < temporaryTodoListData.size(); i++) {
-            if (temporaryTodoListData.get(i).getListID() == data.listID) {
-                listIndex = i;
-                break;
-            }
-        }
-
-        for (int i = 0; i < data.changeLog.length; i++) {
-            if (!Objects.equals(data.changeLog[i][0], data.changeLog[i][1])) {
-                int oldTodoId = data.changeLog[i][0];
-                int newTodoId = data.changeLog[i][1];
-
-                for (int j = 0; j < temporaryTodoListData.get(listIndex).getList().size(); j++) {
-                    if (Objects.equals(temporaryTodoListData.get(listIndex).getList().get(j).getTodoID(), oldTodoId)) {
-                        oldTodoIndex = j;
-                    }
-                    if (Objects.equals(temporaryTodoListData.get(listIndex).getList().get(j).getTodoID(), newTodoId)) {
-                        newTodoIndex = j;
-                    }
-                }
-
-                temporaryTodoListData.get(listIndex).getList().get(oldTodoIndex).setTodoID(newTodoId);
-                temporaryTodoListData.get(listIndex).getList().get(newTodoIndex).setTodoID(oldTodoId);
-
-                temporaryTodoListData.get(listIndex).getList().sort((x,y) -> x.getTodoID() - y.getTodoID());
-            }
-        }
+    public void updateTodoPosition(@RequestBody Integer[][] changeLog) {
+        this.todoService.updateTodoPosition(changeLog);
     }
 }
 

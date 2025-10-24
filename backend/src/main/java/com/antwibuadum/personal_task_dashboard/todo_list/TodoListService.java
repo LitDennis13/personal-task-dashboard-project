@@ -1,14 +1,10 @@
 package com.antwibuadum.personal_task_dashboard.todo_list;
 
-import com.antwibuadum.personal_task_dashboard.new_id.NewID;
 import com.antwibuadum.personal_task_dashboard.new_id.NewIDService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -83,10 +79,4 @@ public class TodoListService {
             this.todoListRepository.save(listTwo.get());
         }
     }
-
-
-
-
-
-
 }

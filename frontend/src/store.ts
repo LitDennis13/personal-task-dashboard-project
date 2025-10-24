@@ -9,6 +9,7 @@ let defaultTodoListData: TodoListType = {
     listID: 0,
     name: "My Day",
     list: [],
+    listIdentifier: 0,
 };
 
 type SelectedTodoListData = {
@@ -70,100 +71,6 @@ export const SelectedTodoListDataStore = create<SelectedTodoListData>((set) => (
 }));
 
 
-type TodoListDataStore = {
-    value: TodoListType[];
-    setTodoListData: (newTodoListData: TodoListType[]) => void;
-    addTodolist: (newListID: number) => void;
-    setTodoListName: (listIndex: number, newName: string) => void;
-    deleteTodoList: (listIndex: number) => void;
-    switchListIDs: (listIndexOne: number, listIndexTwo: number) => void;
-    addTodo: (listIndex: number, newTodo: TodoType) => void;
-    setTodoName: (listIndex: number, todoIndex: number, newName: string) => void;
-    setTodoNote: (listIndex: number, todoIndex: number, newNote: string) => void;
-    setTodoCompletionStatus: (listIndex: number, todoIndex: number, status: boolean) => void;
-    deleteTodo: (listIndex: number, todoIndex: number) => void;
-    updateTodoPosition: (listIndex: number, oldID: number, oldIndex: number, newID: number, newIndex: number) => void;
-};
-
-// SHOULD BE SERVER SIDE STATE
-export const TodoListDataStore = create<TodoListDataStore>((set) => ({
-    value: [defaultTodoListData],
-    setTodoListData: (newTodoListData) => {
-        set({value: [...newTodoListData]});
-    },
-    addTodolist: (newListID) => {
-        set((state) => ({value: [...state.value, {listID: newListID, name: "", list: []}]}));
-    },
-    setTodoListName: (listIndex, newName) => {
-        set((state) => {
-            state.value[listIndex].name = newName;
-            return {value: [...state.value]};
-        });
-    },
-    deleteTodoList: (listIndex) => {
-        set((state) => {
-            state.value.splice(listIndex, 1);
-            return {value: [...state.value]};
-        });
-    },
-    switchListIDs: (listIndexOne, listIndexTwo) => {
-        set((state) => {
-            let tempID = state.value[listIndexOne].listID;
-            state.value[listIndexOne].listID = state.value[listIndexTwo].listID;
-            state.value[listIndexTwo].listID = tempID;
-
-            state.value.sort((x, y) => x.listID - y.listID);
-
-            return {value: [...state.value]};
-        });
-    },
-    addTodo: (listIndex, newTodo) => {
-        set((state) => {
-            state.value[listIndex].list.push(newTodo);
-            return {value: [...state.value]}
-        });
-    },
-    setTodoName: (listIndex, todoIndex, newName) => {
-        set((state) => {
-            state.value[listIndex].list[todoIndex].name = newName;
-            return {value: [...state.value]};
-        });
-    },
-    setTodoNote: (listIndex, todoIndex, newNote) => {
-        set((state) => {
-            let hasNote = false;
-            if (!emptyOrWhiteSpace(newNote)) hasNote = true;
-
-
-            state.value[listIndex].list[todoIndex].note = newNote;
-            state.value[listIndex].list[todoIndex].hasNote = hasNote;
-            return {value: [...state.value]};
-        });
-    },
-    setTodoCompletionStatus: (listIndex, todoIndex, status) => {
-        set((state) => {
-            state.value[listIndex].list[todoIndex].isComplete = status;
-            return {value: [...state.value]};
-        });
-    },
-    deleteTodo: (listIndex, todoIndex) => {
-        set((state) => {
-            state.value[listIndex].list.splice(todoIndex, 1);
-
-            return {value: [...state.value]};
-        });
-    },
-    updateTodoPosition: (listIndex, oldID, oldIndex, newID, newIndex) => {
-        set((state) => {
-            state.value[listIndex].list[oldIndex].todoID = newID;
-            state.value[listIndex].list[newIndex].todoID = oldID;
-
-            state.value[listIndex].list.sort((x, y) => x.todoID - y.todoID);
-
-            return {value: [...state.value]};
-        });
-    }
-}));
 
 
 type SelectedTodoListIDStore = {

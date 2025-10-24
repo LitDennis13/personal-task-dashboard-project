@@ -83,17 +83,11 @@ async function sendSwitchListIDs(data: SwitchListsIDsData) {
 }
 
 
-type AddTodoData = {
-    listID: number;
-    newTodo: TodoType;
-};
-async function sendAddTodo(data: AddTodoData) {
-    const listID = data.listID;
-    const newTodo = data.newTodo;
 
+async function sendAddTodo(newTodo: TodoType ) {
     await fetch("http://localhost:8080/api/v1/todo-list-data/add-todo", {
         ...fetchOptionsPUT,
-        body: JSON.stringify({listID, newTodo})
+        body: JSON.stringify(newTodo)
     })
     .catch((error) => {
         console.error(error);
@@ -102,18 +96,16 @@ async function sendAddTodo(data: AddTodoData) {
 
 
 type SetTodoNameData = {
-    listID: number;
     todoID: number;
     newTodoName: string;
 };
 async function sendSetTodoName(data: SetTodoNameData) {
-    const listID = data.listID;
     const todoID = data.todoID;
     const newTodoName = data.newTodoName;
 
     await fetch("http://localhost:8080/api/v1/todo-list-data/set-todo-name", {
         ...fetchOptionsPUT,
-        body: JSON.stringify({listID, todoID, newTodoName})
+        body: JSON.stringify({todoID, newTodoName})
     })
     .catch((error) => {
         console.error(error);
@@ -122,18 +114,16 @@ async function sendSetTodoName(data: SetTodoNameData) {
 
 
 type SetTodoNoteData = {
-    listID: number;
     todoID: number;
     newTodoNote: string;
 };
 async function sendSetTodoNote(data: SetTodoNoteData) {
-    const listID = data.listID;
     const todoID = data.todoID;
     const newTodoNote = data.newTodoNote;
 
     await fetch("http://localhost:8080/api/v1/todo-list-data/set-todo-note", {
         ...fetchOptionsPUT,
-        body: JSON.stringify({listID, todoID, newTodoNote})
+        body: JSON.stringify({todoID, newTodoNote})
     })
     .catch((error) => {
         console.error(error);
@@ -142,18 +132,16 @@ async function sendSetTodoNote(data: SetTodoNoteData) {
 
 
 type SetTodoCompletionStatusData = {
-    listID: number;
     todoID: number;
     status: boolean;
 };
 async function sendSetTodoCompletionStatus(data: SetTodoCompletionStatusData) {
-    const listID = data.listID;
     const todoID = data.todoID;
     const status = data.status;
 
     await fetch("http://localhost:8080/api/v1/todo-list-data/set-todo-completion-status", {
         ...fetchOptionsPUT,
-        body: JSON.stringify({listID, todoID, status})
+        body: JSON.stringify({todoID, status})
     })
     .catch((error) => {
         console.error(error);
@@ -161,17 +149,11 @@ async function sendSetTodoCompletionStatus(data: SetTodoCompletionStatusData) {
 }
 
 
-type DeleteTodoData = {
-    listID: number;
-    todoID: number;
-};
-async function sendDeleteTodo(data: DeleteTodoData) {
-    const listID = data.listID;
-    const todoID = data.todoID;
+async function sendDeleteTodo(todoID: number) {
 
     await fetch("http://localhost:8080/api/v1/todo-list-data/delete-todo", {
         ...fetchOptionsPUT,
-        body: JSON.stringify({listID, todoID})
+        body: JSON.stringify(todoID)
     })
     .catch((error) => {
         console.error(error);
@@ -180,17 +162,10 @@ async function sendDeleteTodo(data: DeleteTodoData) {
 
 
 
-type UpdateTodoPositionsData = {
-    listID: number;
-    changeLog: number[][];
-};
-async function sendUpdateTodoPositions(data: UpdateTodoPositionsData) {
-    const listID = data.listID;
-    const changeLog = data.changeLog;    
-
+async function sendUpdateTodoPositions(changeLog: number[][]) {
     await fetch("http://localhost:8080/api/v1/todo-list-data/update-todo-positions", {
         ...fetchOptionsPUT,
-        body: JSON.stringify({listID, changeLog: changeLog})
+        body: JSON.stringify(changeLog)
     })
     .catch((error) => {
         console.error(error);
@@ -202,5 +177,5 @@ export { fetchTodoListData, sendAddTodoList, sendSetTodoListName, sendDeleteTodo
     sendSwitchListIDs, sendAddTodo, sendSetTodoName, sendSetTodoNote,
     sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPositions };
 
-export type { AddTodoListData, SetTodoListNameData, DeleteTodoListData, SwitchListsIDsData, AddTodoData,
-     SetTodoNameData, SetTodoNoteData, SetTodoCompletionStatusData, DeleteTodoData, UpdateTodoPositionsData };
+export type { AddTodoListData, SetTodoListNameData, DeleteTodoListData, SwitchListsIDsData,
+     SetTodoNameData, SetTodoNoteData, SetTodoCompletionStatusData };

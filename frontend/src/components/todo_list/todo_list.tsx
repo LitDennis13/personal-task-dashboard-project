@@ -41,7 +41,7 @@ async function updateCompletionStatus(todoListData: TodoListType[], selectedTodo
         }
     }
 
-    await setTodoCompletionStatus({listID: todoListData[selectedTodoListIndex].listID, todoID, status: completionStatus});
+    await setTodoCompletionStatus({todoID, status: completionStatus});
 
     if (completionStatus) {
         playTaskCompleteSoundEffect();
@@ -81,7 +81,8 @@ function TodoList() {
         name: "",
         note: "",
         hasNote: false,
-        isComplete: false
+        isComplete: false,
+        associatedListIdentifier: 0,
     };
     
     const [newTodo, setNewTodo] = useState<TodoType>(newTodoDefaultState);
@@ -272,7 +273,7 @@ function TodoList() {
     }
 
     async function onTodoDrop() {
-        await todoListData.updateTodoPositions({listID: selectedTodoListDataLocal.data.listID, changeLog: todoPositionChangeLog});
+        await todoListData.updateTodoPositions(todoPositionChangeLog);
         setTodoPositionChangeLog([]);
     }
 
@@ -333,7 +334,8 @@ function TodoList() {
 
         if (!emptyOrWhiteSpace(newTodo.name)) {
             newTodo.todoID = newID.data;
-            await todoListData.addTodo({listID: selectedTodoListDataLocal.data.listID, newTodo});
+            newTodo.associatedListIdentifier = selectedTodoListDataLocal.data.listIdentifier;
+            await todoListData.addTodo(newTodo);
         }
 
         await newID.incrementNewID();
@@ -357,7 +359,7 @@ function TodoList() {
             }
         }
 
-        await todoListData.setTodoName({listID: selectedTodoListDataLocal.data.listID, todoID: selectedTodoListDataLocal.data.list[todoIndex].todoID, newTodoName: selectedTodoListDataLocal.data.list[todoIndex].name});
+        await todoListData.setTodoName({todoID: selectedTodoListDataLocal.data.list[todoIndex].todoID, newTodoName: selectedTodoListDataLocal.data.list[todoIndex].name});
     }
 
     function onTodoNoteChange(event: React.ChangeEvent<HTMLTextAreaElement>, todoIndex: number) {
@@ -377,7 +379,7 @@ function TodoList() {
             }
         }
 
-        await todoListData.setTodoNote({listID: selectedTodoListDataLocal.data.listID, todoID: selectedTodoListDataLocal.data.list[todoIndex].todoID, newTodoNote: selectedTodoListDataLocal.data.list[todoIndex].note});
+        await todoListData.setTodoNote({todoID: selectedTodoListDataLocal.data.list[todoIndex].todoID, newTodoNote: selectedTodoListDataLocal.data.list[todoIndex].note});
     }
 
     function onTodoDeleteClick() {
@@ -385,7 +387,7 @@ function TodoList() {
     }
 
     async function onConfirmTodoDeleteClick(todoID: number) {
-        await todoListData.deleteTodo({listID: selectedTodoListDataLocal.data.listID, todoID});
+        await todoListData.deleteTodo(todoID);
 
         closeTodoEditArea(false);
         setDeleteTodoPressed(false);
