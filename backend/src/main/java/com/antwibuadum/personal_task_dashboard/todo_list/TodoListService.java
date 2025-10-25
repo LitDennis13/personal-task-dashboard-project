@@ -20,25 +20,19 @@ public class TodoListService {
 
         if (this.todoListRepository.findById(0).isEmpty()) {
             TodoList defaultList = new TodoList(0, "My Day", new ArrayList<Todo>(), 0);
-            Todo defaultTodo = new Todo(0, "Example Todo", "", false, false, 0);
             this.todoListRepository.save(defaultList);
-            this.todoRepository.save(defaultTodo);
         }
     }
 
     public List<TodoList> getTodoLists() {
         List<TodoList> todoListInfoData = this.todoListRepository.findAll();
         List<TodoList> allTodoData = new ArrayList<TodoList>();
-        for (int i = 0; i < todoListInfoData.size(); i++) {
-            TodoList currentList = todoListInfoData.get(i);
-
+        for (TodoList currentList : todoListInfoData) {
             Optional<List<Todo>> todoListTodos = this.todoRepository.findByAssociatedListIdentifier(currentList.getListIdentifier());
 
             if (todoListTodos.isPresent()) {
                 allTodoData.add(new TodoList(currentList.getListID(), currentList.getName(), new ArrayList<Todo>(todoListTodos.get()), currentList.getListIdentifier()));
             }
-
-
         }
         return allTodoData;
     }
@@ -61,7 +55,19 @@ public class TodoListService {
     }
 
     public void deleteTodoList(int listID) {
-        this.todoListRepository.deleteById(listID);
+        Optional<TodoList> list = this.todoListRepository.findById(listID);
+
+        if (list.isPresent()) {
+            Optional<List<Todo>> associatedTodos = this.todoRepository.findByAssociatedListIdentifier(list.get().getListIdentifier());
+
+            if (associatedTodos.isPresent()) {
+                for (Todo todo: associatedTodos.get()) {
+                    this.todoRepository.deleteById(todo.getTodoID());
+                }
+            }
+
+            this.todoListRepository.deleteById(listID);
+        }
     }
 
     public void switchListIDs(TodoListRequestBodyTypes.SwitchTodoListIDsData data) {

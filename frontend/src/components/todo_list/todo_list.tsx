@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { emptyOrWhiteSpace } from "../App/App";
 import type { TodoListType, TodoType } from "../../types";
 import { SelectedTodoListDataStore, useSelectedTodoIDStore, useSelectedTodoListIDStore } from "../../store";
-import { useNewID } from "../custom_hooks/use_newID";
 
 import styles from "./todo_list.module.css";
 
@@ -54,8 +53,6 @@ function TodoList() {
     const EDIT_TODO_AREA = "EditTodoArea";
     const DELETE_LIST_BUTTON = "DeleteListButton";
     const DELETE_TODO_BUTTON = "DeleteTodoButton";
-
-    const newID = useNewID();
 
     const todoListData = useTodoListData();
 
@@ -142,8 +139,7 @@ function TodoList() {
     }
 
     async function onNewListClick() {
-        await todoListData.addTodoList({listID: newID.data});
-        await newID.incrementNewID();
+        await todoListData.addTodoList();
         setNewListMade(true);
     }
 
@@ -333,12 +329,10 @@ function TodoList() {
         event.preventDefault();
 
         if (!emptyOrWhiteSpace(newTodo.name)) {
-            newTodo.todoID = newID.data;
             newTodo.associatedListIdentifier = selectedTodoListDataLocal.data.listIdentifier;
             await todoListData.addTodo(newTodo);
         }
 
-        await newID.incrementNewID();
         setNewTodo({...newTodoDefaultState});
     }
 

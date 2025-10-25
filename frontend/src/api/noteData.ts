@@ -31,10 +31,9 @@ async function sendSetNote(data: SetNoteData) {
     });
 }
 
-async function sendAddNote(newNoteID: number) {
+async function sendAddNote() {
     await fetch("http://localhost:8080/api/v1/note-data/add-note", {
         ...fetchOptionsPUT,
-        body: JSON.stringify(newNoteID),
     })
     .catch((error) => {
         console.error(error);

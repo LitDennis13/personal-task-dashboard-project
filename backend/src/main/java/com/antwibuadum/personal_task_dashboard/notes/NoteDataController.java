@@ -3,9 +3,7 @@ package com.antwibuadum.personal_task_dashboard.notes;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("api/v1/note-data")
@@ -31,8 +29,7 @@ public class NoteDataController {
 
     @PutMapping
     @RequestMapping("/add-note")
-    public void addNote(@RequestBody int newNoteID) {
-//        temporaryNoteData.add(new Note(newNoteID, ""));
+    public void addNote() {
         this.noteService.addNote();
     }
 

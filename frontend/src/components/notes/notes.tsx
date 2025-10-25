@@ -137,7 +137,7 @@ function Notes() {
     async function addNoteButtonOnClick() {
         checkAndHandleScrollBarLoaded();
 
-        await notesData.addNote(newID.data);
+        await notesData.addNote();
         showNoteEditor(newID.data);        
     }
 

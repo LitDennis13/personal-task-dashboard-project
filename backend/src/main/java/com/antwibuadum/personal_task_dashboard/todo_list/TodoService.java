@@ -2,27 +2,26 @@ package com.antwibuadum.personal_task_dashboard.todo_list;
 
 import com.antwibuadum.personal_task_dashboard.new_id.NewIDService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class TodoService {
-    private final TodoListRepository todoListRepository;
     private final TodoRepository todoRepository;
     private final NewIDService newIDService;
 
-    public TodoService(TodoListRepository todoListRepository, TodoRepository todoRepository, NewIDService newIDService) {
-        this.todoListRepository = todoListRepository;
+    public TodoService(TodoRepository todoRepository, NewIDService newIDService) {
         this.todoRepository = todoRepository;
         this.newIDService = newIDService;
     }
 
-
     public void addTodo(Todo newTodo) {
+        Integer newIDValue = this.newIDService.getNewID();
+        newTodo.setTodoID(newIDValue);
+
+        this.newIDService.incrementID();
         this.todoRepository.save(newTodo);
     }
 
@@ -42,12 +41,7 @@ public class TodoService {
         if (valueToUpdate.isPresent()) {
             valueToUpdate.get().setNote(data.newTodoNote);
 
-            if (Objects.equals(data.newTodoNote, "")) {
-                valueToUpdate.get().setHasNote(false);
-            }
-            else {
-                valueToUpdate.get().setHasNote(true);
-            }
+            valueToUpdate.get().setHasNote(!Objects.equals(data.newTodoNote, ""));
 
             this.todoRepository.save(valueToUpdate.get());
         }

@@ -15,15 +15,10 @@ async function fetchTodoListData() {
 }
 
 
-type AddTodoListData = {
-    listID: number;
-};
-async function sendAddTodoList(data: AddTodoListData) {
-    const listID = data.listID;
+async function sendAddTodoList() {
 
     await fetch("http://localhost:8080/api/v1/todo-list-data/add-todo-list", {
         ...fetchOptionsPUT,
-        body: JSON.stringify(listID),
     })
     .catch((error) => {
         console.error(error);
@@ -177,5 +172,5 @@ export { fetchTodoListData, sendAddTodoList, sendSetTodoListName, sendDeleteTodo
     sendSwitchListIDs, sendAddTodo, sendSetTodoName, sendSetTodoNote,
     sendSetTodoCompletionStatus, sendDeleteTodo, sendUpdateTodoPositions };
 
-export type { AddTodoListData, SetTodoListNameData, DeleteTodoListData, SwitchListsIDsData,
+export type { SetTodoListNameData, DeleteTodoListData, SwitchListsIDsData,
      SetTodoNameData, SetTodoNoteData, SetTodoCompletionStatusData };
